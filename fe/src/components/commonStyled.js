@@ -1,4 +1,4 @@
-import { Box, styled } from "@mui/material";
+import { Box, Button, styled, TextField } from "@mui/material";
 
 
 export const FlexBox = styled(Box)(({ theme }) => ({
@@ -26,4 +26,28 @@ export const Row = styled(Box)(({ theme }) => ({
 export const Column = styled(Box)(({ theme }) => ({
     display: "flex",
     flexDirection: 'column'
+}))
+
+
+export const TextFieldStyle = styled(TextField)(() => ({
+    background: '#EDEDED',
+    borderRadius: '1rem',
+    "& .MuiOutlinedInput-root": {
+        "& fieldset": {
+            border: "none",
+        },
+        "&:hover fieldset": {
+            border: "none",
+        },
+        "&.Mui-focused fieldset": {
+            border: "none",
+        },
+    },
+}));
+
+export const MainButton = styled(Button)(({ theme }) => ({
+    background: '#EDEDED',
+    borderRadius: '1rem',
+    height: '3rem',
+    
 }))
