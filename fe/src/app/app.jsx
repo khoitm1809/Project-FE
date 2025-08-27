@@ -1,4 +1,6 @@
 import { RouterConfig } from "../router/routerConfig"
+import '../utils/index.css';
+
 
 function App() {
     return ( 
