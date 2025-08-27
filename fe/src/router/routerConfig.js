@@ -5,7 +5,7 @@ import Home from "../pages/home";
 export const RouterConfig = () => {
     return (
         <Routes>
-            <Route path={ROUTES.HOME} element={<Home />}/>
+            <Route path={ROUTES.HOME} element={<Home />} />
         </Routes>
     )
 }
