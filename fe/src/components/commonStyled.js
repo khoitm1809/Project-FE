@@ -1,5 +1,8 @@
 import { Box, Button, styled, TextField } from "@mui/material";
 
+export const BoxContainer = styled(Box)(({ theme }) => ({
+    width: '100%',
+}));
 
 export const FlexBox = styled(Box)(({ theme }) => ({
     width: '50%',
@@ -49,5 +52,5 @@ export const MainButton = styled(Button)(({ theme }) => ({
     background: '#EDEDED',
     borderRadius: '1rem',
     height: '3rem',
-    
+
 }))
