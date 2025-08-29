@@ -7,8 +7,13 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { Button } from '@mui/material';
+import { useNavigate } from 'react-router';
+import { ROUTES } from '../router/routerConstants';
 
 export default function CustomTable({ title, data, isEdit }) {
+    const navigate = useNavigate()
+
+
     return (
         <TableContainer component={Paper}>
             <Table sx={{ minWidth: 650 }}>
@@ -41,7 +46,7 @@ export default function CustomTable({ title, data, isEdit }) {
                                             variant="contained"
                                             color="primary"
                                             size="small"
-                                            onClick={() => console.log("Edit:", item)}
+                                            onClick={() => navigate(`${ROUTES.DETAIL_PAGE}`, { state: { item } })}
                                         >
                                             Edit
                                         </Button>
