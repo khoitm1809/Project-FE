@@ -44,11 +44,8 @@ const Layout = ({ children }) => {
                 component="main"
                 sx={{
                     flexGrow: 1,
-                    margin: '2rem'
-                }}>
-                    <Box mb={'4rem'}>
-                        
-                    </Box>
+                }}><Box>
+                </Box>
                 {children}
             </Box>
         </Box>

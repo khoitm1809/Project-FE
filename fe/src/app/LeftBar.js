@@ -9,10 +9,9 @@ import {
     Divider,
     Box,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { ROUTES } from "../router/routerConstants";
-
-
+import { ROLES } from '../utils/rolesConstant'
 
 
 export default function LeftBar({ open, onClose, drawerWidth }) {
@@ -20,26 +19,26 @@ export default function LeftBar({ open, onClose, drawerWidth }) {
 
     const menuItems = [
         //adm
-        { text: "Home", icon: null, path: ROUTES.HOME, },
-        { text: "Quản lý tài khoản", icon: null, path: ROUTES.HOME },
-        { text: "Quản lý gói dịch vụ", icon: null, path: ROUTES.HOME },
-        { text: "Settings", icon: null, path: ROUTES.HOME },
+        { text: "Home", icon: null, path: ROUTES.HOME, role: ROLES.ADMIN },
+        { text: "Quản lý tài khoản", icon: null, path: ROUTES.SETTINGS, role: ROLES.ADMIN },
+        { text: "Quản lý gói dịch vụ", icon: null, path: ROUTES.HOME, role: ROLES.ADMIN },
+        { text: "Settings", icon: null, path: ROUTES.HOME, role: ROLES.ADMIN },
         // chu trai
-        { text: "Tạo tài khoản cho nhân công", icon: null, path: ROUTES.HOME },
-        { text: "Quản lý giống và đàn lợn", icon: null, path: ROUTES.HOME },
-        { text: "Thiết lập thức ăn và dinh dưỡng", icon: null, path: ROUTES.HOME },
-        { text: "Quản lý hóa đơn nhập hàng", icon: null, path: ROUTES.HOME },
-        { text: "Quản lý  kho hàng hóa", icon: null, path: ROUTES.HOME },
-        { text: "Giao việc cho công nhân", icon: null, path: ROUTES.HOME },
-        { text: "Mua gói dịch vụ", icon: null, path: ROUTES.HOME },
+        { text: "Tạo tài khoản cho nhân công", icon: null, path: ROUTES.HOME, role: ROLES.OWNER },
+        { text: "Quản lý giống và đàn lợn", icon: null, path: ROUTES.HOME, role: ROLES.OWNER },
+        { text: "Thiết lập thức ăn và dinh dưỡng", icon: null, path: ROUTES.HOME, role: ROLES.OWNER },
+        { text: "Quản lý hóa đơn nhập hàng", icon: null, path: ROUTES.HOME, role: ROLES.OWNER },
+        { text: "Quản lý  kho hàng hóa", icon: null, path: ROUTES.HOME, role: ROLES.OWNER },
+        { text: "Giao việc cho công nhân", icon: null, path: ROUTES.HOME, role: ROLES.OWNER },
+        { text: "Mua gói dịch vụ", icon: null, path: ROUTES.HOME, role: ROLES.OWNER },
         // cong nhan
-        { text: "Nhập nguồn gốc giống lợn", icon: null, path: ROUTES.HOME },
-        { text: "Ghi nhận tốc độ tăng trưởng", icon: null, path: ROUTES.HOME },
-        { text: "Nhập thông tin sức khỏe toàn truồng và từng cá thể lợn", icon: null, path: ROUTES.HOME },
-        { text: "Nhập vào kho hàng, vacxin, ", icon: null, path: ROUTES.HOME },
-        { text: "Theo giõi chu kì động dục của lợn, ", icon: null, path: ROUTES.HOME },
-        { text: "Ghi nhận và tính ngày phối giống", icon: null, path: ROUTES.HOME },
-        { text: "To do list các việc mà chủ trang trại giao", icon: null, path: ROUTES.HOME },
+        { text: "Nhập nguồn gốc giống lợn", icon: null, path: ROUTES.HOME, role: ROLES.WORKER },
+        { text: "Ghi nhận tốc độ tăng trưởng", icon: null, path: ROUTES.HOME, role: ROLES.WORKER },
+        { text: "Nhập thông tin sức khỏe toàn truồng và từng cá thể lợn", icon: null, path: ROUTES.HOME, role: ROLES.WORKER },
+        { text: "Nhập vào kho hàng, vacxin, ", icon: null, path: ROUTES.HOME, role: ROLES.WORKER },
+        { text: "Theo giõi chu kì động dục của lợn, ", icon: null, path: ROUTES.HOME, role: ROLES.WORKER },
+        { text: "Ghi nhận và tính ngày phối giống", icon: null, path: ROUTES.HOME, role: ROLES.WORKER },
+        { text: "To do list các việc mà chủ trang trại giao", icon: null, path: ROUTES.HOME, role: ROLES.WORKER },
     ];
 
     return (
@@ -64,8 +63,7 @@ export default function LeftBar({ open, onClose, drawerWidth }) {
                     background: "#cfc0c0ff",
                     borderRight: "none",
                 },
-            })}
-        >
+            })}>
             <Box sx={{ padding: '2rem' }}>
                 <Box sx={{ borderBottom: '1px solid #FFFFFF1A' }}>
                     {/* <img
