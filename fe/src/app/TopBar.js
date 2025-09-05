@@ -1,4 +1,4 @@
-import { AppBar, Toolbar, Typography, IconButton, Box, } from "@mui/material";
+import { AppBar, Toolbar, Typography, IconButton, Box, Button, } from "@mui/material";
 import Avatar from '@mui/material/Avatar';
 import { deepOrange, deepPurple } from '@mui/material/colors';
 import { ROLES } from "../utils/rolesConstant";
@@ -35,6 +35,8 @@ export default function TopBar({
         { text: "Theo giõi chu kì động dục của lợn, ", icon: null, path: ROUTES.HOME, role: ROLES.WORKER },
         { text: "Ghi nhận và tính ngày phối giống", icon: null, path: ROUTES.HOME, role: ROLES.WORKER },
         { text: "To do list các việc mà chủ trang trại giao", icon: null, path: ROUTES.HOME, role: ROLES.WORKER },
+        // Đăng xuất
+        { text: "Đăng xuất", icon: null, path: ROUTES.LOGIN },
     ];
 
     return (
@@ -61,10 +63,10 @@ export default function TopBar({
             <Toolbar>
                 <Box sx={{ flexGrow: 1, display: 'flex', alignItems: 'center' }}>
                     <Avatar sx={{ bgcolor: deepOrange[500] }}>H</Avatar>
-                    <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: '1.2rem' }}>
-                        <Typography variant="10500">
-                            Have a nice day!
-                        </Typography>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: '0.4rem' }}>
+                        {/* <Typography variant="10500">
+                            Welcome
+                        </Typography> */}
                         <Typography variant="12500">
                             {"Huy Phan"}
                         </Typography>
@@ -72,33 +74,50 @@ export default function TopBar({
                 </Box>
 
                 <Box display="flex" flexDirection="row" alignItems="center">
-                    {isMobile && menuItems
-                        .filter((item) => item.role === role)
-                        .map((item) => (
-                            <Box
-                                onClick={() => {
-                                    navigate({
-                                        pathname: item.path,
-                                        search: item.search,
-                                    });
-                                }}
-                                sx={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    cursor: 'pointer',
-                                    gap: '0.4rem',
-                                }}
-                                key={item.text}>
-                                <IconButton
-                                    color="inherit"
-                                    sx={{ ml: 1 }}>
-                                    {item.icon}
-                                </IconButton>
-                                <Typography variant="12650">
-                                    {item.text}
-                                </Typography>
-                            </Box>
-                        ))}
+                    {isMobile &&
+                        menuItems
+                            .filter((item) => item.role === role)
+                            .map((item) => (
+                                <Box
+                                    key={item.text}
+                                    onClick={() => {
+                                        navigate({
+                                            pathname: item.path,
+                                            search: item.search,
+                                        });
+                                    }}
+                                    sx={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        cursor: 'pointer',
+                                        gap: '0.4rem',
+                                    }}
+                                >
+                                    <IconButton color="inherit" sx={{ ml: 1 }}>
+                                        {item.icon}
+                                    </IconButton>
+                                    <Typography variant="body1">{item.text}</Typography>
+                                </Box>
+                            ))}
+
+                    {/* Đăng xuất luôn hiển thị, bất kể isMobile */}
+                    <Box
+                        onClick={() => {
+                            navigate({ pathname: ROUTES.LOGIN });
+                        }}
+                        sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            cursor: 'pointer',
+                            gap: '0.4rem',
+                        }}
+                    >
+                        <IconButton color="inherit" >
+                            {/* Có thể thay icon logout */}
+                        </IconButton>
+                        <Typography variant="body1">Đăng xuất</Typography>
+                    </Box>
+
                 </Box>
             </Toolbar>
         </AppBar >

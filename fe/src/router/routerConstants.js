@@ -5,4 +5,5 @@ export const ROUTES = {
   LIST_ACCOUNT: "/listAccount",
   SERVICE_PACKAGES: "/servicePackages",
   DETAIL_PAGE: "/detail",
+  ADD_NEW_ACCOUNT: "/addNewAccount",
 };

@@ -6,6 +6,7 @@ import Settings from "../pages/settings/settingsPage";
 import DetailPage from "../pages/DetailPage";
 import ListAccount from "../pages/accountControl/listAccount";
 import ServicePackages from "../pages/service/servicePackages";
+import AddNewAccount from "../pages/accountControl/addNewAccount";
 
 export const RouterConfig = () => {
     return (
@@ -16,6 +17,7 @@ export const RouterConfig = () => {
             <Route path={ROUTES.DETAIL_PAGE} element={<DetailPage />} />
             <Route path={ROUTES.LIST_ACCOUNT} element={<ListAccount />} />
             <Route path={ROUTES.SERVICE_PACKAGES} element={<ServicePackages />} />
+            <Route path={ROUTES.ADD_NEW_ACCOUNT} element={<AddNewAccount />} />
         </Routes>
     )
 }

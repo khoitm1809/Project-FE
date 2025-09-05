@@ -7,6 +7,7 @@ import {
     ListItemText,
     Divider,
     Box,
+    Button,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "../router/routerConstants";
@@ -97,7 +98,6 @@ export default function LeftBar({ open, onClose, drawerWidth }) {
                             </ListItem>
                         ))}
                 </List>
-
             </Box>
             <Divider />
         </Drawer>

@@ -30,10 +30,11 @@ const Layout = ({ children }) => {
     return (
         <Box display="flex">
             {/* Top Bar */}
-            <TopBar
-                drawerWidth={drawerWidth}
-                isMobile={isMobile}
-            />
+            {location?.pathname !== ROUTES.LOGIN &&
+                <TopBar
+                    drawerWidth={drawerWidth}
+                    isMobile={isMobile}
+                />}
             {/* Sidebar */}
             {location?.pathname !== ROUTES.LOGIN && (
                 <Box
@@ -49,7 +50,7 @@ const Layout = ({ children }) => {
                 component="main"
                 sx={{
                     flexGrow: 1,
-                    pt: '64px'
+                    pt: location.pathname !== ROUTES.LOGIN && '64px'
                 }}><Box>
                 </Box>
                 {children}
