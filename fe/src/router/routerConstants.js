@@ -2,5 +2,7 @@ export const ROUTES = {
   HOME: "/home",
   LOGIN: "/login",
   SETTINGS: "/settings",
-  DETAIL_PAGE: "/detail"
+  LIST_ACCOUNT: "/listAccount",
+  SERVICE_PACKAGES: "/servicePackages",
+  DETAIL_PAGE: "/detail",
 };

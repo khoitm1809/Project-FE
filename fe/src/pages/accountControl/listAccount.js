@@ -1,12 +1,12 @@
 import { BoxContainer } from "../../components/commonStyled";
 
-const Settings = () => {
+const ListAccount = () => {
    
     return (
         <BoxContainer>
-            Setting page
+            List Account
         </BoxContainer>
     )
 }
 
-export default Settings;
+export default ListAccount;

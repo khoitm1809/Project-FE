@@ -6,6 +6,7 @@ import LeftBar from "./LeftBar";
 import { Box, useMediaQuery } from "@mui/material";
 import { ROUTES } from "../router/routerConstants";
 import { useLocation } from "react-router";
+import TopBar from "./TopBar";
 
 
 function App() {
@@ -28,6 +29,11 @@ const Layout = ({ children }) => {
 
     return (
         <Box display="flex">
+            {/* Top Bar */}
+            <TopBar
+                drawerWidth={drawerWidth}
+                isMobile={isMobile}
+            />
             {/* Sidebar */}
             {location?.pathname !== ROUTES.LOGIN && (
                 <Box
@@ -38,12 +44,12 @@ const Layout = ({ children }) => {
                     <LeftBar open={true} drawerWidth={drawerWidth} />
                 </Box>
             )}
-
             {/* Content */}
             <Box
                 component="main"
                 sx={{
                     flexGrow: 1,
+                    pt: '64px'
                 }}><Box>
                 </Box>
                 {children}

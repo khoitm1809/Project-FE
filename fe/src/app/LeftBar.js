@@ -1,4 +1,3 @@
-import React from "react";
 import {
     Drawer,
     List,
@@ -9,20 +8,24 @@ import {
     Divider,
     Box,
 } from "@mui/material";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { ROUTES } from "../router/routerConstants";
 import { ROLES } from '../utils/rolesConstant'
+import { useSelector } from "react-redux";
 
 
 export default function LeftBar({ open, onClose, drawerWidth }) {
     const navigate = useNavigate();
+    const { role } = useSelector((state) => state.auth);
+
+    // const { role } = useSelector((state) => state);
 
     const menuItems = [
         //adm
         { text: "Home", icon: null, path: ROUTES.HOME, role: ROLES.ADMIN },
-        { text: "Quản lý tài khoản", icon: null, path: ROUTES.SETTINGS, role: ROLES.ADMIN },
-        { text: "Quản lý gói dịch vụ", icon: null, path: ROUTES.HOME, role: ROLES.ADMIN },
-        { text: "Settings", icon: null, path: ROUTES.HOME, role: ROLES.ADMIN },
+        { text: "Quản lý tài khoản", icon: null, path: ROUTES.LIST_ACCOUNT, role: ROLES.ADMIN },
+        { text: "Quản lý gói dịch vụ", icon: null, path: ROUTES.SERVICE_PACKAGES, role: ROLES.ADMIN },
+        { text: "Settings", icon: null, path: ROUTES.SETTINGS, role: ROLES.ADMIN },
         // chu trai
         { text: "Tạo tài khoản cho nhân công", icon: null, path: ROUTES.HOME, role: ROLES.OWNER },
         { text: "Quản lý giống và đàn lợn", icon: null, path: ROUTES.HOME, role: ROLES.OWNER },
@@ -77,23 +80,24 @@ export default function LeftBar({ open, onClose, drawerWidth }) {
                         }} /> */}
                 </Box>
                 <List>
-                    {menuItems.map((item) => (
-                        <ListItem key={item.text} disablePadding>
-                            <ListItemButton
-                                onClick={() => {
-                                    navigate({
-                                        pathname: item.path,
-                                        search: item.search
-                                    });
-                                    // onClose(); // đóng menu khi chọn
-                                }}
-                            >
-                                <ListItemIcon>{item.icon}</ListItemIcon>
-                                <ListItemText primary={item.text} />
-                            </ListItemButton>
-                        </ListItem>
-                    ))}
+                    {menuItems
+                        .filter((item) => item.role === role)
+                        .map((item) => (
+                            <ListItem key={item.text} disablePadding>
+                                <ListItemButton
+                                    onClick={() => {
+                                        navigate({
+                                            pathname: item.path,
+                                            search: item.search,
+                                        });
+                                    }}>
+                                    <ListItemIcon>{item.icon}</ListItemIcon>
+                                    <ListItemText primary={item.text} />
+                                </ListItemButton>
+                            </ListItem>
+                        ))}
                 </List>
+
             </Box>
             <Divider />
         </Drawer>

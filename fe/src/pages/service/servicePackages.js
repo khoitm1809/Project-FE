@@ -1,12 +1,12 @@
 import { BoxContainer } from "../../components/commonStyled";
 
-const Settings = () => {
+const ServicePackages = () => {
    
     return (
         <BoxContainer>
-            Setting page
+            Service package
         </BoxContainer>
     )
 }
 
-export default Settings;
+export default ServicePackages;
