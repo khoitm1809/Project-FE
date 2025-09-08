@@ -49,6 +49,8 @@ const Layout = ({ children }) => {
             <Box
                 component="main"
                 sx={{
+                    height: '100vh',
+                    background: '#f4f6f8',
                     flexGrow: 1,
                     pt: location.pathname !== ROUTES.LOGIN && '64px'
                 }}><Box>

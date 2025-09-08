@@ -6,10 +6,10 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { Box, Button, Input, Typography } from '@mui/material';
+import { Box, Button, Input, TextField, Typography } from '@mui/material';
 import { useNavigate } from 'react-router';
 import { ROUTES } from '../router/routerConstants';
-import { BoxBeetwen, Row } from './commonStyled';
+import { BoxBeetwen, Row, TextFieldCustom } from './commonStyled';
 
 export default function CustomTable({ title, data, isEdit }) {
     const navigate = useNavigate()
@@ -17,12 +17,12 @@ export default function CustomTable({ title, data, isEdit }) {
 
     return (
         <Box>
-            <BoxBeetwen>
+            <BoxBeetwen sx={{ marginBottom: '1.5rem' }}>
                 <Typography variant='14400'>
                     Bảng danh sách
                 </Typography>
-                <Row>
-                    <Input placeholder='Tìm kiếm...' />
+                <Row gap={'0.6rem'}>
+                    <TextFieldCustom placeholder='Tìm kiếm...' variant='outlined' />
                     <Button onClick={() => navigate(ROUTES.ADD_NEW_ACCOUNT)}>
                         Thêm mới
                     </Button>

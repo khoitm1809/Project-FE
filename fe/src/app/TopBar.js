@@ -43,7 +43,7 @@ export default function TopBar({
         <AppBar
             position="fixed"
             sx={(theme) => ({
-                background: '#131313',
+                background: '#89928eff',
                 zIndex: theme.zIndex.drawer + 1,
                 transition: "margin 0.3s ease, width 0.3s ease",
 

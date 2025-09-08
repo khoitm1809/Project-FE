@@ -54,3 +54,10 @@ export const MainButton = styled(Button)(({ theme }) => ({
     height: '3rem',
 
 }))
+
+export const TextFieldCustom = styled(TextField)(() => ({
+    background: '#FFFFFF',
+    '& .MuiOutlinedInput-input': {
+        padding: '10px 14px',
+    },
+}));
