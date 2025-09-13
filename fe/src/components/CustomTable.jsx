@@ -6,10 +6,15 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { Box, Button, Input, TextField, Typography } from '@mui/material';
+import { Box, Button, IconButton, Input, InputAdornment, TextField, Typography } from '@mui/material';
 import { useNavigate } from 'react-router';
 import { ROUTES } from '../router/routerConstants';
-import { BoxBeetwen, Row, TextFieldCustom } from './commonStyled';
+import { BoxBeetwen, FilterButton, MainButton, Row, SecondaryButton, TextFieldCustom } from './commonStyled';
+import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
+import TuneOutlinedIcon from '@mui/icons-material/TuneOutlined';
+import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined';
+import { THEME } from '../utils/ThemeConstants';
+
 
 export default function CustomTable({ title, data, isEdit }) {
     const navigate = useNavigate()
@@ -17,15 +22,26 @@ export default function CustomTable({ title, data, isEdit }) {
 
     return (
         <Box>
-            <BoxBeetwen sx={{ marginBottom: '1.5rem' }}>
-                <Typography variant='14400'>
-                    Bảng danh sách
-                </Typography>
+            <Typography variant='14700'>
+                Bảng danh sách
+            </Typography>
+            <BoxBeetwen sx={{ marginY: '1.5rem' }}>
                 <Row gap={'0.6rem'}>
-                    <TextFieldCustom placeholder='Tìm kiếm...' variant='outlined' />
-                    <Button onClick={() => navigate(ROUTES.ADD_NEW_ACCOUNT)}>
+                    <MainButton sx={{ padding: '0rem 1.4rem' }} onClick={() => navigate(ROUTES.ADD_NEW_ACCOUNT)}>
                         Thêm mới
-                    </Button>
+                    </MainButton>
+                </Row>
+                <Row gap={'1rem'}>
+                    <TextFieldCustom slotProps={{
+                        input: {
+                            startAdornment: (
+                                <InputAdornment position="start">
+                                    <SearchOutlinedIcon />
+                                </InputAdornment>
+                            )
+                        }
+                    }} placeholder='Tìm kiếm...' variant='outlined' />
+                    <FilterButton endIcon={<TuneOutlinedIcon />}>Filters</FilterButton>
                 </Row>
             </BoxBeetwen>
             <TableContainer component={Paper}>
@@ -55,14 +71,22 @@ export default function CustomTable({ title, data, isEdit }) {
                                     ))}
                                     {isEdit && (
                                         <TableCell>
-                                            <Button
-                                                variant="contained"
-                                                color="primary"
-                                                size="small"
-                                                onClick={() => navigate(`${ROUTES.DETAIL_PAGE}`, { state: { item } })}
+                                            <IconButton
+                                                sx={{
+                                                    borderRadius: "50%",
+                                                    width: "2rem",
+                                                    height: "2rem",
+                                                    background: THEME.THEME_BACKGROUND,
+                                                    "&:hover": { background: THEME.THEME_BACKGROUND },
+                                                }}
+                                                onClick={() =>
+                                                    navigate(`${ROUTES.DETAIL_PAGE}`, { state: { item } })
+                                                }
                                             >
-                                                Edit
-                                            </Button>
+                                                <ModeEditOutlineOutlinedIcon
+                                                    sx={{ color: THEME.SECONDARY_TEXT_BUTTON, fontSize: "1rem" }}
+                                                />
+                                            </IconButton>
                                         </TableCell>
                                     )}
                                 </TableRow>

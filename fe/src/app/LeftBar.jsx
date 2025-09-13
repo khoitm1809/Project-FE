@@ -30,6 +30,7 @@ import FeedOutlinedIcon from '@mui/icons-material/FeedOutlined';
 import PreviewOutlinedIcon from '@mui/icons-material/PreviewOutlined';
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
 import ChecklistOutlinedIcon from '@mui/icons-material/ChecklistOutlined';
+import { THEME } from "../utils/ThemeConstants";
 export default function LeftBar({ open, onClose, drawerWidth }) {
     const navigate = useNavigate();
     const { role } = useSelector((state) => state.auth);
@@ -79,7 +80,7 @@ export default function LeftBar({ open, onClose, drawerWidth }) {
                 "& .MuiDrawer-paper": {
                     width: drawerWidth,
                     boxSizing: "border-box",
-                    background: "#89928eff",
+                    background: THEME.MENU_BACKGROUND,
                     borderRight: "none",
                 },
             })}>
@@ -107,8 +108,12 @@ export default function LeftBar({ open, onClose, drawerWidth }) {
                                             search: item.search,
                                         });
                                     }}>
-                                    <ListItemIcon sx={{color: 'white'}}>{item.icon}</ListItemIcon>
-                                    <ListItemText sx={{ color: 'white' }} primary={item.text} />
+                                    <ListItemIcon sx={{
+                                        color: THEME.SECONDARY_TEXT_BUTTON
+                                    }}>{item.icon}</ListItemIcon>
+                                    <ListItemText sx={{
+                                        color: THEME.SECONDARY_TEXT_BUTTON
+                                    }} primary={item.text} />
                                 </ListItemButton>
                             </ListItem>
                         ))}

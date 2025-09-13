@@ -7,6 +7,7 @@ import { Box, useMediaQuery } from "@mui/material";
 import { ROUTES } from "../router/routerConstants";
 import { useLocation } from "react-router";
 import TopBar from "./TopBar";
+import { THEME } from "../utils/ThemeConstants";
 
 
 function App() {
@@ -48,12 +49,16 @@ const Layout = ({ children }) => {
             {/* Content */}
             <Box
                 component="main"
-                sx={{
-                    height: '100vh',
-                    background: '#f4f6f8',
+                sx={(theme) => ({
+                    minHeight: '100vh',
+                    height: "100%",
+                    background: THEME.THEME_BACKGROUND,
                     flexGrow: 1,
-                    pt: location.pathname !== ROUTES.LOGIN && '64px'
-                }}><Box>
+                    pt: location.pathname !== ROUTES.LOGIN ? "64px" : 0,
+                    [theme.breakpoints.up(1080)]: {
+                        pt: 0,
+                    },
+                })}><Box>
                 </Box>
                 {children}
             </Box>

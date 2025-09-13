@@ -5,6 +5,7 @@ import { ROLES } from "../utils/rolesConstant";
 import { ROUTES } from "../router/routerConstants";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router";
+import { THEME } from "../utils/ThemeConstants";
 
 export default function TopBar({
     isLeftBarOpen = true,
@@ -43,7 +44,7 @@ export default function TopBar({
         <AppBar
             position="fixed"
             sx={(theme) => ({
-                background: '#89928eff',
+                background: THEME.MENU_BACKGROUND,
                 zIndex: theme.zIndex.drawer + 1,
                 transition: "margin 0.3s ease, width 0.3s ease",
 
@@ -54,6 +55,11 @@ export default function TopBar({
                     : "100%",
 
                 // On small screens (<=1260px): Always full width
+                [theme.breakpoints.up(1080)]: {
+                    // marginLeft: 0,
+                    // width: "100%",
+                    display: 'none'
+                },
                 [theme.breakpoints.down(1080)]: {
                     marginLeft: 0,
                     width: "100%",
@@ -93,10 +99,10 @@ export default function TopBar({
                                         gap: '0.4rem',
                                     }}
                                 >
-                                    <IconButton color="inherit" sx={{ ml: 1 }}>
+                                    <IconButton sx={{ ml: 1, color: THEME.SECONDARY_TEXT_BUTTON }}>
                                         {item.icon}
                                     </IconButton>
-                                    <Typography variant="body1">{item.text}</Typography>
+                                    <Typography variant="12400" sx={{ color: THEME.SECONDARY_TEXT_BUTTON }}>{item.text}</Typography>
                                 </Box>
                             ))}
 
@@ -112,10 +118,10 @@ export default function TopBar({
                             gap: '0.4rem',
                         }}
                     >
-                        <IconButton color="inherit" >
+                        <IconButton sx={{ color: THEME.SECONDARY_TEXT_BUTTON }}>
                             {/* Có thể thay icon logout */}
                         </IconButton>
-                        <Typography variant="body1">Đăng xuất</Typography>
+                        <Typography variant="12400" sx={{ color: THEME.SECONDARY_TEXT_BUTTON }}>Đăng xuất</Typography>
                     </Box>
 
                 </Box>
