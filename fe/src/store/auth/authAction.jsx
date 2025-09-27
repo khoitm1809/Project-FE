@@ -4,26 +4,20 @@ import { LOCAL_STORAGE_NAME } from '../../utils/constant';
 import { axiosBaseQuery } from '../../services/axiosBaseQuery';
 
 
-export const itemApi = createApi({
-    reducerPath: 'itemApi',
+export const authApi = createApi({
+    reducerPath: 'authApi',
     baseQuery: axiosBaseQuery(),
     endpoints: (builder) => ({
-        //getItemRecommend
-        userLogin: builder.query({
-            query: (params) => ({
+        // userLogin
+        userLogin: builder.mutation({
+            query: (body) => ({
                 url: API_URL.LOGIN,
-                method: 'GET',
-                params: {
-                    ...params,
-                },
+                method: 'POST',
+                data: body,
             }),
         }),
-
-        //getItemsHot
 
     }),
 });
 
-export const {
-
-} = itemApi;
+export const { useUserLoginMutation } = authApi;

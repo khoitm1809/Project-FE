@@ -13,7 +13,9 @@ export default function TopBar({
     isMobile
 }) {
     const navigate = useNavigate();
-    const { role } = useSelector((state) => state.auth);
+    // const { role } = useSelector((state) => state?.auth);
+    const role = useSelector((state) => state);
+    console.log(role)
     const menuItems = [
         //adm
         { text: "Home", icon: null, path: ROUTES.HOME, role: ROLES.ADMIN },
@@ -82,7 +84,7 @@ export default function TopBar({
                 <Box display="flex" flexDirection="row" alignItems="center">
                     {isMobile &&
                         menuItems
-                            .filter((item) => item.role === role)
+                            // .filter((item) => item?.role == role)
                             .map((item) => (
                                 <Box
                                     key={item.text}

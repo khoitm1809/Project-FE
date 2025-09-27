@@ -1,4 +1,4 @@
 export const API_URL = {
-  LOGIN: '/api/login',
+  LOGIN: '/api/auth/login',
 
 };

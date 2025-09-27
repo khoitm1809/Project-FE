@@ -3,6 +3,7 @@ import persistReducer from "redux-persist/es/persistReducer";
 import persistStore from "redux-persist/es/persistStore";
 import storage from "redux-persist/lib/storage";
 import authReducer from "./auth/authSlice";
+import { authApi } from "./auth/authAction";
 
 const persistConfig = {
     key: 'root',
@@ -15,12 +16,15 @@ const rootReducer = combineReducers({
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
-const store = configureStore({
-    reducer: persistedReducer,
+export const store = configureStore({
+    reducer: {
+        ...persistedReducer,
+        [authApi.reducerPath]: authApi.reducer,
+    },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({
-
-        })
+            serializableCheck: false,
+        }).concat(authApi.middleware),
 })
 
 

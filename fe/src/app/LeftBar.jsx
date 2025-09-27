@@ -33,7 +33,8 @@ import ChecklistOutlinedIcon from '@mui/icons-material/ChecklistOutlined';
 import { THEME } from "../utils/ThemeConstants";
 export default function LeftBar({ open, onClose, drawerWidth }) {
     const navigate = useNavigate();
-    const { role } = useSelector((state) => state.auth);
+    
+    // const { role } = useSelector((state) => state?.auth);
 
     // const { role } = useSelector((state) => state);
 
@@ -98,7 +99,7 @@ export default function LeftBar({ open, onClose, drawerWidth }) {
                 </Box> */}
                 <List>
                     {menuItems
-                        .filter((item) => item.role === role)
+                        // .filter((item) => item?.role === role)
                         .map((item) => (
                             <ListItem key={item.text} disablePadding>
                                 <ListItemButton

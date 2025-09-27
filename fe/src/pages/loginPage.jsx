@@ -8,19 +8,42 @@ import { setRole } from "../store/auth/authSlice";
 import { useDispatch } from "react-redux";
 import { ROLES } from "../utils/rolesConstant";
 import { THEME } from "../utils/ThemeConstants";
+import { useUserLoginMutation } from "../store/auth/authAction";
+import { useState } from "react";
 
 const ChildBox = styled(Box)(({ theme }) => ({
     height: '100vh',
 }));
 
 function LoginPage() {
+    const [email, setEmail] = useState();
+    const [password, setPassword] = useState();
+    const [loginUser] = useUserLoginMutation();
     const isMobile = useMediaQuery('(max-width:1080px')
     const navigate = useNavigate()
     const dispatch = useDispatch();
     const login = () => {
-        dispatch(setRole(ROLES.ADMIN));
-        navigate(ROUTES.HOME)
-    }
+        loginUser({ email, password })
+            .unwrap()
+            .then((res) => {
+                // Lưu token nếu cần
+                localStorage.setItem("token", res.token);
+
+                // Navigate về Home
+                navigate(ROUTES.HOME);
+
+                // Tạm thời set role cứng (vì API chưa trả role)
+                // if (res.user?.email === "admin@gmail.com") {
+                //     dispatch(setRole(ROLES.ADMIN));
+                // } else {
+                //     dispatch(setRole(ROLES.USER));
+                // }
+            })
+            .catch((err) => {
+                console.error("Login failed:", err);
+            });
+    };
+
 
 
     return (
@@ -37,8 +60,8 @@ function LoginPage() {
                         <Typography variant='18700' color={THEME.SECONDARY_TEXT_BUTTON}>Welcome Back!</Typography>
                     </Box>
                     <Column sx={{ width: '50%', gap: '1rem' }}>
-                        <TextFieldStyle placeholder='Tên đăng nhập' />
-                        <TextFieldStyle placeholder='Mật khẩu' type='password' />
+                        <TextFieldStyle placeholder='Tên đăng nhập' value={email} onChange={(e) => setEmail(e.target.value)} />
+                        <TextFieldStyle placeholder='Mật khẩu' type='password' value={password} onChange={(e) => setPassword(e.target.value)} />
                     </Column>
                     <MainButton
                         sx={{ width: '40%' }}
