@@ -6,12 +6,13 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, Input, InputAdornment, TextField, Typography } from '@mui/material';
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, Input, InputAdornment, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material';
 import { useNavigate } from 'react-router';
 import { ROUTES } from '../router/routerConstants';
 import { BoxBeetwen, Column, FilterButton, MainButton, Row, SecondaryButton, TextFieldCustom } from './commonStyled';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import TuneOutlinedIcon from '@mui/icons-material/TuneOutlined';
+import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined';
 import { THEME } from '../utils/ThemeConstants';
 import Draggable from 'react-draggable';
@@ -50,7 +51,10 @@ export default function CustomTable({ title, data, isEdit }) {
             >
                 <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
                     <BoxBeetwen>
-                        <Typography>Thêm khu</Typography>
+                        <Typography>Thêm tài khoản</Typography>
+                        <Button onClick={handleClose}>
+                            <CloseOutlinedIcon></CloseOutlinedIcon>
+                    </Button>
                     </BoxBeetwen>
                 </DialogTitle>
                 <DialogContent>
@@ -58,42 +62,43 @@ export default function CustomTable({ title, data, isEdit }) {
                         <Column>
                             <Row>
                                 <TextFieldCustom
-                                    label="Tên khu"
+                                    label="Họ và tên"
                                     variant="outlined"
                                 />
                                 <TextFieldCustom
-                                    label="Tên khu"
+                                    label="Email"
                                     variant="outlined"
                                 />
                             </Row>
                             <Row>
                                 <TextFieldCustom
-                                    label="Tên khu"
+                                    label="Tên đăng nhập"
                                     variant="outlined"
                                 />
                                 <TextFieldCustom
-                                    label="Tên khu"
+                                    label="Số điện thoại"
                                     variant="outlined"
                                 />
                             </Row>
                             <Row>
                                 <TextFieldCustom
-                                    label="Tên khu"
+                                    label="Cơ sở"
                                     variant="outlined"
                                 />
-                                <TextFieldCustom
-                                    label="Tên khu"
-                                    variant="outlined"
-                                />
+                                <Select
+                                    label="Quyền"
+                                    variant="standard"
+                                >
+                                    <MenuItem value="admin">Admin</MenuItem>
+                                    <MenuItem value="owner">Chủ trang trại</MenuItem>
+                                    <MenuItem value="worker">Nhân công</MenuItem>
+                                </Select>
                             </Row>
                         </Column>
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button autoFocus onClick={handleClose}>
-                        Cancel
-                    </Button>
-                    <Button onClick={handleClose}>Subscribe</Button>
+                    <Button onClick={handleClose}>Tạo mới</Button>
                 </DialogActions>
             </Dialog>
 
