@@ -16,6 +16,8 @@ import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined';
 import { THEME } from '../utils/ThemeConstants';
 import Draggable from 'react-draggable';
+import { ROLES } from '../utils/rolesConstant';
+import dayjs from 'dayjs';
 
 function PaperComponent(props) {
     const nodeRef = React.useRef(null);
@@ -30,10 +32,22 @@ function PaperComponent(props) {
     );
 }
 
-export default function CustomTable({ title, data, isEdit }) {
+export default function CustomTable({ title, data, isEdit, detailNavigate }) {
     const navigate = useNavigate()
     const [open, setOpen] = React.useState(false);
 
+    const getValueByPath = (obj, path) => {
+        return path.split(".").reduce((acc, key) => (acc && acc[key] !== undefined ? acc[key] : null), obj);
+    };
+    const formatValue = (key, value) => {
+        if (!value) return "-";
+
+        if (key.toLowerCase().includes("date") || key.toLowerCase().includes("created_at")) {
+            return dayjs(value).isValid() ? dayjs(value).format("DD/MM/YYYY") : value;
+        }
+
+        return value;
+    };
     const handleClickOpen = () => {
         setOpen(true);
     };
@@ -54,7 +68,7 @@ export default function CustomTable({ title, data, isEdit }) {
                         <Typography>Thêm tài khoản</Typography>
                         <Button onClick={handleClose}>
                             <CloseOutlinedIcon></CloseOutlinedIcon>
-                    </Button>
+                        </Button>
                     </BoxBeetwen>
                 </DialogTitle>
                 <DialogContent>
@@ -88,10 +102,14 @@ export default function CustomTable({ title, data, isEdit }) {
                                 <Select
                                     label="Quyền"
                                     variant="standard"
+                                    sx={{ width: '100%' }}
                                 >
-                                    <MenuItem value="admin">Admin</MenuItem>
-                                    <MenuItem value="owner">Chủ trang trại</MenuItem>
-                                    <MenuItem value="worker">Nhân công</MenuItem>
+                                    {Object.values(ROLES)?.map((role, index) => (
+                                        <MenuItem key={index} value={role}>{role}</MenuItem>
+                                    ))}
+                                    {/* <MenuItem value="admin"></MenuItem> */}
+                                    {/* <MenuItem value="owner">Chủ trang trại</MenuItem>
+                                    <MenuItem value="worker">Nhân công</MenuItem> */}
                                 </Select>
                             </Row>
                         </Column>
@@ -133,47 +151,52 @@ export default function CustomTable({ title, data, isEdit }) {
                         <TableRow>
                             {title?.map((col, i) => (
                                 <TableCell key={i} sx={{ fontWeight: "bold" }}>
-                                    {col}
+                                    {col.label}
                                 </TableCell>
                             ))}
-                            {isEdit && <TableCell sx={{ fontWeight: "bold" }}>Sửa</TableCell>}
+                            {isEdit && (
+                                <TableCell sx={{ fontWeight: "bold" }}>Sửa</TableCell>
+                            )}
                         </TableRow>
                     </TableHead>
 
                     {/* Table Body */}
                     <TableBody>
-                        {data?.map((item, rowIndex) => {
-                            const values = Object.values(item); // lấy tất cả value theo thứ tự key
-                            return (
-                                <TableRow key={rowIndex}>
-                                    {title?.map((_, colIndex) => (
-                                        <TableCell key={colIndex}>
-                                            {values[colIndex]}
+                        {data?.map((item, rowIndex) => (
+                            <TableRow key={rowIndex}>
+                                {title?.map((col, colIndex) => {
+                                    const rawValue = getValueByPath(item, col.key);
+                                    return (
+                                        <TableCell key={colIndex}
+                                        onClick={() => navigate(detailNavigate)}
+                                        sx={{ cursor: detailNavigate ? 'pointer' : 'default' }}
+                                        >
+                                            {formatValue(col.key, rawValue)}
                                         </TableCell>
-                                    ))}
-                                    {isEdit && (
-                                        <TableCell>
-                                            <IconButton
-                                                sx={{
-                                                    borderRadius: "50%",
-                                                    width: "2rem",
-                                                    height: "2rem",
-                                                    background: THEME.THEME_BACKGROUND,
-                                                    "&:hover": { background: THEME.THEME_BACKGROUND },
-                                                }}
-                                                onClick={() =>
-                                                    navigate(`${ROUTES.DETAIL_PAGE}`, { state: { item } })
-                                                }
-                                            >
-                                                <ModeEditOutlineOutlinedIcon
-                                                    sx={{ color: THEME.SECONDARY_TEXT_BUTTON, fontSize: "1rem" }}
-                                                />
-                                            </IconButton>
-                                        </TableCell>
-                                    )}
-                                </TableRow>
-                            );
-                        })}
+                                    );
+                                })}
+                                {isEdit && (
+                                    <TableCell>
+                                        <IconButton
+                                            sx={{
+                                                borderRadius: "50%",
+                                                width: "2rem",
+                                                height: "2rem",
+                                                background: "#f0f0f0",
+                                                "&:hover": { background: "#ddd" },
+                                            }}
+                                            onClick={() =>
+                                                navigate("/detail-page", { state: { item } })
+                                            }
+                                        >
+                                            <ModeEditOutlineOutlinedIcon
+                                                sx={{ color: "#333", fontSize: "1rem" }}
+                                            />
+                                        </IconButton>
+                                    </TableCell>
+                                )}
+                            </TableRow>
+                        ))}
                     </TableBody>
                 </Table>
             </TableContainer>

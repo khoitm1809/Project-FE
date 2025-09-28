@@ -1,6 +1,6 @@
 import { Box, Typography, useMediaQuery } from "@mui/material";
 import { Column, MainButton, Row, TextFieldStyle } from '../components/commonStyled';
-import { useLocation, useNavigate } from 'react-router';
+import { useNavigate } from 'react-router';
 import { ROUTES } from '../router/routerConstants';
 import styled from '@emotion/styled';
 import pigFarm from '../assets/pigFarm.avif'
@@ -8,41 +8,28 @@ import { setRole } from "../store/auth/authSlice";
 import { useDispatch } from "react-redux";
 import { ROLES } from "../utils/rolesConstant";
 import { THEME } from "../utils/ThemeConstants";
-import { useUserLoginMutation } from "../store/auth/authAction";
+import { useUserRegisterMutation } from "../store/auth/authAction";
 import { useState } from "react";
 
 const ChildBox = styled(Box)(({ theme }) => ({
     height: '100vh',
 }));
 
-function LoginPage() {
-    const location = useLocation();
+function RegisterPage() {
+    const [name, setName] = useState();
     const [email, setEmail] = useState();
     const [password, setPassword] = useState();
-    const [loginUser] = useUserLoginMutation();
+    const [registerUser] = useUserRegisterMutation();
     const isMobile = useMediaQuery('(max-width:1080px')
     const navigate = useNavigate()
-    const registered = location.state?.registered;
-    const dispatch = useDispatch();
-    const login = () => {
-        loginUser({ email, password })
+    const register = () => {
+        registerUser({ name, email, password })
             .unwrap()
             .then((res) => {
-                // Lưu token nếu cần
-                localStorage.setItem("token", res.token);
-
-                // Navigate về Home
-                navigate(ROUTES.HOME);
-
-                // Tạm thời set role cứng (vì API chưa trả role)
-                // if (res.user?.email === "admin@gmail.com") {
-                //     dispatch(setRole(ROLES.ADMIN));
-                // } else {
-                //     dispatch(setRole(ROLES.USER));
-                // }
+                navigate(ROUTES.LOGIN, { state: { registered: true } });
             })
             .catch((err) => {
-                console.error("Login failed:", err);
+                console.error("Register failed:", err);
             });
     };
 
@@ -59,26 +46,29 @@ function LoginPage() {
             <ChildBox sx={{ width: isMobile ? "100%" : "50%" }}>
                 <Column sx={{ justifyContent: 'center', alignItems: 'center', height: '100%', gap: '4rem' }}>
                     <Box>
-                        <Typography variant='18700' color={THEME.SECONDARY_TEXT_BUTTON}>{registered ? "Đăng ký thành công! Vui lòng đăng nhập." : "Welcome Back!"}</Typography>
+                        <Typography variant='18700' color={THEME.SECONDARY_TEXT_BUTTON}>Đăng ký tài khoản</Typography>
                     </Box>
                     <Column sx={{ width: '50%', gap: '1rem' }}>
+                        <TextFieldStyle placeholder='Họ và tên' value={name} onChange={(e) => setName(e.target.value)} />
                         <TextFieldStyle placeholder='Tên đăng nhập' value={email} onChange={(e) => setEmail(e.target.value)} />
                         <TextFieldStyle placeholder='Mật khẩu' type='password' value={password} onChange={(e) => setPassword(e.target.value)} />
+                        {/* <TextFieldStyle placeholder='Xác nhận mật khẩu' type='password' value={password} onChange={(e) => setPassword(e.target.value)} /> */}
                         <Row sx={{ gap: '0.5rem', justifyContent: 'flex-end' }}>
-                            <Typography variant='12400' color={THEME.SECONDARY_TEXT_BUTTON}>Chưa có tài khoản?</Typography>
+                            <Typography variant='12400' color={THEME.SECONDARY_TEXT_BUTTON}>Đã có tài khoản?</Typography>
                             <Typography
                                 variant='12400'
                                 sx={{ color: THEME.SECONDARY_TEXT_BUTTON, cursor: 'pointer' }}
-                                onClick={() => navigate(ROUTES.REGISTER)}>Đăng ký</Typography>
+                                onClick={() => navigate(ROUTES.LOGIN)}>Đăng nhập</Typography>
                         </Row>
+
                     </Column>
                     <MainButton
                         sx={{ width: '40%' }}
-                        onClick={() => login()}>Đăng nhập</MainButton>
+                        onClick={() => register()}>Đăng ký</MainButton>
                 </Column>
             </ChildBox>
         </Row>
     )
 }
 
-export default LoginPage
+export default RegisterPage

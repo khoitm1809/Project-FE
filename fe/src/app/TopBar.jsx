@@ -15,7 +15,6 @@ export default function TopBar({
     const navigate = useNavigate();
     // const { role } = useSelector((state) => state?.auth);
     const role = useSelector((state) => state);
-    console.log(role)
     const menuItems = [
         //adm
         { text: "Home", icon: null, path: ROUTES.HOME, role: ROLES.ADMIN },
@@ -24,7 +23,8 @@ export default function TopBar({
         { text: "Settings", icon: null, path: ROUTES.SETTINGS, role: ROLES.ADMIN },
         // chu trai
         { text: "Tạo tài khoản cho nhân công", icon: null, path: ROUTES.HOME, role: ROLES.OWNER },
-        { text: "Quản lý giống và đàn lợn", icon: null, path: ROUTES.HOME, role: ROLES.OWNER },
+        { text: "Quản lý giống và đàn lợn", icon: null, path: ROUTES.OFF_SPRING, role: ROLES.OWNER },
+        { text: "Quản lý khu và chuồng nuôi", icon: null, path: ROUTES.HERD_BREED_MANAGEMENT, role: ROLES.OWNER },
         { text: "Thiết lập thức ăn và dinh dưỡng", icon: null, path: ROUTES.HOME, role: ROLES.OWNER },
         { text: "Quản lý hóa đơn nhập hàng", icon: null, path: ROUTES.HOME, role: ROLES.OWNER },
         { text: "Quản lý  kho hàng hóa", icon: null, path: ROUTES.HOME, role: ROLES.OWNER },
@@ -39,7 +39,7 @@ export default function TopBar({
         { text: "Ghi nhận và tính ngày phối giống", icon: null, path: ROUTES.HOME, role: ROLES.WORKER },
         { text: "To do list các việc mà chủ trang trại giao", icon: null, path: ROUTES.HOME, role: ROLES.WORKER },
         // Đăng xuất
-        { text: "Đăng xuất", icon: null, path: ROUTES.LOGIN },
+        // { text: "Đăng xuất", icon: null, path: ROUTES.LOGIN },
     ];
 
     return (
@@ -111,6 +111,7 @@ export default function TopBar({
                     {/* Đăng xuất luôn hiển thị, bất kể isMobile */}
                     <Box
                         onClick={() => {
+                            localStorage.removeItem("token");
                             navigate({ pathname: ROUTES.LOGIN });
                         }}
                         sx={{

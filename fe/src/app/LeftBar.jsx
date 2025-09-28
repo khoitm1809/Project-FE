@@ -8,6 +8,8 @@ import {
     Divider,
     Box,
     Button,
+    IconButton,
+    Typography,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "../router/routerConstants";
@@ -33,7 +35,7 @@ import ChecklistOutlinedIcon from '@mui/icons-material/ChecklistOutlined';
 import { THEME } from "../utils/ThemeConstants";
 export default function LeftBar({ open, onClose, drawerWidth }) {
     const navigate = useNavigate();
-    
+
     // const { role } = useSelector((state) => state?.auth);
 
     // const { role } = useSelector((state) => state);
@@ -46,7 +48,8 @@ export default function LeftBar({ open, onClose, drawerWidth }) {
         { text: "Settings", icon: <SettingsOutlinedIcon />, path: ROUTES.SETTINGS, role: ROLES.ADMIN },
         // chu trai
         { text: "Tạo tài khoản cho nhân công", icon: <GroupAddOutlinedIcon />, path: ROUTES.HOME, role: ROLES.OWNER },
-        { text: "Quản lý giống và đàn lợn", icon: <AgricultureOutlinedIcon />, path: ROUTES.HOME, role: ROLES.OWNER },
+        { text: "Quản lý giống và đàn lợn", icon: <AgricultureOutlinedIcon />, path: ROUTES.OFF_SPRING, role: ROLES.OWNER },
+        { text: "Quản lý khu và chuồng nuôi", icon: <AgricultureOutlinedIcon />, path: ROUTES.HERD_BREED_MANAGEMENT, role: ROLES.OWNER },
         { text: "Thiết lập thức ăn và dinh dưỡng", icon: <SoupKitchenOutlinedIcon />, path: ROUTES.HOME, role: ROLES.OWNER },
         { text: "Quản lý hóa đơn nhập hàng", icon: <InventoryOutlinedIcon />, path: ROUTES.HOME, role: ROLES.OWNER },
         { text: "Quản lý  kho hàng hóa", icon: <WarehouseOutlinedIcon />, path: ROUTES.HOME, role: ROLES.OWNER },
@@ -60,6 +63,7 @@ export default function LeftBar({ open, onClose, drawerWidth }) {
         { text: "Theo giõi chu kì động dục của lợn, ", icon: <PreviewOutlinedIcon />, path: ROUTES.HOME, role: ROLES.WORKER },
         { text: "Ghi nhận và tính ngày phối giống", icon: <CalendarMonthOutlinedIcon />, path: ROUTES.HOME, role: ROLES.WORKER },
         { text: "To do list các việc mà chủ trang trại giao", icon: <ChecklistOutlinedIcon />, path: ROUTES.HOME, role: ROLES.WORKER },
+
     ];
 
     return (
@@ -119,6 +123,23 @@ export default function LeftBar({ open, onClose, drawerWidth }) {
                             </ListItem>
                         ))}
                 </List>
+                <Box
+                    onClick={() => {
+                        localStorage.removeItem("token");
+                        navigate({ pathname: ROUTES.LOGIN });
+                    }}
+                    sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        cursor: 'pointer',
+                        gap: '0.4rem',
+                    }}
+                >
+                    <IconButton sx={{ color: THEME.SECONDARY_TEXT_BUTTON }}>
+                        {/* Có thể thay icon logout */}
+                    </IconButton>
+                    <Typography variant="12400" sx={{ color: THEME.SECONDARY_TEXT_BUTTON }}>Đăng xuất</Typography>
+                </Box>
             </Box>
             <Divider />
         </Drawer>

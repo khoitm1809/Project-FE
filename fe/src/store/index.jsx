@@ -4,6 +4,8 @@ import persistStore from "redux-persist/es/persistStore";
 import storage from "redux-persist/lib/storage";
 import authReducer from "./auth/authSlice";
 import { authApi } from "./auth/authAction";
+import { breedingApi } from "./breeding/breedingAction";
+import { offSpringApi } from "./offSpring/offSpringAction";
 
 const persistConfig = {
     key: 'root',
@@ -20,11 +22,13 @@ export const store = configureStore({
     reducer: {
         ...persistedReducer,
         [authApi.reducerPath]: authApi.reducer,
+        [breedingApi.reducerPath]: breedingApi.reducer,
+        [offSpringApi.reducerPath]: offSpringApi.reducer,
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({
             serializableCheck: false,
-        }).concat(authApi.middleware),
+        }).concat(authApi.middleware, breedingApi.middleware, offSpringApi.middleware),
 })
 
 

@@ -31,13 +31,13 @@ const Layout = ({ children }) => {
     return (
         <Box display="flex">
             {/* Top Bar */}
-            {location?.pathname !== ROUTES.LOGIN &&
+            {(location?.pathname !== ROUTES.LOGIN && location?.pathname !== ROUTES.REGISTER) &&
                 <TopBar
                     drawerWidth={drawerWidth}
                     isMobile={isMobile}
                 />}
             {/* Sidebar */}
-            {location?.pathname !== ROUTES.LOGIN && (
+            {(location?.pathname !== ROUTES.LOGIN && location?.pathname !== ROUTES.REGISTER) && (
                 <Box
                     sx={{
                         width: isMobile ? 0 : drawerWidth,
@@ -54,7 +54,7 @@ const Layout = ({ children }) => {
                     height: "100%",
                     background: THEME.THEME_BACKGROUND,
                     flexGrow: 1,
-                    pt: location.pathname !== ROUTES.LOGIN ? "64px" : 0,
+                    pt: (location?.pathname !== ROUTES.LOGIN && location?.pathname !== ROUTES.REGISTER) ? "64px" : 0,
                     [theme.breakpoints.up(1080)]: {
                         pt: 0,
                     },
