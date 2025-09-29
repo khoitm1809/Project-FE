@@ -6,7 +6,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, Input, InputAdornment, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material';
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, Grid, IconButton, Input, InputAdornment, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material';
 import { useNavigate } from 'react-router';
 import { ROUTES } from '../router/routerConstants';
 import { BoxBeetwen, Column, FilterButton, MainButton, Row, SecondaryButton, TextFieldCustom } from './commonStyled';
@@ -25,8 +25,7 @@ function PaperComponent(props) {
         <Draggable
             nodeRef={nodeRef}
             handle="#draggable-dialog-title"
-            cancel={'[class*="MuiDialogContent-root"]'}
-        >
+            cancel={'[class*="MuiDialogContent-root"]'}>
             <Paper {...props} ref={nodeRef} />
         </Draggable>
     );
@@ -55,68 +54,94 @@ export default function CustomTable({ title, data, isEdit, detailNavigate }) {
     const handleClose = () => {
         setOpen(false);
     };
+
+    const [formData, setFormData] = React.useState(
+        title.reduce((acc, f) => ({ ...acc, [f.key]: "" }), {})
+    );
+
+    const handleChange = (key, value) => {
+        setFormData((prev) => ({ ...prev, [key]: value }));
+    };
+
+    const handleSave = () => {
+        console.log("Form data:", formData);
+        handleClose();
+    };
+
+
     return (
         <Box>
             <Dialog
                 open={open}
                 onClose={handleClose}
                 PaperComponent={PaperComponent}
-                aria-labelledby="draggable-dialog-title"
+                PaperProps={{
+                    sx: {
+                        width: "50%",
+                        height: "60%",
+                        maxWidth: "none",
+                    },
+                }}
             >
-                <DialogTitle style={{ cursor: 'move' }} id="draggable-dialog-title">
+                <DialogTitle style={{ cursor: "move" }} id="draggable-dialog-title">
                     <BoxBeetwen>
-                        <Typography>Thêm tài khoản</Typography>
+                        <Typography>Thêm hàng hóa</Typography>
                         <Button onClick={handleClose}>
-                            <CloseOutlinedIcon></CloseOutlinedIcon>
+                            <CloseOutlinedIcon />
                         </Button>
                     </BoxBeetwen>
                 </DialogTitle>
+
                 <DialogContent>
-                    <DialogContentText>
-                        <Column>
-                            <Row>
-                                <TextFieldCustom
-                                    label="Họ và tên"
-                                    variant="outlined"
-                                />
-                                <TextFieldCustom
-                                    label="Email"
-                                    variant="outlined"
-                                />
-                            </Row>
-                            <Row>
-                                <TextFieldCustom
-                                    label="Tên đăng nhập"
-                                    variant="outlined"
-                                />
-                                <TextFieldCustom
-                                    label="Số điện thoại"
-                                    variant="outlined"
-                                />
-                            </Row>
-                            <Row>
-                                <TextFieldCustom
-                                    label="Cơ sở"
-                                    variant="outlined"
-                                />
-                                <Select
-                                    label="Quyền"
-                                    variant="standard"
-                                    sx={{ width: '100%' }}
+                    <DialogContentText component="div">
+                        <Grid container spacing={2}>
+                            {title.map((field) => (
+                                <Grid
+                                    item
+                                    xs={12}
+                                    sm={field.key === "note" ? 12 : 6}
+                                    key={field.key}
                                 >
-                                    {Object.values(ROLES)?.map((role, index) => (
-                                        <MenuItem key={index} value={role}>{role}</MenuItem>
-                                    ))}
-                                    {/* <MenuItem value="admin"></MenuItem> */}
-                                    {/* <MenuItem value="owner">Chủ trang trại</MenuItem>
-                                    <MenuItem value="worker">Nhân công</MenuItem> */}
-                                </Select>
-                            </Row>
-                        </Column>
+                                    {field.isDropDown ? (
+                                        <FormControl sx={{ minWidth: '200px' }}>
+                                            <InputLabel id="demo-simple-select-autowidth-label">Age</InputLabel>
+                                            <Select
+                                                labelId="demo-simple-select-autowidth-label"
+                                                id="demo-simple-select-autowidth"
+                                                value={null}
+                                                // onChange={handleChange}
+                                                autoWidth
+                                                label="Age"
+                                            >
+                                                {field?.list?.map((item, index) => (
+                                                    <MenuItem value={item?.value} key={index}>{item?.label}</MenuItem>
+                                                ))}
+
+                                            </Select>
+                                        </FormControl>
+                                    ) : (
+                                        <TextFieldCustom
+                                            fullWidth
+                                            label={field.label}
+                                            variant="outlined"
+                                            value={formData[field.key]}
+                                            onChange={(e) =>
+                                                handleChange(field.key, e.target.value)
+                                            }
+                                            multiline={field.key === "note"}
+                                            rows={field.key === "note" ? 3 : 1}
+                                        />
+                                    )}
+                                </Grid>
+                            ))}
+                        </Grid>
                     </DialogContentText>
                 </DialogContent>
+
                 <DialogActions>
-                    <Button onClick={handleClose}>Tạo mới</Button>
+                    <Button onClick={handleSave} variant="contained">
+                        Tạo mới
+                    </Button>
                 </DialogActions>
             </Dialog>
 
@@ -168,8 +193,8 @@ export default function CustomTable({ title, data, isEdit, detailNavigate }) {
                                     const rawValue = getValueByPath(item, col.key);
                                     return (
                                         <TableCell key={colIndex}
-                                        onClick={() => navigate(detailNavigate)}
-                                        sx={{ cursor: detailNavigate ? 'pointer' : 'default' }}
+                                            onClick={() => navigate(detailNavigate)}
+                                            sx={{ cursor: detailNavigate ? 'pointer' : 'default' }}
                                         >
                                             {formatValue(col.key, rawValue)}
                                         </TableCell>

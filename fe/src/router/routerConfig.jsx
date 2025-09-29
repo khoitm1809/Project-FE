@@ -10,6 +10,8 @@ import RegisterPage from "../pages/registerPage";
 import HerdBreedPage from "../pages/herdBreedManagement/herdBreedPage";
 import BarnPage from "../pages/herdBreedManagement/barnPage";
 import OffSpring from "../pages/offSpring/offSpringPage";
+import FoodWarehousePage from "../pages/warehouse/foodWarehousePage";
+import MeditionWarehousePage from "../pages/warehouse/meditionWarehousePage";
 
 export const RouterConfig = () => {
     return (
@@ -18,6 +20,8 @@ export const RouterConfig = () => {
             <Route path={ROUTES.HERD_BREED_MANAGEMENT} element={<HerdBreedPage />} />
             <Route path={ROUTES.BARN} element={<BarnPage />} />
             <Route path={ROUTES.OFF_SPRING} element={<OffSpring />} />
+            <Route path={ROUTES.FOOD_WAREHOUSE} element={<FoodWarehousePage />} />
+            <Route path={ROUTES.MEDITION_WAREHOUSE} element={<MeditionWarehousePage />} />
             <Route path={ROUTES.LOGIN} element={<LoginPage />} />
             <Route path={ROUTES.REGISTER} element={<RegisterPage />} />
             <Route path={ROUTES.SETTINGS} element={<Settings />} />

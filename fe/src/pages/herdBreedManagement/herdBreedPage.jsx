@@ -12,6 +12,7 @@ const HerdBreedPage = () => {
         { key: "status", label: "Trạng thái" },
         { key: "type", label: "Loại" },
         { key: "start_date", label: "Ngày bắt đầu" },
+        { key: "note", label: "Note" },
     ];
     const {
         data: listBreeding,

@@ -9,4 +9,6 @@ export const ROUTES = {
   HERD_BREED_MANAGEMENT: "/herdBreedManagement",
   BARN: "/barn",
   OFF_SPRING: "/offSpring",
+  FOOD_WAREHOUSE: "/foodWarehouse",
+  MEDITION_WAREHOUSE: "/meditionWarehouse",
 };

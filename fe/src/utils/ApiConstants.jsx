@@ -4,4 +4,6 @@ export const API_URL = {
   BREEDING: '/api/breedingarea',
   BARN: '/api/barn',
   OFF_SPRING: '/api/offspring',
+  FOOD_WAREHOUSE: '/api/food-warehouse',
+  MEDITION_WAREHOUSE: '/api/medition-warehouse',
 };
