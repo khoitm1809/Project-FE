@@ -27,7 +27,25 @@ export const breedingApi = createApi({
                 },
             }),
         }),
+
+        // add breeding
+        addBreading: builder.mutation({
+            query: (body) => ({
+                url: API_URL.BREEDING + "/add",
+                method: 'POST',
+                data: body,
+            }),
+        }),
+
+          // add barn
+        addBarn: builder.mutation({
+            query: (body) => ({
+                url: API_URL.BARN + "/add",
+                method: 'POST',
+                data: body,
+            }),
+        }),
     }),
 });
 
-export const { useGetListBreedingQuery, useGetListBarnQuery } = breedingApi;
+export const { useGetListBreedingQuery, useGetListBarnQuery, useAddBreadingMutation, useAddBarnMutation } = breedingApi;

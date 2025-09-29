@@ -1,20 +1,21 @@
 import { Box, Typography } from "@mui/material";
 import { BoxContainer } from "../../components/commonStyled";
 import CustomTable from "../../components/CustomTable";
-import { useGetListMeditionWarehouseQuery } from "../../store/warehouse/warehouseAction";
+import { useAddMeditionWarehouseMutation, useGetListMeditionWarehouseQuery } from "../../store/warehouse/warehouseAction";
 
 const MeditionWarehousePage = () => {
+    const [addMeditionWarehouse] = useAddMeditionWarehouseMutation();
     const title = [
         { key: "name", label: "Tên vacxine" },
-        { key: "drug_type", label: "Loại thuốc" },
         { key: "brand", label: "Hãng" },
-        { key: "capacity", label: "Dung tích" },
-        { key: "date_of_manufacture", label: "Ngày sản xuất" },
-        { key: "expiry", label: "Ngày hết hạn" },
-        { key: "import_price", label: "Giá nhập" },
+        { key: "drug_type", label: "Loại thuốc" },
+        { key: "usage_type", label: "Cách sử dụng" },
         { key: "inventory", label: "Số lượng" },
         { key: "unit", label: "Đơn vị" },
-        { key: "usage_type", label: "Cách sử dụng" },
+        { key: "capacity", label: "Dung tích" },
+        { key: "import_price", label: "Giá nhập" },
+        { key: "date_of_manufacture", label: "Ngày sản xuất" },
+        { key: "expiry", label: "Ngày hết hạn" },
         { key: "Note", label: "Note" },
     ];
     const {
@@ -30,6 +31,7 @@ const MeditionWarehousePage = () => {
                 title={title}
                 data={listWareHouse}
                 isEdit={true}
+                mutationFunction={addMeditionWarehouse}
             />
         </BoxContainer>
     )

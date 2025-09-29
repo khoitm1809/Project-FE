@@ -31,7 +31,43 @@ function PaperComponent(props) {
     );
 }
 
-export default function CustomTable({ title, data, isEdit, detailNavigate }) {
+const FormField = React.memo(({ field, value, onChange }) => {
+    return (
+        <Grid item xs={12} sm={field.key === "note" ? 12 : 6}>
+            {field.isDropDown ? (
+                <FormControl sx={{ minWidth: "200px" }}>
+                    <InputLabel id={`${field.key}-label`}>{field.label}</InputLabel>
+                    <Select
+                        labelId={`${field.key}-label`}
+                        id={field.key}
+                        value={value ?? ""}
+                        onChange={(e) => onChange(field.key, e.target.value)}
+                        autoWidth
+                    >
+                        {field?.list?.map((item, index) => (
+                            <MenuItem value={item?.value} key={index}>
+                                {item?.label}
+                            </MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
+            ) : (
+                <TextFieldCustom
+                    fullWidth
+                    label={field.label}
+                    variant="outlined"
+                    value={value ?? ""}
+                    onChange={(e) => onChange(field.key, e.target.value)}
+                    multiline={field.key === "note"}
+                    rows={field.key === "note" ? 3 : 1}
+                />
+            )}
+        </Grid>
+    );
+});
+
+
+export default function CustomTable({ title, data, isEdit, detailNavigate, mutationFunction }) {
     const navigate = useNavigate()
     const [open, setOpen] = React.useState(false);
 
@@ -59,12 +95,12 @@ export default function CustomTable({ title, data, isEdit, detailNavigate }) {
         title.reduce((acc, f) => ({ ...acc, [f.key]: "" }), {})
     );
 
-    const handleChange = (key, value) => {
+    const handleChange = React.useCallback((key, value) => {
         setFormData((prev) => ({ ...prev, [key]: value }));
-    };
+    }, [setFormData]);
 
     const handleSave = () => {
-        console.log("Form data:", formData);
+        mutationFunction(formData)
         handleClose();
     };
 
@@ -78,7 +114,7 @@ export default function CustomTable({ title, data, isEdit, detailNavigate }) {
                 PaperProps={{
                     sx: {
                         width: "50%",
-                        height: "60%",
+                        height: "auto",
                         maxWidth: "none",
                     },
                 }}
@@ -96,43 +132,12 @@ export default function CustomTable({ title, data, isEdit, detailNavigate }) {
                     <DialogContentText component="div">
                         <Grid container spacing={2}>
                             {title.map((field) => (
-                                <Grid
-                                    item
-                                    xs={12}
-                                    sm={field.key === "note" ? 12 : 6}
+                                <FormField
                                     key={field.key}
-                                >
-                                    {field.isDropDown ? (
-                                        <FormControl sx={{ minWidth: '200px' }}>
-                                            <InputLabel id="demo-simple-select-autowidth-label">Age</InputLabel>
-                                            <Select
-                                                labelId="demo-simple-select-autowidth-label"
-                                                id="demo-simple-select-autowidth"
-                                                value={null}
-                                                // onChange={handleChange}
-                                                autoWidth
-                                                label="Age"
-                                            >
-                                                {field?.list?.map((item, index) => (
-                                                    <MenuItem value={item?.value} key={index}>{item?.label}</MenuItem>
-                                                ))}
-
-                                            </Select>
-                                        </FormControl>
-                                    ) : (
-                                        <TextFieldCustom
-                                            fullWidth
-                                            label={field.label}
-                                            variant="outlined"
-                                            value={formData[field.key]}
-                                            onChange={(e) =>
-                                                handleChange(field.key, e.target.value)
-                                            }
-                                            multiline={field.key === "note"}
-                                            rows={field.key === "note" ? 3 : 1}
-                                        />
-                                    )}
-                                </Grid>
+                                    field={field}
+                                    value={formData[field.key]}
+                                    onChange={handleChange}
+                                />
                             ))}
                         </Grid>
                     </DialogContentText>
@@ -228,3 +233,4 @@ export default function CustomTable({ title, data, isEdit, detailNavigate }) {
         </Box>
     );
 }
+

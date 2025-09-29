@@ -18,7 +18,7 @@ export const warehouseApi = createApi({
             }),
         }),
 
-         // Get List medition warehouse
+        // Get List medition warehouse
         getListMeditionWarehouse: builder.query({
             query: (params) => ({
                 url: API_URL.MEDITION_WAREHOUSE,
@@ -28,8 +28,26 @@ export const warehouseApi = createApi({
                 },
             }),
         }),
-    
+
+        // add food warehouse
+        addFoodWarehouse: builder.mutation({
+            query: (body) => ({
+                url: API_URL.FOOD_WAREHOUSE + "/add",
+                method: 'POST',
+                data: body,
+            }),
+        }),
+
+        // add medition warehouse
+        addMeditionWarehouse: builder.mutation({
+            query: (body) => ({
+                url: API_URL.MEDITION_WAREHOUSE + "/add",
+                method: 'POST',
+                data: body,
+            }),
+        }),
+
     }),
 });
 
-export const { useGetListFoodWarehouseQuery, useGetListMeditionWarehouseQuery  } = warehouseApi;
+export const { useGetListFoodWarehouseQuery, useGetListMeditionWarehouseQuery, useAddFoodWarehouseMutation, useAddMeditionWarehouseMutation } = warehouseApi;

@@ -17,8 +17,17 @@ export const offSpringApi = createApi({
                 },
             }),
         }),
-      
+
+        // add off spring
+        addOffSpring: builder.mutation({
+            query: (body) => ({
+                url: API_URL.OFF_SPRING + "/add",
+                method: 'POST',
+                data: body,
+            }),
+        }),
+
     }),
 });
 
-export const { useGetListOffSpringQuery } = offSpringApi;
+export const { useGetListOffSpringQuery, useAddOffSpringMutation } = offSpringApi;

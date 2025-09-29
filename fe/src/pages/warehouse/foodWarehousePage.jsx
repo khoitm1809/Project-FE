@@ -1,17 +1,19 @@
 import { Box, Typography } from "@mui/material";
 import { BoxContainer } from "../../components/commonStyled";
 import CustomTable from "../../components/CustomTable";
-import { useGetListFoodWarehouseQuery, useGetListWarehouseQuery } from "../../store/warehouse/warehouseAction";
+import { useAddFoodWarehouseMutation, useGetListFoodWarehouseQuery, useGetListWarehouseQuery } from "../../store/warehouse/warehouseAction";
 
 const FoodWarehousePage = () => {
+    const [addFoodWarehouse] = useAddFoodWarehouseMutation();
     const title = [
         { key: "name", label: "Tên hàng hóa" },
         { key: "inventory", label: "Số lượng" },
+        { key: "weight", label: "Trọng lượng (kg)", isDropDown: true, list: [{ value: 'kg', label: 'kg' }, { value: 'g', label: 'g' }] },
+         { key: "unit", label: "Đơn vị" },
+         { key: "protein_content", label: "Lượng protein" },
+         { key: "energy_content", label: "Năng lượng" },
         { key: "import_price", label: "Giá nhập" },
         { key: "import_date", label: "Ngày nhập" },
-        { key: "protein_content", label: "Lượng protein" },
-        { key: "weight", label: "Trọng lượng (kg)", isDropDown: true, list: [{ value: 'kg', label: 'kg' }, { value: 'g', label: 'g' }] },
-        { key: "energy_content", label: "Năng lượng" },
         { key: "note", label: "Note" },
     ];
     const {
@@ -27,6 +29,7 @@ const FoodWarehousePage = () => {
                 title={title}
                 data={listFoodWareHouse}
                 isEdit={true}
+                mutationFunction={addFoodWarehouse}
             />
         </BoxContainer>
     )
