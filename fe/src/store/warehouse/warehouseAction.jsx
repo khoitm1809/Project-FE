@@ -47,7 +47,52 @@ export const warehouseApi = createApi({
             }),
         }),
 
+        // edit food warehouse
+        editFoodWarehouse: builder.mutation({
+            query: (body) => ({
+                url: API_URL.FOOD_WAREHOUSE + "/edit" `${body.id}`,
+                method: 'PUT',
+                data: body,
+            }),
+        }),
+
+        // delete food warehouse
+        deleteFoodWarehouse: builder.mutation({
+            query: (body) => ({
+                url: API_URL.FOOD_WAREHOUSE + "/delete" + `${body.id}`,
+                method: 'DELETE',
+                data: body,
+            }),
+        }),
+
+        // edit medition warehouse
+        editMeditionWarehouse: builder.mutation({
+            query: (body) => ({
+                url: API_URL.MEDITION_WAREHOUSE + "/edit" `${body.id}`,
+                method: 'PUT',
+                data: body,
+            }),
+        }),
+
+        // delete medition warehouse
+        deleteMeditionWarehouse: builder.mutation({
+            query: (body) => ({
+                url: API_URL.MEDITION_WAREHOUSE + "/delete" + `${body.id}`,
+                method: 'DELETE',
+                data: body,
+            }),
+        }),
+
     }),
 });
 
-export const { useGetListFoodWarehouseQuery, useGetListMeditionWarehouseQuery, useAddFoodWarehouseMutation, useAddMeditionWarehouseMutation } = warehouseApi;
+export const {
+    useGetListFoodWarehouseQuery,
+    useGetListMeditionWarehouseQuery,
+    useAddFoodWarehouseMutation,
+    useAddMeditionWarehouseMutation,
+    useDeleteFoodWarehouseMutation,
+    useDeleteMeditionWarehouseMutation,
+    useEditFoodWarehouseMutation,
+    useEditMeditionWarehouseMutation
+} = warehouseApi;

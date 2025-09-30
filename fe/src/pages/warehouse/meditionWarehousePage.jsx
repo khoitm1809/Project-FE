@@ -1,10 +1,12 @@
 import { Box, Typography } from "@mui/material";
 import { BoxContainer } from "../../components/commonStyled";
 import CustomTable from "../../components/CustomTable";
-import { useAddMeditionWarehouseMutation, useGetListMeditionWarehouseQuery } from "../../store/warehouse/warehouseAction";
+import { useAddMeditionWarehouseMutation, useDeleteMeditionWarehouseMutation, useGetListMeditionWarehouseQuery } from "../../store/warehouse/warehouseAction";
 
 const MeditionWarehousePage = () => {
     const [addMeditionWarehouse] = useAddMeditionWarehouseMutation();
+    const [editMeditionWarehouse] = useAddMeditionWarehouseMutation();
+    const [deleteMeditionWarehouse] = useDeleteMeditionWarehouseMutation();
     const title = [
         { key: "name", label: "Tên vacxine" },
         { key: "brand", label: "Hãng" },
@@ -31,7 +33,10 @@ const MeditionWarehousePage = () => {
                 title={title}
                 data={listWareHouse}
                 isEdit={true}
-                mutationFunction={addMeditionWarehouse}
+                mutationAddFunction={addMeditionWarehouse}
+                mutationEditFunction={editMeditionWarehouse}
+                mutationDeleteFunction={deleteMeditionWarehouse}
+                loading={loadinglistWareHouse}
             />
         </BoxContainer>
     )

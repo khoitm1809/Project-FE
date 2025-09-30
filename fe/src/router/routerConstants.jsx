@@ -11,4 +11,5 @@ export const ROUTES = {
   OFF_SPRING: "/offSpring",
   FOOD_WAREHOUSE: "/foodWarehouse",
   MEDITION_WAREHOUSE: "/meditionWarehouse",
+  INVOICE: "/invoice",
 };

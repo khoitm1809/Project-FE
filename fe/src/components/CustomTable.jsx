@@ -6,7 +6,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, Grid, IconButton, Input, InputAdornment, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material';
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, Grid, IconButton, Input, InputAdornment, InputLabel, MenuItem, Select, Skeleton, TextField, Typography } from '@mui/material';
 import { useNavigate } from 'react-router';
 import { ROUTES } from '../router/routerConstants';
 import { BoxBeetwen, Column, FilterButton, MainButton, Row, SecondaryButton, TextFieldCustom } from './commonStyled';
@@ -67,15 +67,21 @@ const FormField = React.memo(({ field, value, onChange }) => {
 });
 
 
-export default function CustomTable({ title, data, isEdit, detailNavigate, mutationFunction }) {
+export default function CustomTable({ title, data, isEdit, detailNavigate, mutationAddFunction, mutationEditFunction, mutationDeleteFunction, loading }) {
     const navigate = useNavigate()
     const [open, setOpen] = React.useState(false);
-
+    const [formData, setFormData] = React.useState(
+        title?.reduce((acc, f) => ({ ...acc, [f.key]: "" }), {})
+    );
     const getValueByPath = (obj, path) => {
-        return path.split(".").reduce((acc, key) => (acc && acc[key] !== undefined ? acc[key] : null), obj);
+        return path.split(".")?.reduce((acc, key) => (acc && acc[key] !== undefined ? acc[key] : null), obj);
     };
     const formatValue = (key, value) => {
-        if (!value) return "-";
+        if (value === null || value === undefined) return "-";
+
+        if (typeof value === "boolean") {
+            return value ? "true" : "false";
+        }
 
         if (key.toLowerCase().includes("date") || key.toLowerCase().includes("created_at")) {
             return dayjs(value).isValid() ? dayjs(value).format("DD/MM/YYYY") : value;
@@ -83,7 +89,9 @@ export default function CustomTable({ title, data, isEdit, detailNavigate, mutat
 
         return value;
     };
+
     const handleClickOpen = () => {
+        setFormData([])
         setOpen(true);
     };
 
@@ -91,18 +99,22 @@ export default function CustomTable({ title, data, isEdit, detailNavigate, mutat
         setOpen(false);
     };
 
-    const [formData, setFormData] = React.useState(
-        title.reduce((acc, f) => ({ ...acc, [f.key]: "" }), {})
-    );
+
 
     const handleChange = React.useCallback((key, value) => {
         setFormData((prev) => ({ ...prev, [key]: value }));
     }, [setFormData]);
 
     const handleSave = () => {
-        mutationFunction(formData)
+        mutationAddFunction(formData)
         handleClose();
     };
+
+    const handleEdit = (item) => {
+        setFormData(item);
+        setOpen(true);
+    };
+
 
 
     return (
@@ -131,7 +143,7 @@ export default function CustomTable({ title, data, isEdit, detailNavigate, mutat
                 <DialogContent>
                     <DialogContentText component="div">
                         <Grid container spacing={2}>
-                            {title.map((field) => (
+                            {title?.map((field) => (
                                 <FormField
                                     key={field.key}
                                     field={field}
@@ -192,45 +204,69 @@ export default function CustomTable({ title, data, isEdit, detailNavigate, mutat
 
                     {/* Table Body */}
                     <TableBody>
-                        {data?.map((item, rowIndex) => (
-                            <TableRow key={rowIndex}>
-                                {title?.map((col, colIndex) => {
-                                    const rawValue = getValueByPath(item, col.key);
-                                    return (
-                                        <TableCell key={colIndex}
-                                            onClick={() => navigate(detailNavigate)}
-                                            sx={{ cursor: detailNavigate ? 'pointer' : 'default' }}
-                                        >
-                                            {formatValue(col.key, rawValue)}
+                        {loading ? (
+                            // Show skeleton rows while loading
+                            [...Array(5)].map((_, rowIndex) => (
+                                <TableRow key={rowIndex}>
+                                    {title?.map((_, colIndex) => (
+                                        <TableCell key={colIndex}>
+                                            <Skeleton variant="text" width="80%" height={20} />
                                         </TableCell>
-                                    );
-                                })}
-                                {isEdit && (
-                                    <TableCell>
-                                        <IconButton
-                                            sx={{
-                                                borderRadius: "50%",
-                                                width: "2rem",
-                                                height: "2rem",
-                                                background: "#f0f0f0",
-                                                "&:hover": { background: "#ddd" },
-                                            }}
-                                            onClick={() =>
-                                                navigate("/detail-page", { state: { item } })
-                                            }
-                                        >
-                                            <ModeEditOutlineOutlinedIcon
-                                                sx={{ color: "#333", fontSize: "1rem" }}
-                                            />
-                                        </IconButton>
-                                    </TableCell>
-                                )}
+                                    ))}
+                                    {isEdit && (
+                                        <TableCell>
+                                            <Skeleton variant="circular" width={32} height={32} />
+                                        </TableCell>
+                                    )}
+                                </TableRow>
+                            ))
+                        ) : data?.length > 0 ? (
+                            data?.map((item, rowIndex) => (
+                                <TableRow key={rowIndex}>
+                                    {title?.map((col, colIndex) => {
+                                        const rawValue = getValueByPath(item, col.key);
+                                        return (
+                                            <TableCell
+                                                key={colIndex}
+                                                onClick={() => navigate(detailNavigate)}
+                                                sx={{ cursor: detailNavigate ? "pointer" : "default" }}
+                                            >
+                                                {formatValue(col.key, rawValue)}
+                                            </TableCell>
+                                        );
+                                    })}
+                                    {isEdit && (
+                                        <TableCell>
+                                            <IconButton
+                                                sx={{
+                                                    borderRadius: "50%",
+                                                    width: "2rem",
+                                                    height: "2rem",
+                                                    background: "#f0f0f0",
+                                                    "&:hover": { background: "#ddd" },
+                                                }}
+                                                onClick={() => handleEdit(item)}>
+                                                <ModeEditOutlineOutlinedIcon
+                                                    sx={{ color: "#333", fontSize: "1rem" }}
+                                                />
+                                            </IconButton>
+                                        </TableCell>
+                                    )}
+                                </TableRow>
+                            ))
+                        ) : (
+                            // No data case
+                            <TableRow>
+                                <TableCell colSpan={title?.length + (isEdit ? 1 : 0)} align="center">
+                                    No data available
+                                </TableCell>
                             </TableRow>
-                        ))}
+                        )}
                     </TableBody>
+
                 </Table>
             </TableContainer>
-        </Box>
+        </Box >
     );
 }
 

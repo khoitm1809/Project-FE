@@ -17,7 +17,7 @@ export const breedingApi = createApi({
                 },
             }),
         }),
-          // Get List Barn
+        // Get List Barn
         getListBarn: builder.query({
             query: (params) => ({
                 url: API_URL.BARN,
@@ -37,7 +37,7 @@ export const breedingApi = createApi({
             }),
         }),
 
-          // add barn
+        // add barn
         addBarn: builder.mutation({
             query: (body) => ({
                 url: API_URL.BARN + "/add",
@@ -45,7 +45,52 @@ export const breedingApi = createApi({
                 data: body,
             }),
         }),
+
+        // edit breeding
+        editBreading: builder.mutation({
+            query: (body) => ({
+                url: API_URL.BREEDING + "/edit" + `${body.id}`,
+                method: 'PUT',
+                data: body,
+            }),
+        }),
+
+        // edit barn
+        editBarn: builder.mutation({
+            query: (body) => ({
+                url: API_URL.BARN + "/edit" `${body.id}`,
+                method: 'PUT',
+                data: body,
+            }),
+        }),
+
+        // delete breeding
+        deleteBreading: builder.mutation({
+            query: (body) => ({
+                url: API_URL.BREEDING + "/delete" + `${body.id}`,
+                method: 'DELETE',
+                data: body,
+            }),
+        }),
+
+        // delete barn
+        deleteBarn: builder.mutation({
+            query: (body) => ({
+                url: API_URL.BREEDING + "/delete" + `${body.id}`,
+                method: 'DELETE',
+                data: body,
+            }),
+        }),
     }),
 });
 
-export const { useGetListBreedingQuery, useGetListBarnQuery, useAddBreadingMutation, useAddBarnMutation } = breedingApi;
+export const {
+    useGetListBreedingQuery,
+    useGetListBarnQuery,
+    useAddBreadingMutation,
+    useAddBarnMutation,
+    useEditBreadingMutation,
+    useEditBarnMutation,
+    useDeleteBarnMutation,
+    useDeleteBreadingMutation
+} = breedingApi;

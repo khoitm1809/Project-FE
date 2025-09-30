@@ -2,10 +2,12 @@ import { Box, Typography } from "@mui/material";
 import { BoxContainer } from "../../components/commonStyled";
 import CustomTable from "../../components/CustomTable";
 import { ROUTES } from "../../router/routerConstants";
-import { useAddOffSpringMutation, useGetListOffSpringQuery } from "../../store/offSpring/offSpringAction";
+import { useAddOffSpringMutation, useDeleteOffSpringMutation, useEditOffSpringMutation, useGetListOffSpringQuery } from "../../store/offSpring/offSpringAction";
 
-const OffSpring = () => {
+const OffSpringPage = () => {
     const [addOffSpring] = useAddOffSpringMutation();
+    const [editOffSpring] = useEditOffSpringMutation();
+    const [deleteOffSpring] = useDeleteOffSpringMutation();
     const title = [
         { key: "name", label: "Loại heo" },
         { key: "origin", label: "Xuất xứ" },
@@ -33,10 +35,13 @@ const OffSpring = () => {
                 title={title}
                 data={listOffSpring}
                 isEdit={true}
-                mutationFunction={addOffSpring}
+                mutationAddFunction={addOffSpring}
+                mutationEditFunction={editOffSpring}
+                mutationDeleteFunction={deleteOffSpring}
+                loading={loadingListOffSpring}
             />
         </BoxContainer>
     )
 }
 
-export default OffSpring;
+export default OffSpringPage;

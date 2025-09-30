@@ -1,11 +1,13 @@
 import { Box, Typography } from "@mui/material";
 import { BoxContainer } from "../../components/commonStyled";
 import CustomTable from "../../components/CustomTable";
-import { useAddBarnMutation, useGetListBarnQuery } from "../../store/breeding/breedingAction";
+import { useAddBarnMutation, useDeleteBarnMutation, useEditBarnMutation, useGetListBarnQuery } from "../../store/breeding/breedingAction";
 import { ROUTES } from "../../router/routerConstants";
 
 const BarnPage = () => {
     const [addBarn] = useAddBarnMutation();
+    const [editBarn] = useEditBarnMutation();
+    const [deleteBarn] = useDeleteBarnMutation();
     const title = [
         { key: "name", label: "Tên chuồng" },
         { key: "acreage", label: "Diện tích" },
@@ -28,7 +30,10 @@ const BarnPage = () => {
                 title={title}
                 data={listBarn}
                 isEdit={true}
-                mutationFunction={addBarn}
+                mutationAddFunction={addBarn}
+                mutationEditFunction={editBarn}
+                mutationDeleteFunction={deleteBarn}
+                loading={loadingListBarn}
             />
         </BoxContainer>
     )

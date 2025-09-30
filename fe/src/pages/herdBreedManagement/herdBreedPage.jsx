@@ -1,11 +1,13 @@
 import { Box, Typography } from "@mui/material";
 import { BoxContainer } from "../../components/commonStyled";
 import CustomTable from "../../components/CustomTable";
-import { useAddBreadingMutation, useGetListBreedingQuery } from "../../store/breeding/breedingAction";
+import { useAddBreadingMutation, useDeleteBarnMutation, useEditBreadingMutation, useGetListBreedingQuery } from "../../store/breeding/breedingAction";
 import { ROUTES } from "../../router/routerConstants";
 
 const HerdBreedPage = () => {
     const [addBreeding] = useAddBreadingMutation();
+    const [editBreeding] = useEditBreadingMutation();
+    const [deleteBreeding] = useDeleteBarnMutation();
     const title = [
         { key: "name", label: "Tên khu" },
         { key: "acreage", label: "Diện tích" },
@@ -29,7 +31,10 @@ const HerdBreedPage = () => {
                 data={listBreeding}
                 isEdit={true}
                 detailNavigate={ROUTES.BARN}
-                mutationFunction={addBreeding}
+                mutationAddFunction={addBreeding}
+                mutationEditFunction={editBreeding}
+                mutationDeleteFunction={deleteBreeding}
+                loading={loadingListBreeding}
             />
         </BoxContainer>
     )

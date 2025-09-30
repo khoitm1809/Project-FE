@@ -6,4 +6,5 @@ export const API_URL = {
   OFF_SPRING: '/api/offspring',
   FOOD_WAREHOUSE: '/api/food-warehouse',
   MEDITION_WAREHOUSE: '/api/medition-warehouse',
+  INVOICE: '/api/invoice'
 };

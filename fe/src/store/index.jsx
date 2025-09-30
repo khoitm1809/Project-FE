@@ -7,6 +7,7 @@ import { authApi } from "./auth/authAction";
 import { breedingApi } from "./breeding/breedingAction";
 import { offSpringApi } from "./offSpring/offSpringAction";
 import { warehouseApi } from "./warehouse/warehouseAction";
+import { invoiceApi } from "./invoice/invoiceAction";
 
 const persistConfig = {
     key: 'root',
@@ -26,11 +27,18 @@ export const store = configureStore({
         [breedingApi.reducerPath]: breedingApi.reducer,
         [offSpringApi.reducerPath]: offSpringApi.reducer,
         [warehouseApi.reducerPath]: warehouseApi.reducer,
+        [invoiceApi.reducerPath]: invoiceApi.reducer
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({
             serializableCheck: false,
-        }).concat(authApi.middleware, breedingApi.middleware, offSpringApi.middleware, warehouseApi.middleware),
+        }).concat(
+            authApi.middleware,
+            breedingApi.middleware,
+            offSpringApi.middleware,
+            warehouseApi.middleware,
+            invoiceApi.middleware
+        ),
 })
 
 

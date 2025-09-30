@@ -9,9 +9,10 @@ import ServicePackages from "../pages/service/servicePackages";
 import RegisterPage from "../pages/registerPage";
 import HerdBreedPage from "../pages/herdBreedManagement/herdBreedPage";
 import BarnPage from "../pages/herdBreedManagement/barnPage";
-import OffSpring from "../pages/offSpring/offSpringPage";
+import OffSpringPage from "../pages/offSpring/offSpringPage";
 import FoodWarehousePage from "../pages/warehouse/foodWarehousePage";
 import MeditionWarehousePage from "../pages/warehouse/meditionWarehousePage";
+import InvoicePage from "../pages/invoice/invoicePage";
 
 export const RouterConfig = () => {
     return (
@@ -19,7 +20,8 @@ export const RouterConfig = () => {
             <Route path={ROUTES.HOME} element={<Home />} />
             <Route path={ROUTES.HERD_BREED_MANAGEMENT} element={<HerdBreedPage />} />
             <Route path={ROUTES.BARN} element={<BarnPage />} />
-            <Route path={ROUTES.OFF_SPRING} element={<OffSpring />} />
+            <Route path={ROUTES.OFF_SPRING} element={<OffSpringPage />} />
+            <Route path={ROUTES.INVOICE} element={<InvoicePage />} />
             <Route path={ROUTES.FOOD_WAREHOUSE} element={<FoodWarehousePage />} />
             <Route path={ROUTES.MEDITION_WAREHOUSE} element={<MeditionWarehousePage />} />
             <Route path={ROUTES.LOGIN} element={<LoginPage />} />

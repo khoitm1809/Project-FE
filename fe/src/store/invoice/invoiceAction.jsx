@@ -3,14 +3,14 @@ import { API_URL } from '../../utils/ApiConstants';
 import { LOCAL_STORAGE_NAME } from '../../utils/constant';
 import { axiosBaseQuery } from '../../services/axiosBaseQuery';
 
-export const offSpringApi = createApi({
-    reducerPath: 'offSpringApi',
+export const invoiceApi = createApi({
+    reducerPath: 'invoiceApi',
     baseQuery: axiosBaseQuery(),
     endpoints: (builder) => ({
         // Get List Off Spring
-        getListOffSpring: builder.query({
+        getListInvoice: builder.query({
             query: (params) => ({
-                url: API_URL.OFF_SPRING,
+                url: API_URL.INVOICE,
                 method: 'GET',
                 params: {
                     ...params,
@@ -18,28 +18,28 @@ export const offSpringApi = createApi({
             }),
         }),
 
-        // add off spring
-        addOffSpring: builder.mutation({
+        // add invoice
+        addInvoice: builder.mutation({
             query: (body) => ({
-                url: API_URL.OFF_SPRING + "/add",
+                url: API_URL.INVOICE + "/add",
                 method: 'POST',
                 data: body,
             }),
         }),
 
-        // edit off spring
-        editOffSpring: builder.mutation({
+        // edit invoice
+        editInvoice: builder.mutation({
             query: (body) => ({
-                url: API_URL.OFF_SPRING + "/edit" `${body.id}`,
+                url: API_URL.INVOICE + "/edit" `${body.id}`,
                 method: 'PUT',
                 data: body,
             }),
         }),
 
-        // delete off spring
-        deleteOffSpring: builder.mutation({
+        // delete invoice
+        deleteInvoice: builder.mutation({
             query: (body) => ({
-                url: API_URL.OFF_SPRING + "/delete" + `${body.id}`,
+                url: API_URL.INVOICE + "/delete" + `${body.id}`,
                 method: 'DELETE',
                 data: body,
             }),
@@ -49,8 +49,8 @@ export const offSpringApi = createApi({
 });
 
 export const {
-    useGetListOffSpringQuery,
-    useAddOffSpringMutation,
-    useDeleteOffSpringMutation,
-    useEditOffSpringMutation
-} = offSpringApi;
+    useAddInvoiceMutation,
+    useGetListInvoiceQuery,
+    useDeleteInvoiceMutation,
+    useEditInvoiceMutation
+} = invoiceApi;
