@@ -50,7 +50,7 @@ export const warehouseApi = createApi({
         // edit food warehouse
         editFoodWarehouse: builder.mutation({
             query: (body) => ({
-                url: API_URL.FOOD_WAREHOUSE + "/edit" `${body.id}`,
+                url: API_URL.FOOD_WAREHOUSE + "/edit/" + body._id,
                 method: 'PUT',
                 data: body,
             }),
@@ -58,17 +58,16 @@ export const warehouseApi = createApi({
 
         // delete food warehouse
         deleteFoodWarehouse: builder.mutation({
-            query: (body) => ({
-                url: API_URL.FOOD_WAREHOUSE + "/delete" + `${body.id}`,
+            query: (id) => ({
+                url: API_URL.FOOD_WAREHOUSE + "/delete/" + id,
                 method: 'DELETE',
-                data: body,
             }),
         }),
 
         // edit medition warehouse
         editMeditionWarehouse: builder.mutation({
             query: (body) => ({
-                url: API_URL.MEDITION_WAREHOUSE + "/edit" `${body.id}`,
+                url: API_URL.MEDITION_WAREHOUSE + "/edit/" + body._id,
                 method: 'PUT',
                 data: body,
             }),
@@ -76,10 +75,9 @@ export const warehouseApi = createApi({
 
         // delete medition warehouse
         deleteMeditionWarehouse: builder.mutation({
-            query: (body) => ({
-                url: API_URL.MEDITION_WAREHOUSE + "/delete" + `${body.id}`,
+            query: (id) => ({
+                url: API_URL.MEDITION_WAREHOUSE + "/delete/" + id,
                 method: 'DELETE',
-                data: body,
             }),
         }),
 

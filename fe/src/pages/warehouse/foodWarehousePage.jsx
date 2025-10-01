@@ -15,7 +15,7 @@ const FoodWarehousePage = () => {
         { key: "protein_content", label: "Lượng protein" },
         { key: "energy_content", label: "Năng lượng" },
         { key: "import_price", label: "Giá nhập" },
-        { key: "import_date", label: "Ngày nhập" },
+        { key: "import_date", label: "Ngày nhập", isDateTime: true },
         { key: "note", label: "Note" },
     ];
     const {

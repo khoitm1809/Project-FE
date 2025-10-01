@@ -11,7 +11,7 @@ const OffSpringPage = () => {
     const title = [
         { key: "name", label: "Loại heo" },
         { key: "origin", label: "Xuất xứ" },
-        { key: "date_of_entry", label: "Ngày nhập vào" },
+        { key: "date_of_entry", label: "Ngày nhập vào", isDateTime: true },
         { key: "type", label: "Loại" },
         { key: "sex", label: "Giới tính" },
         { key: "weight_at_import", label: "Cân nặng lúc nhập" },

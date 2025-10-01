@@ -14,7 +14,7 @@ const HerdBreedPage = () => {
         { key: "number_of_barns", label: "Số chuồng" },
         { key: "status", label: "Trạng thái" },
         { key: "type", label: "Loại" },
-        { key: "start_date", label: "Ngày bắt đầu" },
+        { key: "start_date", label: "Ngày bắt đầu", isDateTime: true },
         { key: "note", label: "Note" },
     ];
     const {

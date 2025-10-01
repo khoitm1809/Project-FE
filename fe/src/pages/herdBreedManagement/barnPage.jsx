@@ -13,7 +13,7 @@ const BarnPage = () => {
         { key: "acreage", label: "Diện tích" },
         { key: "maximum_capacity", label: "Sức chứa" },
         { key: "status", label: "Trạng thái" },
-        { key: "start_date", label: "Ngày bắt đầu" },
+        { key: "start_date", label: "Ngày bắt đầu", isDateTime: true},
         { key: "breedingarea.name", label: "Thuộc khu" },
         { key: "note", label: "Note" },
     ];

@@ -30,7 +30,7 @@ export const invoiceApi = createApi({
         // edit invoice
         editInvoice: builder.mutation({
             query: (body) => ({
-                url: API_URL.INVOICE + "/edit" `${body.id}`,
+                url: API_URL.INVOICE + "/edit/" + body._id,
                 method: 'PUT',
                 data: body,
             }),
@@ -38,10 +38,9 @@ export const invoiceApi = createApi({
 
         // delete invoice
         deleteInvoice: builder.mutation({
-            query: (body) => ({
-                url: API_URL.INVOICE + "/delete" + `${body.id}`,
+            query: (id) => ({
+                url: API_URL.INVOICE + "/delete/" + id,
                 method: 'DELETE',
-                data: body,
             }),
         }),
 

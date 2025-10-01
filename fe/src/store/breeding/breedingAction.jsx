@@ -49,7 +49,7 @@ export const breedingApi = createApi({
         // edit breeding
         editBreading: builder.mutation({
             query: (body) => ({
-                url: API_URL.BREEDING + "/edit" + `${body.id}`,
+                url: API_URL.BREEDING + "/edit/" + body._id,
                 method: 'PUT',
                 data: body,
             }),
@@ -58,7 +58,7 @@ export const breedingApi = createApi({
         // edit barn
         editBarn: builder.mutation({
             query: (body) => ({
-                url: API_URL.BARN + "/edit" `${body.id}`,
+                url: API_URL.BARN + "/edit/" + body._id,
                 method: 'PUT',
                 data: body,
             }),
@@ -66,19 +66,17 @@ export const breedingApi = createApi({
 
         // delete breeding
         deleteBreading: builder.mutation({
-            query: (body) => ({
-                url: API_URL.BREEDING + "/delete" + `${body.id}`,
+            query: (id) => ({
+                url: API_URL.BREEDING + "/delete/" + id,
                 method: 'DELETE',
-                data: body,
             }),
         }),
 
         // delete barn
         deleteBarn: builder.mutation({
-            query: (body) => ({
-                url: API_URL.BREEDING + "/delete" + `${body.id}`,
+            query: (id) => ({
+                url: API_URL.BREEDING + "/delete/" + id,
                 method: 'DELETE',
-                data: body,
             }),
         }),
     }),

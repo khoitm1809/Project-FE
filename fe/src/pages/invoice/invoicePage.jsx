@@ -11,7 +11,7 @@ const InvoicePage = () => {
     const title = [
         { key: "discount", label: "Giảm giá" },
         { key: "payment_status", label: "Trạng thái thanh toán" },
-        { key: "creation_date", label: "Ngày tạo" },
+        { key: "creation_date", label: "Ngày tạo", isDateTime: true },
     ];
     const {
         data: listInvoice,

@@ -14,10 +14,14 @@ import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import TuneOutlinedIcon from '@mui/icons-material/TuneOutlined';
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined';
+import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import { THEME } from '../utils/ThemeConstants';
 import Draggable from 'react-draggable';
 import { ROLES } from '../utils/rolesConstant';
 import dayjs from 'dayjs';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import { renderTimeViewClock } from '@mui/x-date-pickers/timeViewRenderers';
+
 
 function PaperComponent(props) {
     const nodeRef = React.useRef(null);
@@ -51,6 +55,17 @@ const FormField = React.memo(({ field, value, onChange }) => {
                         ))}
                     </Select>
                 </FormControl>
+            ) : field.isDateTime ? (
+                <DateTimePicker
+                    label={field.label}
+                    value={value ? dayjs(value) : null}
+                    viewRenderers={{
+                        hours: renderTimeViewClock,
+                        minutes: renderTimeViewClock,
+                    }}
+                    onChange={(newValue) => onChange(field.key, newValue)}
+                    slotProps={{ textField: { fullWidth: true } }}
+                />
             ) : (
                 <TextFieldCustom
                     fullWidth
@@ -70,6 +85,7 @@ const FormField = React.memo(({ field, value, onChange }) => {
 export default function CustomTable({ title, data, isEdit, detailNavigate, mutationAddFunction, mutationEditFunction, mutationDeleteFunction, loading }) {
     const navigate = useNavigate()
     const [open, setOpen] = React.useState(false);
+    const [isBtnEdit, setIsBtnEdit] = React.useState(false)
     const [formData, setFormData] = React.useState(
         title?.reduce((acc, f) => ({ ...acc, [f.key]: "" }), {})
     );
@@ -93,6 +109,7 @@ export default function CustomTable({ title, data, isEdit, detailNavigate, mutat
     const handleClickOpen = () => {
         setFormData([])
         setOpen(true);
+        setIsBtnEdit(false)
     };
 
     const handleClose = () => {
@@ -106,14 +123,23 @@ export default function CustomTable({ title, data, isEdit, detailNavigate, mutat
     }, [setFormData]);
 
     const handleSave = () => {
-        mutationAddFunction(formData)
+        if (isBtnEdit) {
+            mutationEditFunction(formData)
+        } else {
+            mutationAddFunction(formData)
+        }
         handleClose();
     };
 
-    const handleEdit = (item) => {
+    const handleOpenEdit = (item) => {
         setFormData(item);
         setOpen(true);
+        setIsBtnEdit(true)
     };
+
+    const handleDelete = (id) => {
+        mutationDeleteFunction(id)
+    }
 
 
 
@@ -155,10 +181,12 @@ export default function CustomTable({ title, data, isEdit, detailNavigate, mutat
                     </DialogContentText>
                 </DialogContent>
 
-                <DialogActions>
-                    <Button onClick={handleSave} variant="contained">
-                        Tạo mới
-                    </Button>
+                <DialogActions sx={{ width: '100%' }}>
+                    <BoxBeetwen>
+                        <Button onClick={handleSave} variant="contained">
+                            Lưu
+                        </Button>
+                    </BoxBeetwen>
                 </DialogActions>
             </Dialog>
 
@@ -237,19 +265,34 @@ export default function CustomTable({ title, data, isEdit, detailNavigate, mutat
                                     })}
                                     {isEdit && (
                                         <TableCell>
-                                            <IconButton
-                                                sx={{
-                                                    borderRadius: "50%",
-                                                    width: "2rem",
-                                                    height: "2rem",
-                                                    background: "#f0f0f0",
-                                                    "&:hover": { background: "#ddd" },
-                                                }}
-                                                onClick={() => handleEdit(item)}>
-                                                <ModeEditOutlineOutlinedIcon
-                                                    sx={{ color: "#333", fontSize: "1rem" }}
-                                                />
-                                            </IconButton>
+                                            <Row>
+                                                <IconButton
+                                                    sx={{
+                                                        borderRadius: "50%",
+                                                        width: "2rem",
+                                                        height: "2rem",
+                                                        background: "#f0f0f0",
+                                                        "&:hover": { background: "#ddd" },
+                                                    }}
+                                                    onClick={() => handleOpenEdit(item)}>
+                                                    <ModeEditOutlineOutlinedIcon
+                                                        sx={{ color: "#333", fontSize: "1rem" }}
+                                                    />
+                                                </IconButton>
+                                                <IconButton
+                                                    sx={{
+                                                        borderRadius: "50%",
+                                                        width: "2rem",
+                                                        height: "2rem",
+                                                        background: "#f0f0f0",
+                                                        "&:hover": { background: "#ddd" },
+                                                    }}
+                                                    onClick={() => handleDelete(item?._id)}>
+                                                    <DeleteOutlineOutlinedIcon
+                                                        sx={{ color: "#333", fontSize: "1rem" }}
+                                                    />
+                                                </IconButton>
+                                            </Row>
                                         </TableCell>
                                     )}
                                 </TableRow>

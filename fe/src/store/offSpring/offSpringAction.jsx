@@ -30,7 +30,7 @@ export const offSpringApi = createApi({
         // edit off spring
         editOffSpring: builder.mutation({
             query: (body) => ({
-                url: API_URL.OFF_SPRING + "/edit" `${body.id}`,
+                url: API_URL.OFF_SPRING + "/edit/" + body._id,
                 method: 'PUT',
                 data: body,
             }),
@@ -38,10 +38,9 @@ export const offSpringApi = createApi({
 
         // delete off spring
         deleteOffSpring: builder.mutation({
-            query: (body) => ({
-                url: API_URL.OFF_SPRING + "/delete" + `${body.id}`,
+            query: (id) => ({
+                url: API_URL.OFF_SPRING + "/delete/" + id,
                 method: 'DELETE',
-                data: body,
             }),
         }),
 
