@@ -69,7 +69,7 @@ const FormField = React.memo(({ field, value, onChange }) => {
             ) : (
                 <TextFieldCustom
                     fullWidth
-                    label={field.label}
+                    placeholder={field?.label}
                     variant="outlined"
                     value={value ?? ""}
                     onChange={(e) => onChange(field.key, e.target.value)}
@@ -151,6 +151,7 @@ export default function CustomTable({ title, data, isEdit, detailNavigate, mutat
                 PaperComponent={PaperComponent}
                 PaperProps={{
                     sx: {
+                        background: 'grey',
                         width: "50%",
                         height: "auto",
                         maxWidth: "none",
