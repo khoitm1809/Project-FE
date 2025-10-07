@@ -38,7 +38,7 @@ function PaperComponent(props) {
 const FormField = React.memo(({ field, value, onChange }) => {
     return (
         <Grid item xs={12} sm={field.key === "note" ? 12 : 6}>
-            {(field?.isDropDown || field?.isStatus) ? (
+            {(field.isDropDown && field.isStatus) ? (
                 <FormControl sx={{ minWidth: "200px" }}>
                     <InputLabel id={`${field.key}-label`}>{field.label}</InputLabel>
                     <Select

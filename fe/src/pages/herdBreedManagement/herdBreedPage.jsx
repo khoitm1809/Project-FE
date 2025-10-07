@@ -13,7 +13,7 @@ const HerdBreedPage = () => {
         { key: "name", label: "Tên khu" },
         { key: "acreage", label: "Diện tích" },
         { key: "number_of_barns", label: "Số chuồng" },
-        { key: "status", label: "Trạng thái", isStatus: true, list: LIST_STATUS },
+        { key: "status", label: "Trạng thái", isStatus: true, list: [{}] },
         { key: "type", label: "Loại" },
         { key: "start_date", label: "Ngày bắt đầu", isDateTime: true },
         { key: "note", label: "Note" },
