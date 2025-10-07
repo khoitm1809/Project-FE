@@ -8,6 +8,7 @@ import { breedingApi } from "./breeding/breedingAction";
 import { offSpringApi } from "./offSpring/offSpringAction";
 import { warehouseApi } from "./warehouse/warehouseAction";
 import { invoiceApi } from "./invoice/invoiceAction";
+import { serviceApi } from "./service/serviceAction";
 
 const persistConfig = {
     key: 'root',
@@ -27,7 +28,8 @@ export const store = configureStore({
         [breedingApi.reducerPath]: breedingApi.reducer,
         [offSpringApi.reducerPath]: offSpringApi.reducer,
         [warehouseApi.reducerPath]: warehouseApi.reducer,
-        [invoiceApi.reducerPath]: invoiceApi.reducer
+        [invoiceApi.reducerPath]: invoiceApi.reducer,
+        [serviceApi.reducerPath]: serviceApi.reducer
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({
@@ -37,7 +39,8 @@ export const store = configureStore({
             breedingApi.middleware,
             offSpringApi.middleware,
             warehouseApi.middleware,
-            invoiceApi.middleware
+            invoiceApi.middleware,
+            serviceApi.middleware
         ),
 })
 

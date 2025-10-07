@@ -9,7 +9,7 @@ import Paper from '@mui/material/Paper';
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, Grid, IconButton, Input, InputAdornment, InputLabel, MenuItem, Select, Skeleton, TextField, Typography } from '@mui/material';
 import { useNavigate } from 'react-router';
 import { ROUTES } from '../router/routerConstants';
-import { BoxBeetwen, Column, FilterButton, MainButton, Row, SecondaryButton, TextFieldCustom } from './commonStyled';
+import { BoxBeetwen, Column, FilterButton, MainButton, Row, SecondaryButton, TextFieldCustom, CloseIcon, CloseButton, EditButton, DeleteButton } from './commonStyled';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import TuneOutlinedIcon from '@mui/icons-material/TuneOutlined';
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
@@ -57,6 +57,7 @@ const FormField = React.memo(({ field, value, onChange }) => {
                 </FormControl>
             ) : field.isDateTime ? (
                 <DateTimePicker
+                    sx={{background: "#e8e7e7ff"}}
                     label={field.label}
                     value={value ? dayjs(value) : null}
                     viewRenderers={{
@@ -160,15 +161,15 @@ export default function CustomTable({ title, data, isEdit, detailNavigate, mutat
             >
                 <DialogTitle style={{ cursor: "move" }} id="draggable-dialog-title">
                     <BoxBeetwen>
-                        <Typography>Thêm hàng hóa</Typography>
-                        <Button onClick={handleClose}>
-                            <CloseOutlinedIcon />
-                        </Button>
+                        <Typography style={{fontWeight: "bold"}}>Thêm hàng hóa</Typography>
+                        <CloseButton onClick={handleClose}>
+                            <CloseIcon />
+                        </CloseButton>
                     </BoxBeetwen>
                 </DialogTitle>
 
-                <DialogContent>
-                    <DialogContentText component="div">
+                <DialogContent style={{ background: "#c0c0c023"}}>
+                    <DialogContentText style={{marginTop: "30px"}} component="div">
                         <Grid container spacing={2}>
                             {title?.map((field) => (
                                 <FormField
@@ -182,11 +183,11 @@ export default function CustomTable({ title, data, isEdit, detailNavigate, mutat
                     </DialogContentText>
                 </DialogContent>
 
-                <DialogActions sx={{ width: '100%' }}>
+                <DialogActions sx={{ width: '100%', justifyContent: "center" }}>
                     <BoxBeetwen>
-                        <Button onClick={handleSave} variant="contained">
+                        <MainButton onClick={handleSave} variant="contained">
                             Lưu
-                        </Button>
+                        </MainButton>
                     </BoxBeetwen>
                 </DialogActions>
             </Dialog>
@@ -267,32 +268,12 @@ export default function CustomTable({ title, data, isEdit, detailNavigate, mutat
                                     {isEdit && (
                                         <TableCell>
                                             <Row>
-                                                <IconButton
-                                                    sx={{
-                                                        borderRadius: "50%",
-                                                        width: "2rem",
-                                                        height: "2rem",
-                                                        background: "#f0f0f0",
-                                                        "&:hover": { background: "#ddd" },
-                                                    }}
-                                                    onClick={() => handleOpenEdit(item)}>
-                                                    <ModeEditOutlineOutlinedIcon
-                                                        sx={{ color: "#333", fontSize: "1rem" }}
-                                                    />
-                                                </IconButton>
-                                                <IconButton
-                                                    sx={{
-                                                        borderRadius: "50%",
-                                                        width: "2rem",
-                                                        height: "2rem",
-                                                        background: "#f0f0f0",
-                                                        "&:hover": { background: "#ddd" },
-                                                    }}
-                                                    onClick={() => handleDelete(item?._id)}>
-                                                    <DeleteOutlineOutlinedIcon
-                                                        sx={{ color: "#333", fontSize: "1rem" }}
-                                                    />
-                                                </IconButton>
+                                                <EditButton onClick={() => handleOpenEdit(item)}>
+                                                <ModeEditOutlineOutlinedIcon />
+                                                </EditButton>
+                                                <DeleteButton onClick={() => handleDelete(item?._id)}>
+                                                <DeleteOutlineOutlinedIcon />
+                                                </DeleteButton>
                                             </Row>
                                         </TableCell>
                                     )}
