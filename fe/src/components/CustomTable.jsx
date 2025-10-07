@@ -38,7 +38,7 @@ function PaperComponent(props) {
 const FormField = React.memo(({ field, value, onChange }) => {
     return (
         <Grid item xs={12} sm={field.key === "note" ? 12 : 6}>
-            {field.isDropDown ? (
+            {(field?.isDropDown || field?.isStatus) ? (
                 <FormControl sx={{ minWidth: "200px" }}>
                     <InputLabel id={`${field.key}-label`}>{field.label}</InputLabel>
                     <Select
@@ -57,7 +57,7 @@ const FormField = React.memo(({ field, value, onChange }) => {
                 </FormControl>
             ) : field.isDateTime ? (
                 <DateTimePicker
-                    sx={{background: "#e8e7e7ff"}}
+                    sx={{ background: "#e8e7e7ff" }}
                     label={field.label}
                     value={value ? dayjs(value) : null}
                     viewRenderers={{
@@ -90,6 +90,8 @@ export default function CustomTable({ title, data, isEdit, detailNavigate, mutat
     const [formData, setFormData] = React.useState(
         title?.reduce((acc, f) => ({ ...acc, [f.key]: "" }), {})
     );
+
+
     const getValueByPath = (obj, path) => {
         return path.split(".")?.reduce((acc, key) => (acc && acc[key] !== undefined ? acc[key] : null), obj);
     };
@@ -161,15 +163,15 @@ export default function CustomTable({ title, data, isEdit, detailNavigate, mutat
             >
                 <DialogTitle style={{ cursor: "move" }} id="draggable-dialog-title">
                     <BoxBeetwen>
-                        <Typography style={{fontWeight: "bold"}}>Thêm hàng hóa</Typography>
+                        <Typography style={{ fontWeight: "bold" }}>Thêm hàng hóa</Typography>
                         <CloseButton onClick={handleClose}>
                             <CloseIcon />
                         </CloseButton>
                     </BoxBeetwen>
                 </DialogTitle>
 
-                <DialogContent style={{ background: "#c0c0c023"}}>
-                    <DialogContentText style={{marginTop: "30px"}} component="div">
+                <DialogContent style={{ background: "#c0c0c023" }}>
+                    <DialogContentText style={{ marginTop: "30px" }} component="div">
                         <Grid container spacing={2}>
                             {title?.map((field) => (
                                 <FormField
@@ -255,13 +257,22 @@ export default function CustomTable({ title, data, isEdit, detailNavigate, mutat
                                 <TableRow key={rowIndex}>
                                     {title?.map((col, colIndex) => {
                                         const rawValue = getValueByPath(item, col.key);
+                                        console.log(item?.status)
                                         return (
                                             <TableCell
                                                 key={colIndex}
                                                 onClick={() => navigate(detailNavigate)}
-                                                sx={{ cursor: detailNavigate ? "pointer" : "default" }}
+                                                sx={{
+                                                    cursor: detailNavigate ? "pointer" : "default",
+                                                }}
                                             >
-                                                {formatValue(col.key, rawValue)}
+                                                <Typography sx={{
+                                                    padding: '0.4rem 0.6rem',
+                                                    borderRadius: '0.4rem',
+                                                    background: col?.isStatus ? "red" : "inherit",
+                                                }}>
+                                                    {formatValue(col.key, rawValue)}
+                                                </Typography>
                                             </TableCell>
                                         );
                                     })}
@@ -269,10 +280,10 @@ export default function CustomTable({ title, data, isEdit, detailNavigate, mutat
                                         <TableCell>
                                             <Row>
                                                 <EditButton onClick={() => handleOpenEdit(item)}>
-                                                <ModeEditOutlineOutlinedIcon />
+                                                    <ModeEditOutlineOutlinedIcon />
                                                 </EditButton>
                                                 <DeleteButton onClick={() => handleDelete(item?._id)}>
-                                                <DeleteOutlineOutlinedIcon />
+                                                    <DeleteOutlineOutlinedIcon />
                                                 </DeleteButton>
                                             </Row>
                                         </TableCell>
