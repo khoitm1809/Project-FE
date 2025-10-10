@@ -22,7 +22,8 @@ const MeditionWarehousePage = () => {
     ];
     const {
         data: listWareHouse,
-        isLoading: loadinglistWareHouse
+        isLoading: loadinglistWareHouse,
+        refetch
     } = useGetListMeditionWarehouseQuery({}, { refetchOnMountOrArgChange: true })
     return (
         <BoxContainer padding={'2rem'}>
@@ -37,6 +38,7 @@ const MeditionWarehousePage = () => {
                 mutationEditFunction={editMeditionWarehouse}
                 mutationDeleteFunction={deleteMeditionWarehouse}
                 loading={loadinglistWareHouse}
+                refetch={refetch}
             />
         </BoxContainer>
     )

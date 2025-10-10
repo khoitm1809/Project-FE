@@ -38,7 +38,7 @@ function PaperComponent(props) {
 const FormField = React.memo(({ field, value, onChange }) => {
     return (
         <Grid item xs={12} sm={field.key === "note" ? 12 : 6}>
-            {(field.isDropDown && field.isStatus) ? (
+            {(field?.isDropDown || field?.isStatus) ? (
                 <FormControl sx={{ minWidth: "200px" }}>
                     <InputLabel id={`${field.key}-label`}>{field.label}</InputLabel>
                     <Select
@@ -83,7 +83,7 @@ const FormField = React.memo(({ field, value, onChange }) => {
 });
 
 
-export default function CustomTable({ title, data, isEdit, detailNavigate, mutationAddFunction, mutationEditFunction, mutationDeleteFunction, loading }) {
+export default function CustomTable({ title, data, isEdit, detailNavigate, mutationAddFunction, mutationEditFunction, mutationDeleteFunction, loading, refetch }) {
     const navigate = useNavigate()
     const [open, setOpen] = React.useState(false);
     const [isBtnEdit, setIsBtnEdit] = React.useState(false)
@@ -91,6 +91,18 @@ export default function CustomTable({ title, data, isEdit, detailNavigate, mutat
         title?.reduce((acc, f) => ({ ...acc, [f.key]: "" }), {})
     );
 
+    const getStatusStyle = (value) => {
+        switch (value) {
+            case "active":
+                return { background: "green", color: "white" };
+            case "inactive":
+                return { background: "goldenrod", color: "white" };
+            case "pending":
+                return { background: "red", color: "white" };
+            default:
+                return { background: "inherit", color: "inherit" };
+        }
+    };
 
     const getValueByPath = (obj, path) => {
         return path.split(".")?.reduce((acc, key) => (acc && acc[key] !== undefined ? acc[key] : null), obj);
@@ -125,13 +137,18 @@ export default function CustomTable({ title, data, isEdit, detailNavigate, mutat
         setFormData((prev) => ({ ...prev, [key]: value }));
     }, [setFormData]);
 
-    const handleSave = () => {
-        if (isBtnEdit) {
-            mutationEditFunction(formData)
-        } else {
-            mutationAddFunction(formData)
+    const handleSave = async () => {
+        try {
+            if (isBtnEdit) {
+                await mutationEditFunction(formData).unwrap();
+            } else {
+                await mutationAddFunction(formData).unwrap();
+            }
+            refetch(); 
+            handleClose();
+        } catch (error) {
+            console.error("Error saving data:", error);
         }
-        handleClose();
     };
 
     const handleOpenEdit = (item) => {
@@ -140,10 +157,14 @@ export default function CustomTable({ title, data, isEdit, detailNavigate, mutat
         setIsBtnEdit(true)
     };
 
-    const handleDelete = (id) => {
-        mutationDeleteFunction(id)
-    }
-
+    const handleDelete = async (id) => {
+        try {
+            await mutationDeleteFunction(id).unwrap();
+            refetch(); 
+        } catch (error) {
+            console.error("Error deleting data:", error);
+        }
+    };
 
 
     return (
@@ -269,7 +290,8 @@ export default function CustomTable({ title, data, isEdit, detailNavigate, mutat
                                                 <Typography sx={{
                                                     padding: '0.4rem 0.6rem',
                                                     borderRadius: '0.4rem',
-                                                    background: col?.isStatus ? "red" : "inherit",
+                                                    textTransform: "capitalize",
+                                                    ...getStatusStyle(rawValue),
                                                 }}>
                                                     {formatValue(col.key, rawValue)}
                                                 </Typography>

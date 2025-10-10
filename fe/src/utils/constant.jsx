@@ -4,11 +4,11 @@ export const LOCAL_STORAGE_NAME = {
 
 export const SUCCESS_CODE = "00";
 
-export const STATUS = {
-  ACTIVE: "active",
-  PENDING: "pending",
-  INACTIVE: "inactive",
-};
+export const STATUS = [
+  { value: "active", label: "Active" },
+  { value: "inactive", label: "Inactive" },
+  { value: "pending", label: "Pending" },
+]
 
 export const WEIGHT = [
   { value: "kg", label: "kg" },

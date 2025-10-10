@@ -22,7 +22,8 @@ const OffSpringPage = () => {
     ];
     const {
         data: listOffSpring,
-        isLoading: loadingListOffSpring
+        isLoading: loadingListOffSpring,
+        refetch
     } = useGetListOffSpringQuery({}, { refetchOnMountOrArgChange: true })
 
 
@@ -39,6 +40,7 @@ const OffSpringPage = () => {
                 mutationEditFunction={editOffSpring}
                 mutationDeleteFunction={deleteOffSpring}
                 loading={loadingListOffSpring}
+                refetch={refetch}
             />
         </BoxContainer>
     )

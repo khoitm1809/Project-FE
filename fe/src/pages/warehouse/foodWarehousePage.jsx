@@ -21,7 +21,8 @@ const FoodWarehousePage = () => {
     ];
     const {
         data: listFoodWareHouse,
-        isLoading: loadingListFoodWareHouse
+        isLoading: loadingListFoodWareHouse,
+        refetch
     } = useGetListFoodWarehouseQuery({}, { refetchOnMountOrArgChange: true })
     return (
         <BoxContainer padding={'2rem'}>
@@ -36,6 +37,7 @@ const FoodWarehousePage = () => {
                 mutationEditFunction={editFoodWarehouse}
                 mutationDeleteFunction={deleteFoodWarehouse}
                 loading={loadingListFoodWareHouse}
+                refetch={refetch}
             />
         </BoxContainer>
     )

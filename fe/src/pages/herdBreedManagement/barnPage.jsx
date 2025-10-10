@@ -19,7 +19,8 @@ const BarnPage = () => {
     ];
     const {
         data: listBarn,
-        isLoading: loadingListBarn
+        isLoading: loadingListBarn,
+        refetch
     } = useGetListBarnQuery({}, { refetchOnMountOrArgChange: true })
     return (
         <BoxContainer padding={'2rem'}>
@@ -34,6 +35,7 @@ const BarnPage = () => {
                 mutationEditFunction={editBarn}
                 mutationDeleteFunction={deleteBarn}
                 loading={loadingListBarn}
+                refetch={refetch}
             />
         </BoxContainer>
     )

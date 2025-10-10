@@ -24,6 +24,10 @@ function LoginPage() {
     const navigate = useNavigate()
     const registered = location.state?.registered;
     const dispatch = useDispatch();
+
+    // useEffect(() => {
+    //     navigateType
+    // }, [])
     const login = () => {
         loginUser({ email, password })
             .unwrap()

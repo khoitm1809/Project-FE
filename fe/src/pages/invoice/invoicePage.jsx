@@ -15,7 +15,8 @@ const InvoicePage = () => {
     ];
     const {
         data: listInvoice,
-        isLoading: loadingListInvoice
+        isLoading: loadingListInvoice,
+        refetch
     } = useGetListInvoiceQuery({}, { refetchOnMountOrArgChange: true })
 
 
@@ -32,6 +33,7 @@ const InvoicePage = () => {
                 mutationEditFunction={editInvoice}
                 mutationDeleteFunction={deleteInvoice}
                 loading={loadingListInvoice}
+                refetch={refetch}
             />
         </BoxContainer>
     )
