@@ -31,11 +31,11 @@ const Layout = ({ children }) => {
     return (
         <Box display="flex">
             {/* Top Bar */}
-            {/* {(location?.pathname !== ROUTES.LOGIN && location?.pathname !== ROUTES.REGISTER) &&
+            {(location?.pathname !== ROUTES.LOGIN && location?.pathname !== ROUTES.REGISTER) &&
                 <TopBar
                     drawerWidth={drawerWidth}
                     isMobile={isMobile}
-                />} */}
+                />}
             {/* Sidebar */}
             {(location?.pathname !== ROUTES.LOGIN && location?.pathname !== ROUTES.REGISTER) && (
                 <Box
