@@ -29,7 +29,8 @@ export const store = configureStore({
         [offSpringApi.reducerPath]: offSpringApi.reducer,
         [warehouseApi.reducerPath]: warehouseApi.reducer,
         [invoiceApi.reducerPath]: invoiceApi.reducer,
-        [serviceApi.reducerPath]: serviceApi.reducer
+        [serviceApi.reducerPath]: serviceApi.reducer,
+        auth: authReducer,
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({

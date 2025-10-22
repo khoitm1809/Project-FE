@@ -33,13 +33,13 @@ import PreviewOutlinedIcon from '@mui/icons-material/PreviewOutlined';
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
 import ChecklistOutlinedIcon from '@mui/icons-material/ChecklistOutlined';
 import { THEME } from "../utils/ThemeConstants";
+import { useEffect } from "react";
 export default function LeftBar({ open, onClose, drawerWidth }) {
     const navigate = useNavigate();
+    const role = localStorage.getItem("role");
+    useEffect(() => {
 
-    // const { role } = useSelector((state) => state?.auth);
-
-    // const { role } = useSelector((state) => state);
-
+    }, [role])
     const menuItems = [
         //adm
         { text: "Home", icon: <HomeOutlinedIcon />, path: ROUTES.HOME, role: ROLES.ADMIN },
@@ -47,6 +47,7 @@ export default function LeftBar({ open, onClose, drawerWidth }) {
         { text: "Quản lý gói dịch vụ", icon: <HomeRepairServiceOutlinedIcon />, path: ROUTES.SERVICE_PACKAGES, role: ROLES.ADMIN },
         { text: "Settings", icon: <SettingsOutlinedIcon />, path: ROUTES.SETTINGS, role: ROLES.ADMIN },
         // chu trai
+        { text: "Home", icon: <HomeOutlinedIcon />, path: ROUTES.HOME, role: ROLES.OWNER },
         { text: "Tạo tài khoản cho nhân công", icon: <GroupAddOutlinedIcon />, path: ROUTES.HOME, role: ROLES.OWNER },
         { text: "Quản lý giống và đàn lợn", icon: <AgricultureOutlinedIcon />, path: ROUTES.OFF_SPRING, role: ROLES.OWNER },
         { text: "Quản lý khu và chuồng nuôi", icon: <AgricultureOutlinedIcon />, path: ROUTES.HERD_BREED_MANAGEMENT, role: ROLES.OWNER },
@@ -56,6 +57,7 @@ export default function LeftBar({ open, onClose, drawerWidth }) {
         { text: "Giao việc cho công nhân", icon: <ContactMailOutlinedIcon />, path: ROUTES.HOME, role: ROLES.OWNER },
         { text: "Mua gói dịch vụ", icon: <HomeRepairServiceOutlinedIcon />, path: ROUTES.HOME, role: ROLES.OWNER },
         // cong nhan
+        { text: "Home", icon: <HomeOutlinedIcon />, path: ROUTES.HOME, role: ROLES.WORKER },
         { text: "Nhập nguồn gốc giống lợn", icon: <UploadFileOutlinedIcon />, path: ROUTES.HOME, role: ROLES.WORKER },
         { text: "Ghi nhận tốc độ tăng trưởng", icon: <AreaChartOutlinedIcon />, path: ROUTES.HOME, role: ROLES.WORKER },
         { text: "Nhập thông tin sức khỏe toàn truồng và từng cá thể lợn", icon: <FeedOutlinedIcon />, path: ROUTES.HOME, role: ROLES.WORKER },
@@ -103,7 +105,7 @@ export default function LeftBar({ open, onClose, drawerWidth }) {
                 </Box> */}
                 <List>
                     {menuItems
-                        // .filter((item) => item?.role === role)
+                        .filter((item) => item?.role == role)
                         .map((item) => (
                             <ListItem key={item.text} disablePadding>
                                 <ListItemButton

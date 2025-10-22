@@ -4,7 +4,6 @@ import { useLocation, useNavigate } from 'react-router';
 import { ROUTES } from '../router/routerConstants';
 import styled from '@emotion/styled';
 import pigFarm from '../assets/pigFarm.avif'
-import { setRole } from "../store/auth/authSlice";
 import { useDispatch } from "react-redux";
 import { ROLES } from "../utils/rolesConstant";
 import { THEME } from "../utils/ThemeConstants";
@@ -34,16 +33,12 @@ function LoginPage() {
             .then((res) => {
                 // Lưu token nếu cần
                 localStorage.setItem("token", res.token);
-
+                localStorage.setItem("role", res.user.role)
                 // Navigate về Home
                 navigate(ROUTES.HOME);
 
-                // Tạm thời set role cứng (vì API chưa trả role)
-                // if (res.user?.email === "admin@gmail.com") {
-                //     dispatch(setRole(ROLES.ADMIN));
-                // } else {
-                //     dispatch(setRole(ROLES.USER));
-                // }
+
+
             })
             .catch((err) => {
                 console.error("Login failed:", err);

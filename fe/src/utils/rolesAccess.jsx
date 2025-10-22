@@ -1,0 +1,17 @@
+import { ROUTES } from "../router/routerConstants";
+import { ROLES } from "./rolesConstant";
+
+export const ROLE_ACCESS = {
+    [ROUTES.HOME]: [ROLES.ADMIN, ROLES.OWNER, ROLES.WORKER],
+    //admin
+    [ROUTES.LIST_ACCOUNT]: [ROLES.ADMIN],
+    [ROUTES.SERVICE_PACKAGES]: [ROLES.ADMIN],
+    [ROUTES.SETTINGS]: [ROLES.ADMIN],
+    //owner
+    [ROUTES.OFF_SPRING]: [ROLES.OWNER],
+    [ROUTES.HERD_BREED_MANAGEMENT]: [ROLES.OWNER],
+    [ROUTES.INVOICE]: [ROLES.OWNER],
+    [ROUTES.FOOD_WAREHOUSE]: [ROLES.OWNER],
+    //worker
+    [ROUTES.MEDITION_WAREHOUSE]: [ROLES.WORKER],
+};

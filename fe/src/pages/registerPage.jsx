@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router';
 import { ROUTES } from '../router/routerConstants';
 import styled from '@emotion/styled';
 import pigFarm from '../assets/pigFarm.avif'
-import { setRole } from "../store/auth/authSlice";
 import { useDispatch } from "react-redux";
 import { ROLES } from "../utils/rolesConstant";
 import { THEME } from "../utils/ThemeConstants";
