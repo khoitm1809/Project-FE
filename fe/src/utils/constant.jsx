@@ -14,3 +14,9 @@ export const WEIGHT = [
   { value: "kg", label: "kg" },
   { value: "g", label: "g" },
 ];
+
+export const MESSAGE_TYPE = {
+  SUCCESS: "S",
+  ERROR: "E",
+  WARNING: "W",
+};

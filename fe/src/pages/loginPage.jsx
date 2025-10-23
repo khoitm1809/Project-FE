@@ -10,6 +10,8 @@ import pigFarm from '../assets/pigFarm.avif'
 import { ROLES } from "../utils/rolesConstant";
 import { THEME } from "../utils/ThemeConstants";
 import { useUserLoginMutation } from "../store/auth/authAction";
+import { useConfirmDialog } from "../components/confirmDialog";
+import { MESSAGE_TYPE } from "../utils/constant";
 
 
 const ChildBox = styled(Box)(({ theme }) => ({
@@ -23,7 +25,7 @@ function LoginPage() {
     const navigate = useNavigate();
     const registered = location.state?.registered;
     const dispatch = useDispatch();
-
+    const { openDialog } = useConfirmDialog()
     // ✅ React Hook Form
     const {
         register,
@@ -44,7 +46,14 @@ function LoginPage() {
             localStorage.setItem("role", res.user.role);
             navigate(ROUTES.HOME);
         } catch (err) {
-            console.error("Login failed:", err);
+            openDialog({
+                type: MESSAGE_TYPE.ERROR,
+                message: "Lỗi đăng nhập",
+                customMainText: "Lỗi đăng nhập",
+                isShowCloseBtn: true,
+                isHideAction: true,
+                customSecondText: "Xác nhận"
+            });
         }
     };
 

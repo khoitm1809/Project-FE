@@ -8,16 +8,19 @@ import { ROUTES } from "../router/routerConstants";
 import { useLocation } from "react-router";
 import TopBar from "./TopBar";
 import { THEME } from "../utils/ThemeConstants";
+import { ConfirmDialogProvider } from "../components/confirmDialog";
 
 
 function App() {
     return (
         <div>
             <ThemeProvider theme={TypographyConfig}>
-                <Layout>
-                    <RouterConfig>
-                    </RouterConfig>
-                </Layout>
+                <ConfirmDialogProvider>
+                    <Layout>
+                        <RouterConfig>
+                        </RouterConfig>
+                    </Layout>
+                </ConfirmDialogProvider>
             </ThemeProvider>
         </div>
     )
