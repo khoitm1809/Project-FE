@@ -1,14 +1,16 @@
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { useDispatch } from "react-redux";
+import { useLocation, useNavigate } from 'react-router';
 import { Box, Typography, useMediaQuery } from "@mui/material";
 import { Column, MainButton, Row, TextFieldStyle } from '../components/commonStyled';
-import { useLocation, useNavigate } from 'react-router';
 import { ROUTES } from '../router/routerConstants';
 import styled from '@emotion/styled';
 import pigFarm from '../assets/pigFarm.avif'
-import { useDispatch } from "react-redux";
 import { ROLES } from "../utils/rolesConstant";
 import { THEME } from "../utils/ThemeConstants";
 import { useUserLoginMutation } from "../store/auth/authAction";
-import { useState } from "react";
+
 
 const ChildBox = styled(Box)(({ theme }) => ({
     height: '100vh',
@@ -16,64 +18,107 @@ const ChildBox = styled(Box)(({ theme }) => ({
 
 function LoginPage() {
     const location = useLocation();
-    const [email, setEmail] = useState();
-    const [password, setPassword] = useState();
     const [loginUser] = useUserLoginMutation();
-    const isMobile = useMediaQuery('(max-width:1080px')
-    const navigate = useNavigate()
+    const isMobile = useMediaQuery("(max-width:1080px)");
+    const navigate = useNavigate();
     const registered = location.state?.registered;
     const dispatch = useDispatch();
 
-    // useEffect(() => {
-    //     navigateType
-    // }, [])
-    const login = () => {
-        loginUser({ email, password })
-            .unwrap()
-            .then((res) => {
-                // Lưu token nếu cần
-                localStorage.setItem("token", res.token);
-                localStorage.setItem("role", res.user.role)
-                // Navigate về Home
-                navigate(ROUTES.HOME);
+    // ✅ React Hook Form
+    const {
+        register,
+        handleSubmit,
+        formState: { errors, isSubmitting },
+    } = useForm({
+        defaultValues: {
+            email: "",
+            password: "",
+        },
+    });
 
 
-
-            })
-            .catch((err) => {
-                console.error("Login failed:", err);
-            });
+    const onSubmit = async (data) => {
+        try {
+            const res = await loginUser(data).unwrap();
+            localStorage.setItem("token", res.token);
+            localStorage.setItem("role", res.user.role);
+            navigate(ROUTES.HOME);
+        } catch (err) {
+            console.error("Login failed:", err);
+        }
     };
 
 
 
     return (
         <Row>
-            <ChildBox sx={{ background: THEME.MENU_BACKGROUND, display: isMobile ? 'none' : 'block', width: '50%' }}>
-                <Column sx={{ justifyContent: 'center', alignItems: 'center', height: '100%', gap: '2rem' }}>
-                    <Typography variant='18800' color={THEME.MAIN_TEXT_BUTTON}>Pig Farm</Typography>
-                    <img src={pigFarm} style={{ width: '90%', borderRadius: '1.2rem' }} alt="Pig farm" />
+            <ChildBox
+                sx={{
+                    background: THEME.MENU_BACKGROUND,
+                    display: isMobile ? "none" : "block",
+                    width: "50%",
+                }}
+            >
+                <Column sx={{ justifyContent: "center", alignItems: "center", height: "100%", gap: "2rem" }}>
+                    <Typography variant="18800" color={THEME.MAIN_TEXT_BUTTON}>
+                        Pig Farm
+                    </Typography>
+                    <img src={pigFarm} style={{ width: "90%", borderRadius: "1.2rem" }} alt="Pig farm" />
                 </Column>
             </ChildBox>
+
             <ChildBox sx={{ width: isMobile ? "100%" : "50%" }}>
-                <Column sx={{ justifyContent: 'center', alignItems: 'center', height: '100%', gap: '4rem' }}>
+                <Column sx={{ justifyContent: "center", alignItems: "center", height: "100%", gap: "4rem" }}>
                     <Box>
-                        <Typography variant='18700' color={THEME.SECONDARY_TEXT_BUTTON}>{registered ? "Đăng ký thành công! Vui lòng đăng nhập." : "Welcome Back!"}</Typography>
+                        <Typography variant="18700" color={THEME.SECONDARY_TEXT_BUTTON}>
+                            {registered ? "Đăng ký thành công! Vui lòng đăng nhập." : "Welcome Back!"}
+                        </Typography>
                     </Box>
-                    <Column sx={{ width: '50%', gap: '1rem' }}>
-                        <TextFieldStyle placeholder='Tên đăng nhập' value={email} onChange={(e) => setEmail(e.target.value)} />
-                        <TextFieldStyle placeholder='Mật khẩu' type='password' value={password} onChange={(e) => setPassword(e.target.value)} />
-                        <Row sx={{ gap: '0.5rem', justifyContent: 'flex-end' }}>
-                            <Typography variant='12400' color={THEME.SECONDARY_TEXT_BUTTON}>Chưa có tài khoản?</Typography>
-                            <Typography
-                                variant='12400'
-                                sx={{ color: THEME.SECONDARY_TEXT_BUTTON, cursor: 'pointer' }}
-                                onClick={() => navigate(ROUTES.REGISTER)}>Đăng ký</Typography>
-                        </Row>
-                    </Column>
-                    <MainButton
-                        sx={{ width: '40%' }}
-                        onClick={() => login()}>Đăng nhập</MainButton>
+
+                    {/* ✅ Login Form */}
+                    <form onSubmit={handleSubmit(onSubmit)} style={{ width: "50%" }}>
+                        <Column sx={{ gap: "1rem" }}>
+                            <TextFieldStyle
+                                placeholder="Tên đăng nhập"
+                                {...register("email", { required: "Vui lòng nhập tên đăng nhập" })}
+                                error={!!errors.email}
+                            />
+                            {errors.email && (
+                                <Typography variant="10400" color="red">
+                                    {errors.email.message}
+                                </Typography>
+                            )}
+
+                            <TextFieldStyle
+                                placeholder="Mật khẩu"
+                                type="password"
+                                {...register("password", { required: "Vui lòng nhập mật khẩu" })}
+                                error={!!errors.password}
+                            />
+                            {errors.password && (
+                                <Typography variant="10400" color="red">
+                                    {errors.password.message}
+                                </Typography>
+                            )}
+
+                            <Row sx={{ gap: "0.5rem", justifyContent: "flex-end" }}>
+                                <Typography variant="12400" color={THEME.SECONDARY_TEXT_BUTTON}>
+                                    Chưa có tài khoản?
+                                </Typography>
+                                <Typography
+                                    variant="12400"
+                                    sx={{ color: THEME.SECONDARY_TEXT_BUTTON, cursor: "pointer", textDecoration: "underline" }}
+                                    onClick={() => navigate(ROUTES.REGISTER)}
+                                >
+                                    Đăng ký
+                                </Typography>
+                            </Row>
+                        </Column>
+
+                        <MainButton sx={{ width: "100%", marginTop: "2rem" }} type="submit" disabled={isSubmitting}>
+                            {isSubmitting ? "Đang đăng nhập..." : "Đăng nhập"}
+                        </MainButton>
+                    </form>
                 </Column>
             </ChildBox>
         </Row>
