@@ -12,6 +12,11 @@ import { ConfirmDialogProvider } from "../components/confirmDialog";
 
 
 function App() {
+    const { t, i18n } = useTranslation();
+
+    const changeLanguage = (lng) => {
+        i18n.changeLanguage(lng);
+    };
     return (
         <div>
             <ThemeProvider theme={TypographyConfig}>

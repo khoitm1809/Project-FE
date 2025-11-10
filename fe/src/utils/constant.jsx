@@ -20,3 +20,6 @@ export const MESSAGE_TYPE = {
   ERROR: "E",
   WARNING: "W",
 };
+
+export const LANGUAGE_CODE_VI = "vi";
+export const LANGUAGE_CODE_EN = "en";

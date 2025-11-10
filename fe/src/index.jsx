@@ -6,6 +6,7 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import store from './store';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import "./locales/i18n"
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
