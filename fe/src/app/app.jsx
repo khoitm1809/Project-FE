@@ -9,6 +9,7 @@ import { useLocation } from "react-router";
 import TopBar from "./TopBar";
 import { THEME } from "../utils/ThemeConstants";
 import { ConfirmDialogProvider } from "../components/confirmDialog";
+import { useTranslation } from 'react-i18next';
 
 
 function App() {

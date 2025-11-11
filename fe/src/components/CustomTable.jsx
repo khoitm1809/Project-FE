@@ -87,6 +87,8 @@ export default function CustomTable({ title, data, isEdit, detailNavigate, mutat
     const navigate = useNavigate()
     const [open, setOpen] = React.useState(false);
     const [isBtnEdit, setIsBtnEdit] = React.useState(false)
+    const [searchTerm, setSearchTerm] = React.useState('');
+
     const [formData, setFormData] = React.useState(
         title?.reduce((acc, f) => ({ ...acc, [f.key]: "" }), {})
     );
@@ -121,6 +123,19 @@ export default function CustomTable({ title, data, isEdit, detailNavigate, mutat
         return value;
     };
 
+    const filteredData = React.useMemo(() => {
+        if (!searchTerm) return data;
+        const lowerSearch = searchTerm.toLowerCase();
+
+        return data?.filter((item) =>
+            title?.some((col) => {
+                const value = getValueByPath(item, col.key);
+                return value?.toString()?.toLowerCase()?.includes(lowerSearch);
+            })
+        );
+    }, [data, searchTerm, title]);
+
+
     const handleClickOpen = () => {
         setFormData([])
         setOpen(true);
@@ -144,7 +159,7 @@ export default function CustomTable({ title, data, isEdit, detailNavigate, mutat
             } else {
                 await mutationAddFunction(formData).unwrap();
             }
-            refetch(); 
+            refetch();
             handleClose();
         } catch (error) {
             console.error("Error saving data:", error);
@@ -160,7 +175,7 @@ export default function CustomTable({ title, data, isEdit, detailNavigate, mutat
     const handleDelete = async (id) => {
         try {
             await mutationDeleteFunction(id).unwrap();
-            refetch(); 
+            refetch();
         } catch (error) {
             console.error("Error deleting data:", error);
         }
@@ -227,15 +242,18 @@ export default function CustomTable({ title, data, isEdit, detailNavigate, mutat
                     </MainButton>
                 </Row>
                 <Row gap={'1rem'}>
-                    <TextFieldCustom slotProps={{
-                        input: {
-                            startAdornment: (
-                                <InputAdornment position="start">
-                                    <SearchOutlinedIcon />
-                                </InputAdornment>
-                            )
-                        }
-                    }} placeholder='Tìm kiếm...' variant='outlined' />
+                    <TextFieldCustom
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        slotProps={{
+                            input: {
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <SearchOutlinedIcon />
+                                    </InputAdornment>
+                                )
+                            }
+                        }} placeholder='Tìm kiếm...' variant='outlined' />
                     <FilterButton endIcon={<TuneOutlinedIcon />}>Filters</FilterButton>
                 </Row>
             </BoxBeetwen>
@@ -273,8 +291,8 @@ export default function CustomTable({ title, data, isEdit, detailNavigate, mutat
                                     )}
                                 </TableRow>
                             ))
-                        ) : data?.length > 0 ? (
-                            data?.map((item, rowIndex) => (
+                        ) : filteredData?.length > 0 ? (
+                            filteredData?.map((item, rowIndex) => (
                                 <TableRow key={rowIndex}>
                                     {title?.map((col, colIndex) => {
                                         const rawValue = getValueByPath(item, col.key);
