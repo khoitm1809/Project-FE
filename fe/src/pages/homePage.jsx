@@ -1,7 +1,8 @@
 import { BoxBeetwen, BoxContainer, CenterBox } from "../components/commonStyled";
 import { PieChart } from '@mui/x-charts/PieChart';
 import { ROLES } from "../utils/rolesConstant";
-import { BarChart, LineChart } from "@mui/x-charts";
+import { BarChart, Gauge, LineChart } from "@mui/x-charts";
+import { Box, Typography } from "@mui/material";
 
 const data = [
     { label: 'Khỏe', value: 400, color: '#0088FE' },
@@ -28,8 +29,51 @@ const chartSetting = {
 const Home = () => {
     const role = localStorage.getItem("role");
     return (
-        <BoxContainer marginTop={'4rem'}>
-            <BoxBeetwen>
+        <BoxContainer>
+            <Box
+                sx={{
+                    background: '#e2e2e2ff',
+                    padding: '1rem',
+                    borderRadius: '8px',
+                    marginTop: '2rem',
+                    marginX: '2rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-around'
+                }}>
+                <Gauge
+                    value={75}
+                    startAngle={-110}
+                    endAngle={110}
+                    sx={{
+                        width: 300,
+                        height: 200,
+                        marginTop: '2rem',
+                        marginX: '2rem'
+                    }}
+                    text={({ value, valueMax }) => `${value} / ${valueMax}`}
+                />
+                <Box>
+                    <Typography>
+                        Trạng thái tồn kho
+                    </Typography>
+                    <Typography>
+                        Thức ăn: 1500 kg (Cảnh báo: dưới 500 kg)
+                    </Typography>
+                    <Typography>
+                        Vaccine: 300 lọ (Cảnh báo: dưới 100 lọ)
+                    </Typography>
+                </Box>
+            </Box>
+
+            <BoxBeetwen
+                sx={{
+                    background: '#e2e2e2ff',
+                    padding: '1rem',
+                    borderRadius: '8px',
+                    marginTop: '2rem',
+                    marginX: '2rem'
+                }}>
                 {role == ROLES.OWNER && <PieChart
                     series={[
                         {
@@ -64,7 +108,14 @@ const Home = () => {
                 />}
             </BoxBeetwen>
 
-            <BoxBeetwen marginTop={'4rem'}>
+            <BoxBeetwen
+                sx={{
+                    background: '#e2e2e2ff',
+                    padding: '1rem',
+                    borderRadius: '8px',
+                    marginTop: '2rem',
+                    marginX: '2rem'
+                }}>
                 {role == ROLES.OWNER && <LineChart
                     dataset={[1234567890123, 2345678901234].map((timestamp) => ({
                         date: new Date(timestamp),
