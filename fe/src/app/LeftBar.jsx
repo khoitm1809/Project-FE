@@ -33,10 +33,20 @@ import PreviewOutlinedIcon from '@mui/icons-material/PreviewOutlined';
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
 import ChecklistOutlinedIcon from '@mui/icons-material/ChecklistOutlined';
 import { THEME } from "../utils/ThemeConstants";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import TranslateIcon from "@mui/icons-material/Translate";
+import { LANGUAGE_CODE_EN, LANGUAGE_CODE_VI, LOCAL_STORAGE_NAME } from "../utils/constant";
+import i18next from "i18next";
+
 export default function LeftBar({ open, onClose, drawerWidth }) {
     const navigate = useNavigate();
+    const [langSelect, setlangSelect] = useState(localStorage.getItem(LOCAL_STORAGE_NAME.LANGUAGE))
     const role = localStorage.getItem("role");
+    const changeLanguage = (lng) => {
+        i18next.changeLanguage(lng);
+        localStorage.setItem(LOCAL_STORAGE_NAME.LANGUAGE, lng)
+        setlangSelect(lng)
+    };
     useEffect(() => {
 
     }, [role])
@@ -136,6 +146,13 @@ export default function LeftBar({ open, onClose, drawerWidth }) {
                         gap: '0.4rem',
                     }}
                 >
+                    <Box
+                        onClick={() => {
+                            changeLanguage(langSelect == LANGUAGE_CODE_EN
+                                ? LANGUAGE_CODE_VI : LANGUAGE_CODE_EN)
+                        }}>
+                        <TranslateIcon />
+                    </Box>
                     <IconButton sx={{ color: THEME.SECONDARY_TEXT_BUTTON }}>
                         {/* Có thể thay icon logout */}
                     </IconButton>
