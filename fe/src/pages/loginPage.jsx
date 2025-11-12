@@ -101,7 +101,7 @@ function LoginPage() {
                 <Column sx={{ justifyContent: "center", alignItems: "center", height: "80%", gap: "4rem" }}>
                     <Box>
                         <Typography variant="18700" color={THEME.SECONDARY_TEXT_BUTTON}>
-                            {registered ? t("welcome.registered") : t("welcome.message")}
+                            {registered ? t("login.registerSuccess") : t("login.welcomeBack")}
                         </Typography>
                     </Box>
 

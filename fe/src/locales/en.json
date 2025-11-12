@@ -1,6 +1,114 @@
 {
-  "welcome": {
-    "message": "Welcome Back!",
-    "registered": "Registration successful! Please log in."
+  "register": {
+    "register": "Register Account",
+    "fullName": "Full Name",
+    "fullNameReq": "Please enter your full name",
+    "userName": "Username",
+    "userNameReq": "Please enter a username",
+    "passWord": "Password",
+    "passWordReq": "Please enter a password",
+    "accExist": "Already have an account?"
+  },
+  "login": {
+    "login": "Login",
+    "registering": "Registering...",
+    "register": "Register",
+    "errorLogin": "Login Error",
+    "confirmLogin": "Confirm",
+    "registerSuccess": "Registration successful! Please log in.",
+    "welcomeBack": "Welcome Back!",
+    "accNotExist": "Don’t have an account?",
+    "loggingIn": "Logging in...",
+    "homePage": "Home Page"
+  },
+  "meditionWarehouse": {
+    "meditionWarehouse": "Vaccine Warehouse Management",
+    "name": "Medicine Name",
+    "brand": "Brand",
+    "type": "Type",
+    "instruction": "Usage Instructions",
+    "quantity": "Quantity",
+    "unit": "Unit",
+    "capacity": "Volume",
+    "importPrice": "Import Price",
+    "productDate": "Manufacture Date",
+    "expiryDate": "Expiration Date"
+  },
+  "foodWarehouse": {
+    "foodWarehouse": "Food Warehouse Management",
+    "name": "Product Name",
+    "weight": "Weight (kg)",
+    "protein": "Protein Content",
+    "calories": "Calories",
+    "importDate": "Import Date"
+  },
+  "setting_page": "Setting Page",
+  "offSpring": {
+    "offSpring": "Breeding and Pig Herd Management",
+    "pig": "Pig Type",
+    "origin": "Origin",
+    "importDate": "Date of Import",
+    "type": "Type",
+    "gender": "Gender",
+    "importWeight": "Weight at Import",
+    "health": "Health",
+    "vaccination": "Vaccination"
+  },
+  "invoice": {
+    "invoice": "Purchase Invoice Management",
+    "discount": "Discount",
+    "paymentStatus": "Payment Status",
+    "date": "Created Date"
+  },
+  "herdBreedManagement": {
+    "herdBreedManagement": "Area and Barn Management",
+    "areaName": "Area Name",
+    "acreage": "Acreage",
+    "stableQuantity": "Number of Barns",
+    "status": "Status",
+    "startDate": "Start Date",
+    "barnList": "Barn List",
+    "stableName": "Barn Name",
+    "capacity": "Capacity",
+    "fromArea": "From Area"
+  },
+  "foodRation": {
+    "foodRation": "Feed Chain Setup",
+    "trialDiet": "Trial Diet",
+    "endDate": "End Date",
+    "mealPerDay": "Meals Per Day",
+    "foodDetail": "Food Details",
+    "meal": "Meal",
+    "foodWeight": "Food Quantity",
+    "meditionDetail": "Medicine Details",
+    "dosage": "Dosage Used",
+    "meditionMeal": "Dosage Amount"
+  },
+  "accList": "Account List",
+  "customTable": {
+    "create": "Add Product",
+    "save": "Save",
+    "list": "List Table",
+    "createNew": "Create New",
+    "search": "Search...",
+    "filters": "Filters",
+    "edit": "Edit"
+  },
+  "navigation": {
+    "accList": "Account Management",
+    "createWorkerAcc": "Create Worker Account",
+    "foodRation": "Feed and Nutrition Setup",
+    "toDoList": "Assign Tasks to Workers",
+    "offSpring": "Breeding and Pig Herd Management",
+    "herdBreedManagement": "Area and Barn Management",
+    "foodWarehouse": "Food Warehouse Management",
+    "invoice": "Purchase Invoice Management",
+    "ghi_nhan_toc_o_tang_truong": "Record Growth Rate",
+    "nhap_thong_tin_suc_khoe_toan_truong_va_tung_ca_the_lon": "Enter Health Information for the Entire Barn and Individual Pigs",
+    "meditionWarehouse": "Vaccine Warehouse",
+    "theo_gioi_chu_ki_ong_duc_cua_lon": "Monitor Estrus Cycle of Sows",
+    "ghi_nhan_va_tinh_ngay_phoi_giong": "Record and Calculate Breeding Date",
+    "to_do_list_cac_viec_ma_chu_trang_trai_giao": "To-Do List Assigned by Farm Owner",
+    "logout": "Logout"
   }
 }
