@@ -1,4 +1,6 @@
 {
-  "welcome": "Chào mừng",
-  "hello_user": "Xin chào, {{name}}!"
+  "welcome": {
+    "message": "Chào mừng bạn quay trở lại!",
+    "registered": "Đăng ký thành công! xin hãy đăng nhập."
+  }
 }

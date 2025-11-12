@@ -11,7 +11,10 @@ import { ROLES } from "../utils/rolesConstant";
 import { THEME } from "../utils/ThemeConstants";
 import { useUserLoginMutation } from "../store/auth/authAction";
 import { useConfirmDialog } from "../components/confirmDialog";
-import { MESSAGE_TYPE } from "../utils/constant";
+import { LANGUAGE_CODE_EN, LANGUAGE_CODE_VI, LOCAL_STORAGE_NAME, MESSAGE_TYPE } from "../utils/constant";
+import { useTranslation } from "react-i18next";
+import i18next from "i18next";
+import TranslateIcon from "@mui/icons-material/Translate";
 
 
 const ChildBox = styled(Box)(({ theme }) => ({
@@ -19,6 +22,8 @@ const ChildBox = styled(Box)(({ theme }) => ({
 }));
 
 function LoginPage() {
+    const [langSelect, setlangSelect] = useState(localStorage.getItem(LOCAL_STORAGE_NAME.LANGUAGE))
+    const { t } = useTranslation();
     const location = useLocation();
     const [loginUser] = useUserLoginMutation();
     const isMobile = useMediaQuery("(max-width:1080px)");
@@ -57,6 +62,12 @@ function LoginPage() {
         }
     };
 
+    const changeLanguage = (lng) => {
+        i18next.changeLanguage(lng);
+        localStorage.setItem(LOCAL_STORAGE_NAME.LANGUAGE, lng)
+        setlangSelect(lng)
+    };
+
 
 
     return (
@@ -77,10 +88,20 @@ function LoginPage() {
             </ChildBox>
 
             <ChildBox sx={{ width: isMobile ? "100%" : "50%" }}>
-                <Column sx={{ justifyContent: "center", alignItems: "center", height: "100%", gap: "4rem" }}>
+                <Box
+                    onClick={() => { changeLanguage(langSelect == LANGUAGE_CODE_EN ? LANGUAGE_CODE_VI : LANGUAGE_CODE_EN) }}
+                    sx={{
+                        display: 'flex',
+                        justifyContent: 'flex-end',
+                        width: '100%', padding: '1rem',
+                        cursor: 'pointer'
+                    }}>
+                    <TranslateIcon />
+                </Box>
+                <Column sx={{ justifyContent: "center", alignItems: "center", height: "80%", gap: "4rem" }}>
                     <Box>
                         <Typography variant="18700" color={THEME.SECONDARY_TEXT_BUTTON}>
-                            {registered ? "Đăng ký thành công! Vui lòng đăng nhập." : "Welcome Back!"}
+                            {registered ? t("welcome.registered") : t("welcome.message")}
                         </Typography>
                     </Box>
 

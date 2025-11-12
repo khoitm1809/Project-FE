@@ -1,8 +1,12 @@
-import { BoxBeetwen, BoxContainer, CenterBox, Column } from "../components/commonStyled";
+import { BoxBeetwen, BoxContainer, CenterBox, Column, Row } from "../components/commonStyled";
 import { PieChart } from '@mui/x-charts/PieChart';
 import { ROLES } from "../utils/rolesConstant";
 import { BarChart, Gauge, LineChart } from "@mui/x-charts";
-import { Box, Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
+import Card from '@mui/material/Card';
+import CardActions from '@mui/material/CardActions';
+import CardContent from '@mui/material/CardContent';
+
 
 const data = [
     { label: 'Khỏe', value: 400, color: '#0088FE' },
@@ -186,8 +190,8 @@ const Home = () => {
                         height={300}
                     />
 
-                    
-                     {/* Số lượng thức ăn và vaccine còn tồn trong kho (dual bar chart) */}
+
+                    {/* Số lượng thức ăn và vaccine còn tồn trong kho (dual bar chart) */}
                     <BarChart
                         dataset={[
                             { month: 'Jan', thucan: 4000, vaccine: 2400 },
@@ -207,18 +211,99 @@ const Home = () => {
                     />
                 </BoxBeetwen>
             </Box>}
-            {role == ROLES.WORKER &&
-                <CenterBox>
-                </CenterBox>}
-
             {/* WORKER:
             Widget:
             + Công việc trong tuần
             + Thông báo từ chủ trang trại (vệ sinh chuồng, bổ sung cám, kiểm tra lợn ốm...)
-            Bar chart:
-            + Bar chart ngang hiệu suất công việc (đã hoàn thành bao nhiêu % công việc)
             Card:
             + Các chuồng đang phụ trách ( ấn để xem chuồng) */}
+            <Box>
+                {role == ROLES.WORKER &&
+                    <Box
+                        sx={{
+                            background: '#e2e2e2ff',
+                            padding: '1rem',
+                            borderRadius: '8px',
+                            marginTop: '2rem',
+                            marginX: '2rem',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-around'
+                        }}>
+                        <Column sx={{ alignItems: 'center' }}>
+                            <Typography>Hiệu suất công việc</Typography>
+                            <Gauge
+                                value={15}
+                                startAngle={-110}
+                                endAngle={110}
+                                sx={{
+                                    width: 300,
+                                    height: 200,
+                                    marginTop: '2rem',
+                                    marginX: '2rem'
+                                }}
+                                text={({ value, valueMax }) => `${value} / ${valueMax}`}
+                            />
+                        </Column>
+                    </Box>}
+                {role == ROLES.WORKER &&
+                    <Box
+                        sx={{
+                            background: '#e2e2e2ff',
+                            padding: '1rem',
+                            borderRadius: '8px',
+                            marginTop: '2rem',
+                            marginX: '2rem',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-around'
+                        }}>
+                        <Column width={'100%'}>
+                            <Typography sx={{marginBottom: '1rem'}}>Các chuồng đang phụ trách</Typography>
+                            <Row>
+                                <Column gap={'2rem'}>
+                                    <Card sx={{ minWidth: 275 }}>
+                                        <CardContent>
+                                            <Typography gutterBottom sx={{ color: 'text.secondary', fontSize: 14 }}>
+                                                Word of the Day
+                                            </Typography>
+                                            <Typography variant="h5" component="div">
+                                                be
+                                            </Typography>
+                                            <Typography sx={{ color: 'text.secondary', mb: 1.5 }}>adjective</Typography>
+                                            <Typography variant="body2">
+                                                well meaning and kindly.
+                                                {'"a benevolent smile"'}
+                                            </Typography>
+                                        </CardContent>
+                                        <CardActions>
+                                            <Button size="small">Learn More</Button>
+                                        </CardActions>
+                                    </Card>
+
+                                    <Card sx={{ minWidth: 275 }}>
+                                        <CardContent>
+                                            <Typography gutterBottom sx={{ color: 'text.secondary', fontSize: 14 }}>
+                                                Word of the Day
+                                            </Typography>
+                                            <Typography variant="h5" component="div">
+                                                be
+                                            </Typography>
+                                            <Typography sx={{ color: 'text.secondary', mb: 1.5 }}>adjective</Typography>
+                                            <Typography variant="body2">
+                                                well meaning and kindly.
+                                                {'"a benevolent smile"'}
+                                            </Typography>
+                                        </CardContent>
+                                        <CardActions>
+                                            <Button size="small">Learn More</Button>
+                                        </CardActions>
+                                    </Card>
+                                </Column>
+                            </Row>
+                        </Column>
+                    </Box>}
+            </Box>
         </BoxContainer>
     )
 }

@@ -1,4 +1,6 @@
 {
-  "welcome": "Welcome",
-  "hello_user": "Hello, {{name}}!"
+  "welcome": {
+    "message": "Welcome Back!",
+    "registered": "Registration successful! Please log in."
+  }
 }
