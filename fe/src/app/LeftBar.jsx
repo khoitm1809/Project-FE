@@ -113,6 +113,22 @@ export default function LeftBar({ open, onClose, drawerWidth }) {
                         }} />
                 </Box> */}
                 <List>
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            cursor: 'pointer',
+                            gap: '0.4rem',
+                            cursor: 'pointer',
+                            padding: '8px 16px'
+                        }}
+                        onClick={() => {
+                            changeLanguage(langSelect == LANGUAGE_CODE_EN
+                                ? LANGUAGE_CODE_VI : LANGUAGE_CODE_EN)
+                        }}>
+                        <TranslateIcon />
+                        <Typography>{langSelect == LANGUAGE_CODE_EN ? "Tiếng Anh" : "Tiếng Việt"}</Typography>
+                    </Box>
                     {menuItems
                         .filter((item) => item?.role == role)
                         .map((item) => (
@@ -146,13 +162,6 @@ export default function LeftBar({ open, onClose, drawerWidth }) {
                         gap: '0.4rem',
                     }}
                 >
-                    <Box
-                        onClick={() => {
-                            changeLanguage(langSelect == LANGUAGE_CODE_EN
-                                ? LANGUAGE_CODE_VI : LANGUAGE_CODE_EN)
-                        }}>
-                        <TranslateIcon />
-                    </Box>
                     <IconButton sx={{ color: THEME.SECONDARY_TEXT_BUTTON }}>
                         {/* Có thể thay icon logout */}
                     </IconButton>
