@@ -2,11 +2,11 @@ import { BoxBeetwen, BoxContainer, CenterBox, Column, Row } from "../components/
 import { PieChart } from '@mui/x-charts/PieChart';
 import { ROLES } from "../utils/rolesConstant";
 import { BarChart, Gauge, LineChart } from "@mui/x-charts";
-import { Box, Button, Typography } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Typography } from "@mui/material";
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
-
+import { useState } from "react";
 
 const data = [
     { label: 'Khỏe', value: 400, color: '#0088FE' },
@@ -31,7 +31,12 @@ const chartSetting = {
 };
 
 const Home = () => {
+    const [expanded, setExpanded] = useState('panel1');
     const role = localStorage.getItem("role");
+
+    const handleChange = (panel) => (event, newExpanded) => {
+        setExpanded(newExpanded ? panel : false);
+    };
     return (
         <BoxContainer>
             {role == ROLES.OWNER && <Box>
@@ -227,7 +232,7 @@ const Home = () => {
                             marginTop: '2rem',
                             marginX: '2rem',
                             display: 'flex',
-                            alignItems: 'center',
+                            // alignItems: 'center',
                             justifyContent: 'space-around'
                         }}>
                         <Column sx={{ alignItems: 'center' }}>
@@ -245,6 +250,18 @@ const Home = () => {
                                 text={({ value, valueMax }) => `${value} / ${valueMax}`}
                             />
                         </Column>
+                        <Column sx={{height: '20rem', overflow: 'scroll', }}>
+                            <Accordion expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>
+                                <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
+                                    <Typography component="span">Thông báo 1</Typography>
+                                </AccordionSummary>
+                                <AccordionDetails>
+                                    <Typography>
+                                       Công việc: Vệ sinh chuồng A3 vào ngày 20/06/2024
+                                    </Typography>
+                                </AccordionDetails>
+                            </Accordion>
+                        </Column>
                     </Box>}
                 {role == ROLES.WORKER &&
                     <Box
@@ -259,7 +276,7 @@ const Home = () => {
                             justifyContent: 'space-around'
                         }}>
                         <Column width={'100%'}>
-                            <Typography sx={{marginBottom: '1rem'}}>Các chuồng đang phụ trách</Typography>
+                            <Typography sx={{ marginBottom: '1rem' }}>Các chuồng đang phụ trách</Typography>
                             <Row>
                                 <Column gap={'2rem'}>
                                     <Card sx={{ minWidth: 275 }}>
