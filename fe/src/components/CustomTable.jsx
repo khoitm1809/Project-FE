@@ -6,11 +6,10 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, Grid, IconButton, Input, InputAdornment, InputLabel, MenuItem, Select, Skeleton, TextField, Typography } from '@mui/material';
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, FormControlLabel, Grid, IconButton, Input, InputAdornment, InputLabel, MenuItem, Select, Skeleton, TextField, Typography } from '@mui/material';
 import { useNavigate } from 'react-router';
 import { ROUTES } from '../router/routerConstants';
 import { BoxBeetwen, Column, FilterButton, MainButton, Row, SecondaryButton, TextFieldCustom, CloseIcon, CloseButton, EditButton, DeleteButton } from './commonStyled';
-import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import TuneOutlinedIcon from '@mui/icons-material/TuneOutlined';
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined';
@@ -21,7 +20,8 @@ import { ROLES } from '../utils/rolesConstant';
 import dayjs from 'dayjs';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { renderTimeViewClock } from '@mui/x-date-pickers/timeViewRenderers';
-
+import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
+import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 
 function PaperComponent(props) {
     const nodeRef = React.useRef(null);
@@ -231,57 +231,143 @@ export default function CustomTable({ title, data, isEdit, detailNavigate, mutat
             </Dialog>
 
 
+            <Box mb={4}>
+                {/* TITLE */}
+                <Typography
+                    variant="h4"
+                    fontWeight={700}
+                    sx={{ mb: 1 }}
+                >
+                    Danh sách sản phẩm
+                </Typography>
 
-            <Typography variant='14700'>
-                Bảng danh sách
-            </Typography>
-            <BoxBeetwen sx={{ marginY: '1.5rem' }}>
-                <Row gap={'0.6rem'}>
-                    <MainButton sx={{ padding: '0rem 1.4rem' }} onClick={handleClickOpen}>
-                        Thêm mới
-                    </MainButton>
-                </Row>
-                <Row gap={'1rem'}>
-                    <TextFieldCustom
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        slotProps={{
-                            input: {
-                                startAdornment: (
-                                    <InputAdornment position="start">
-                                        <SearchOutlinedIcon />
-                                    </InputAdornment>
-                                )
-                            }
-                        }} placeholder='Tìm kiếm...' variant='outlined' />
-                    <FilterButton endIcon={<TuneOutlinedIcon />}>Filters</FilterButton>
-                </Row>
-            </BoxBeetwen>
-            <TableContainer component={Paper}>
-                <Table sx={{ minWidth: 650 }}>
-                    {/* Table Head */}
+                {/* SUBTITLE */}
+                <Typography
+                    variant="subtitle1"
+                    color="text.secondary"
+                >
+                    Quản lý toàn bộ sản phẩm 
+                </Typography>
+            </Box>
+
+            <Box
+                display="flex"
+                flexDirection={{ xs: "column", sm: "row" }}
+                alignItems={{ xs: "stretch", sm: "center" }}
+                gap={2}
+                mb={2}
+                sx={{
+                    width: "100%",
+                }}
+            >
+                {/* Search Input */}
+                <TextField
+                    fullWidth
+                    placeholder="Tìm kiếm..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    InputProps={{
+                        startAdornment: (
+                            <SearchOutlinedIcon sx={{ color: "action.active", mr: 1 }} />
+                        ),
+                        sx: {
+                            backgroundColor: "#f2f2f2",
+                            borderRadius: "8px",
+                            height: "44px",
+                            paddingLeft: "8px",
+                            border: "none",
+
+                            "& fieldset": { border: "none" },
+                            "&:hover fieldset": { border: "none" },
+                            "&.Mui-focused fieldset": { border: "none" },
+                        },
+                    }}
+                />
+
+                {/* Nút Lọc */}
+                <Button
+                    variant="outlined"
+                    startIcon={<TuneOutlinedIcon />}
+                    sx={{
+                        height: "44px",
+                        minWidth: { xs: "100%", sm: "auto" }, 
+                        bgcolor: "#fff",
+                        borderColor: "#ccc",
+                        color: "#333",
+                        textTransform: "none",
+                        "&:hover": {
+                            borderColor: "#999",
+                            backgroundColor: "#f7f7f7",
+                        },
+                    }}
+                >
+                    Lọc
+                </Button>
+
+                {/* Nút Thêm */}
+                <Button
+                    variant="contained"
+                    startIcon={<AddOutlinedIcon />}
+                    onClick={handleClickOpen}
+                    sx={{
+                        height: "44px",
+                        width: { xs: "100%", sm: "10rem" }, 
+                        bgcolor: "#000",
+                        color: "#fff",
+                        textTransform: "none",
+                        "&:hover": {
+                            bgcolor: "#222",
+                        },
+                    }}
+                >
+                    Thêm mới
+                </Button>
+            </Box>
+
+
+
+            {/* Table */}
+            <TableContainer
+                component={Paper}
+                sx={{
+                    borderRadius: 2,
+                    boxShadow: 3,
+                    width: "100%",
+                    overflowX: "auto",
+                    display: "block"
+                }}
+            >
+                <Table aria-label="customized table">
+
                     <TableHead>
-                        <TableRow>
+                        <TableRow sx={{ backgroundColor: (theme) => theme.palette.grey[50] }}> 
                             {title?.map((col, i) => (
-                                <TableCell key={i} sx={{ fontWeight: "bold" }}>
+                                <TableCell
+                                    key={i}
+                                    sx={{
+                                        fontWeight: 600,
+                                        color: (theme) => theme.palette.text.primary, 
+                                        padding: '12px 16px' 
+                                    }}
+                                >
                                     {col.label}
                                 </TableCell>
                             ))}
                             {isEdit && (
-                                <TableCell sx={{ fontWeight: "bold" }}>Sửa</TableCell>
+                                <TableCell sx={{ fontWeight: 600, color: (theme) => theme.palette.text.primary, padding: '12px 16px' }}>
+                                    Hành động
+                                </TableCell>
                             )}
                         </TableRow>
                     </TableHead>
 
-                    {/* Table Body */}
                     <TableBody>
                         {loading ? (
-                            // Show skeleton rows while loading
                             [...Array(5)].map((_, rowIndex) => (
                                 <TableRow key={rowIndex}>
                                     {title?.map((_, colIndex) => (
                                         <TableCell key={colIndex}>
-                                            <Skeleton variant="text" width="80%" height={20} />
+                                            <Skeleton variant="rectangular" width="90%" height={24} sx={{ borderRadius: 1 }} />
                                         </TableCell>
                                     ))}
                                     {isEdit && (
@@ -292,49 +378,93 @@ export default function CustomTable({ title, data, isEdit, detailNavigate, mutat
                                 </TableRow>
                             ))
                         ) : filteredData?.length > 0 ? (
-                            filteredData?.map((item, rowIndex) => (
-                                <TableRow key={rowIndex}>
-                                    {title?.map((col, colIndex) => {
-                                        const rawValue = getValueByPath(item, col.key);
-                                        console.log(item?.status)
-                                        return (
-                                            <TableCell
-                                                key={colIndex}
-                                                onClick={() => navigate(detailNavigate)}
-                                                sx={{
-                                                    cursor: detailNavigate ? "pointer" : "default",
-                                                }}
-                                            >
-                                                <Typography sx={{
-                                                    padding: '0.4rem 0.6rem',
-                                                    borderRadius: '0.4rem',
-                                                    textTransform: "capitalize",
-                                                    ...getStatusStyle(rawValue),
-                                                }}>
-                                                    {formatValue(col.key, rawValue)}
-                                                </Typography>
+                            // Hiển thị Dữ liệu
+                            filteredData?.map((item, rowIndex) => {
+                                const getStatusStyleMui = (value) => {
+                                    const lowerValue = String(value).toLowerCase();
+                                    switch (lowerValue) {
+                                        case "active":
+                                            return { background: '#e8f5e9', color: '#388e3c' };
+                                        case "inactive":
+                                            return { background: '#fff3e0', color: '#f57c00' };
+                                        case "pending":
+                                            return { background: '#ffebee', color: '#d32f2f' };
+                                        default:
+                                            return { background: (theme) => theme.palette.grey[100], color: (theme) => theme.palette.text.secondary };
+                                    }
+                                };
+                                return (
+                                    <TableRow
+                                        key={rowIndex}
+                                        sx={{
+                                            '&:last-child td': { borderBottom: 'none' },
+                                            '&:hover': {
+                                                backgroundColor: detailNavigate ? (theme) => theme.palette.action.hover : 'inherit'
+                                            },
+                                        }}
+                                    >
+                                        {title?.map((col, colIndex) => {
+                                            const rawValue = getValueByPath(item, col.key);
+                                            const isStatusField = col.key.toLowerCase().includes('status');
+                                            const cellContent = formatValue(col.key, rawValue);
+                                            const statusStyles = isStatusField ? getStatusStyleMui(rawValue) : {};
+
+                                            return (
+                                                <TableCell
+                                                    key={colIndex}
+                                                    onClick={() => detailNavigate && navigate(detailNavigate)}
+                                                    sx={{
+                                                        cursor: detailNavigate ? "pointer" : "default",
+                                                    }}
+                                                >
+                                                    <Typography
+                                                        variant="body2"
+                                                        component="span"
+                                                        sx={{
+                                                            ...(isStatusField ? {
+                                                                padding: '4px 10px', 
+                                                                borderRadius: '16px', 
+                                                                fontWeight: 500,
+                                                                textTransform: "capitalize",
+                                                                ...statusStyles,
+                                                                display: 'inline-block',
+                                                            } : {}),
+                                                            color: isStatusField ? statusStyles.color : (theme) => theme.palette.text.secondary
+                                                        }}
+                                                    >
+                                                        {cellContent}
+                                                    </Typography>
+                                                </TableCell>
+                                            );
+                                        })}
+                                        {isEdit && (
+                                            <TableCell>
+                                                <Row gap={'0.5rem'}>
+                                                    <EditButton
+                                                        onClick={() => handleOpenEdit(item)}
+                                                        sx={{ '& svg': { fontSize: '1.1rem' } }}
+                                                    >
+                                                        <ModeEditOutlineOutlinedIcon />
+                                                    </EditButton>
+                                                    <DeleteButton
+                                                        onClick={() => handleDelete(item?._id)}
+                                                        sx={{ '& svg': { fontSize: '1.1rem' } }}
+                                                    >
+                                                        <DeleteOutlineOutlinedIcon />
+                                                    </DeleteButton>
+                                                </Row>
                                             </TableCell>
-                                        );
-                                    })}
-                                    {isEdit && (
-                                        <TableCell>
-                                            <Row>
-                                                <EditButton onClick={() => handleOpenEdit(item)}>
-                                                    <ModeEditOutlineOutlinedIcon />
-                                                </EditButton>
-                                                <DeleteButton onClick={() => handleDelete(item?._id)}>
-                                                    <DeleteOutlineOutlinedIcon />
-                                                </DeleteButton>
-                                            </Row>
-                                        </TableCell>
-                                    )}
-                                </TableRow>
-                            ))
+                                        )}
+                                    </TableRow>
+                                );
+                            })
                         ) : (
-                            // No data case
+                            // Trường hợp không có dữ liệu
                             <TableRow>
                                 <TableCell colSpan={title?.length + (isEdit ? 1 : 0)} align="center">
-                                    No data available
+                                    <Typography variant="body1" sx={{ color: 'text.secondary', py: 3 }}>
+                                        Không có dữ liệu nào phù hợp.
+                                    </Typography>
                                 </TableCell>
                             </TableRow>
                         )}

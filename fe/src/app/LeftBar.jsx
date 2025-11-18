@@ -85,90 +85,73 @@ export default function LeftBar({ open, onClose, drawerWidth }) {
             sx={(theme) => ({
                 width: drawerWidth,
                 flexShrink: 0,
-
-                // ✅ Hide drawer on smaller screens (<1200px)
-                [theme.breakpoints.down(1080)]: {
-                    display: "none",
-                },
-                "& .MuiDivider-root": {
-                    borderBottomWidth: 0,
-                },
+                [theme.breakpoints.down(1080)]: { display: "none" },
                 "& .MuiDrawer-paper": {
                     width: drawerWidth,
                     boxSizing: "border-box",
                     background: THEME.MENU_BACKGROUND,
                     borderRight: "none",
                 },
-            })}>
-            <Box sx={{ padding: '2rem' }}>
-                {/* <Box sx={{ borderBottom: '1px solid #FFFFFF1A' }}>
-                    <img
-                        onClick={() => { navigate(ROUTES.HOME) }}
-                        src={null}
-                        style={{
-                            minWidth: '23.2rem',
-                            minHeight: '3.9rem',
-                            padding: '0rem 0rem 1.6rem 1.2rem',
-                            cursor: 'pointer'
-                        }} />
-                </Box> */}
-                <List>
-                    <Box
-                        sx={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            cursor: 'pointer',
-                            gap: '0.4rem',
-                            cursor: 'pointer',
-                            padding: '8px 16px'
-                        }}
-                        onClick={() => {
-                            changeLanguage(langSelect == LANGUAGE_CODE_EN
-                                ? LANGUAGE_CODE_VI : LANGUAGE_CODE_EN)
-                        }}>
-                        <TranslateIcon />
-                        <Typography>{langSelect == LANGUAGE_CODE_EN ? "Tiếng Anh" : "Tiếng Việt"}</Typography>
-                    </Box>
+            })}
+        >
+            <Box sx={{ p: 3, display: "flex", flexDirection: "column", height: "100%" }}>
+                {/* Language switch */}
+                <Box
+                    sx={{ display: "flex", alignItems: "center", gap: 1, mb: 2, cursor: "pointer" }}
+                    onClick={() =>
+                        changeLanguage(
+                            langSelect === LANGUAGE_CODE_EN ? LANGUAGE_CODE_VI : LANGUAGE_CODE_EN
+                        )
+                    }
+                >
+                    <TranslateIcon />
+                    <Typography>{langSelect === LANGUAGE_CODE_EN ? "Tiếng Anh" : "Tiếng Việt"}</Typography>
+                </Box>
+
+                <Divider sx={{ mb: 2 }} />
+
+                {/* Menu Items */}
+                <List sx={{ flexGrow: 1 }}>
                     {menuItems
-                        .filter((item) => item?.role == role)
+                        .filter((item) => item.role === role)
                         .map((item) => (
                             <ListItem key={item.text} disablePadding>
                                 <ListItemButton
-                                    onClick={() => {
+                                    onClick={() =>
                                         navigate({
                                             pathname: item.path,
                                             search: item.search,
-                                        });
-                                    }}>
-                                    <ListItemIcon sx={{
-                                        color: THEME.SECONDARY_TEXT_BUTTON
-                                    }}>{item.icon}</ListItemIcon>
-                                    <ListItemText sx={{
-                                        color: THEME.SECONDARY_TEXT_BUTTON
-                                    }} primary={item.text} />
+                                        })
+                                    }
+                                >
+                                    <ListItemIcon sx={{ color: THEME.SECONDARY_TEXT_BUTTON }}>
+                                        {item.icon}
+                                    </ListItemIcon>
+                                    <ListItemText
+                                        primary={item.text}
+                                        sx={{ color: THEME.SECONDARY_TEXT_BUTTON }}
+                                    />
                                 </ListItemButton>
                             </ListItem>
                         ))}
                 </List>
+
+                <Divider sx={{ my: 2 }} />
+
+                {/* Logout */}
                 <Box
+                    sx={{ display: "flex", alignItems: "center", gap: 1, cursor: "pointer" }}
                     onClick={() => {
                         localStorage.removeItem("token");
                         navigate({ pathname: ROUTES.LOGIN });
                     }}
-                    sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        cursor: 'pointer',
-                        gap: '0.4rem',
-                    }}
                 >
                     <IconButton sx={{ color: THEME.SECONDARY_TEXT_BUTTON }}>
-                        {/* Có thể thay icon logout */}
+                        {/* <LogOut /> */}
                     </IconButton>
-                    <Typography variant="12400" sx={{ color: THEME.SECONDARY_TEXT_BUTTON }}>Đăng xuất</Typography>
+                    <Typography sx={{ color: THEME.SECONDARY_TEXT_BUTTON }}>Đăng xuất</Typography>
                 </Box>
             </Box>
-            <Divider />
         </Drawer>
     );
 }
