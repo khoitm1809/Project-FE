@@ -42,7 +42,7 @@ import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 import LanguageOutlinedIcon from '@mui/icons-material/LanguageOutlined';
 
 
-export default function LeftBar({ open, onClose, drawerWidth }) {
+export default function LeftBar({ open, onClose, drawerWidth, isMobile }) {
     const navigate = useNavigate();
     const [langSelect, setlangSelect] = useState(localStorage.getItem(LOCAL_STORAGE_NAME.LANGUAGE))
     const role = localStorage.getItem("role");
@@ -83,34 +83,20 @@ export default function LeftBar({ open, onClose, drawerWidth }) {
 
     return (
         <Drawer
-            variant="persistent"
+            variant={isMobile ? "temporary" : "persistent"}
             anchor="left"
             open={open}
-            sx={(theme) => ({
+            onClose={onClose}  
+            sx={{
                 width: drawerWidth,
-                flexShrink: 0,
-                [theme.breakpoints.down(1080)]: { display: "none" },
                 "& .MuiDrawer-paper": {
                     width: drawerWidth,
-                    boxSizing: "border-box",
                     background: THEME.MENU_BACKGROUND,
-                    borderRight: "none",
+                    boxSizing: "border-box",
                 },
-            })}
+            }}
         >
             <Box sx={{ p: 3, display: "flex", flexDirection: "column", height: "100%" }}>
-                {/* Language switch */}
-                {/* <Box
-                    sx={{ display: "flex", alignItems: "center", gap: 1, mb: 2, cursor: "pointer" }}
-                    onClick={() =>
-                        changeLanguage(
-                            langSelect === LANGUAGE_CODE_EN ? LANGUAGE_CODE_VI : LANGUAGE_CODE_EN
-                        )
-                    }
-                >
-                    <TranslateIcon />
-                    <Typography>{langSelect === LANGUAGE_CODE_EN ? "Tiếng Anh" : "Tiếng Việt"}</Typography>
-                </Box> */}
                 <Box
                     display="flex"
                     alignItems="center"
