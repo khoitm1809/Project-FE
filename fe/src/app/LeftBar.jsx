@@ -10,6 +10,7 @@ import {
     Button,
     IconButton,
     Typography,
+    Avatar,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "../router/routerConstants";
@@ -37,6 +38,9 @@ import { useEffect, useState } from "react";
 import TranslateIcon from "@mui/icons-material/Translate";
 import { LANGUAGE_CODE_EN, LANGUAGE_CODE_VI, LOCAL_STORAGE_NAME } from "../utils/constant";
 import i18next from "i18next";
+import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
+import LanguageOutlinedIcon from '@mui/icons-material/LanguageOutlined';
+
 
 export default function LeftBar({ open, onClose, drawerWidth }) {
     const navigate = useNavigate();
@@ -96,7 +100,7 @@ export default function LeftBar({ open, onClose, drawerWidth }) {
         >
             <Box sx={{ p: 3, display: "flex", flexDirection: "column", height: "100%" }}>
                 {/* Language switch */}
-                <Box
+                {/* <Box
                     sx={{ display: "flex", alignItems: "center", gap: 1, mb: 2, cursor: "pointer" }}
                     onClick={() =>
                         changeLanguage(
@@ -106,7 +110,47 @@ export default function LeftBar({ open, onClose, drawerWidth }) {
                 >
                     <TranslateIcon />
                     <Typography>{langSelect === LANGUAGE_CODE_EN ? "Tiếng Anh" : "Tiếng Việt"}</Typography>
+                </Box> */}
+                <Box
+                    display="flex"
+                    alignItems="center"
+                    gap={2}
+                    mb={3}
+                    p={2}
+                    sx={{
+                        backgroundColor: "grey.50",
+                        borderRadius: 2,
+                    }}
+                >
+                    {/* Avatar */}
+                    <Avatar
+                        src="https://github.com/shadcn.png"
+                        alt="Nguyễn Văn A"
+                        sx={{ width: 48, height: 48 }}
+                    >
+                        NV
+                    </Avatar>
+
+                    {/* Info */}
+                    <Box flex={1} minWidth={0}>
+                        <Typography
+                            variant="body1"
+                            noWrap
+                            sx={{ fontWeight: 500 }}
+                        >
+                            Nguyễn Văn A
+                        </Typography>
+
+                        <Typography
+                            variant="body2"
+                            color="text.secondary"
+                            noWrap
+                        >
+                            admin@example.com
+                        </Typography>
+                    </Box>
                 </Box>
+
 
                 <Divider sx={{ mb: 2 }} />
 
@@ -137,7 +181,18 @@ export default function LeftBar({ open, onClose, drawerWidth }) {
                 </List>
 
                 <Divider sx={{ my: 2 }} />
-
+                {/* Language switch */}
+                <Box
+                    sx={{ display: "flex", alignItems: "center", gap: 1, cursor: "pointer" }}
+                    onClick={() =>
+                        changeLanguage(
+                            langSelect === LANGUAGE_CODE_EN ? LANGUAGE_CODE_VI : LANGUAGE_CODE_EN
+                        )}>
+                    <IconButton sx={{ color: THEME.SECONDARY_TEXT_BUTTON }}>
+                        <LanguageOutlinedIcon />
+                    </IconButton>
+                    <Typography sx={{ color: THEME.SECONDARY_TEXT_BUTTON }}>Tiếng Việt</Typography>
+                </Box>
                 {/* Logout */}
                 <Box
                     sx={{ display: "flex", alignItems: "center", gap: 1, cursor: "pointer" }}
@@ -147,7 +202,7 @@ export default function LeftBar({ open, onClose, drawerWidth }) {
                     }}
                 >
                     <IconButton sx={{ color: THEME.SECONDARY_TEXT_BUTTON }}>
-                        {/* <LogOut /> */}
+                        <LogoutOutlinedIcon />
                     </IconButton>
                     <Typography sx={{ color: THEME.SECONDARY_TEXT_BUTTON }}>Đăng xuất</Typography>
                 </Box>
