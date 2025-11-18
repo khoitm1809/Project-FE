@@ -26,89 +26,89 @@ export const RouterConfig = () => {
             <Route
                 path={ROUTES.HOME}
                 element={
-                    <ProtectedRoute>
+                    // <ProtectedRoute>
                         <Home />
-                    </ProtectedRoute>
+                    // </ProtectedRoute>
                 }
             />
             <Route
                 path={ROUTES.HERD_BREED_MANAGEMENT}
                 element={
-                    <ProtectedRoute>
+                    // <ProtectedRoute>
                         <HerdBreedPage />
-                    </ProtectedRoute>
+                    // </ProtectedRoute>
                 }
             />
             <Route
                 path={ROUTES.BARN}
                 element={
-                    <ProtectedRoute>
+                    // <ProtectedRoute>
                         <BarnPage />
-                    </ProtectedRoute>
+                    // </ProtectedRoute>
                 }
             />
             <Route
                 path={ROUTES.OFF_SPRING}
                 element={
-                    <ProtectedRoute>
+                    // <ProtectedRoute>
                         <OffSpringPage />
-                    </ProtectedRoute>
+                    // </ProtectedRoute>
                 }
             />
             <Route
                 path={ROUTES.INVOICE}
                 element={
-                    <ProtectedRoute>
+                    // <ProtectedRoute>
                         <InvoicePage />
-                    </ProtectedRoute>
+                    // </ProtectedRoute>
                 }
             />
             <Route
                 path={ROUTES.FOOD_WAREHOUSE}
                 element={
-                    <ProtectedRoute>
+                    // <ProtectedRoute>
                         <FoodWarehousePage />
-                    </ProtectedRoute>
+                    // </ProtectedRoute>
                 }
             />
             <Route
                 path={ROUTES.MEDITION_WAREHOUSE}
                 element={
-                    <ProtectedRoute>
+                    // <ProtectedRoute>
                         <MeditionWarehousePage />
-                    </ProtectedRoute>
+                    // </ProtectedRoute>
                 }
             />
             <Route
                 path={ROUTES.SETTINGS}
                 element={
-                    <ProtectedRoute>
+                    // <ProtectedRoute>
                         <Settings />
-                    </ProtectedRoute>
+                    // </ProtectedRoute>
                 }
             />
             <Route
                 path={ROUTES.DETAIL_PAGE}
                 element={
-                    <ProtectedRoute>
+                    // <ProtectedRoute>
                         <DetailPage />
-                    </ProtectedRoute>
+                    // </ProtectedRoute>
                 }
             />
             <Route
                 path={ROUTES.LIST_ACCOUNT}
                 element={
-                    <ProtectedRoute>
+                    // <ProtectedRoute>
                         <ListAccount />
-                    </ProtectedRoute>
+                    // </ProtectedRoute>
                 }
             />
             <Route
                 path={ROUTES.SERVICE_PACKAGES}
                 element={
-                    <ProtectedRoute>
+                    // <ProtectedRoute>
                         <ServicePackages />
-                    </ProtectedRoute>
+                    // </ProtectedRoute>
                 }
             />
 

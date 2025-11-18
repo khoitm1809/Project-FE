@@ -2,36 +2,25 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { useLocation, useNavigate } from 'react-router';
-import { Box, Typography, useMediaQuery } from "@mui/material";
-import { Column, MainButton, Row, TextFieldStyle } from '../components/commonStyled';
+import { Box, Button, Checkbox, FormControlLabel, InputAdornment, Link, Paper, TextField, Typography, useMediaQuery } from "@mui/material";
 import { ROUTES } from '../router/routerConstants';
-import styled from '@emotion/styled';
-import pigFarm from '../assets/pigFarm.avif'
-import { ROLES } from "../utils/rolesConstant";
-import { THEME } from "../utils/ThemeConstants";
 import { useUserLoginMutation } from "../store/auth/authAction";
 import { useConfirmDialog } from "../components/confirmDialog";
-import { LANGUAGE_CODE_EN, LANGUAGE_CODE_VI, LOCAL_STORAGE_NAME, MESSAGE_TYPE } from "../utils/constant";
+import { LOCAL_STORAGE_NAME, MESSAGE_TYPE } from "../utils/constant";
 import { useTranslation } from "react-i18next";
 import i18next from "i18next";
-import TranslateIcon from "@mui/icons-material/Translate";
-
-
-const ChildBox = styled(Box)(({ theme }) => ({
-    height: '100vh',
-}));
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
+import LanguageOutlinedIcon from '@mui/icons-material/LanguageOutlined';
 
 function LoginPage() {
     const [langSelect, setlangSelect] = useState(localStorage.getItem(LOCAL_STORAGE_NAME.LANGUAGE))
     const { t } = useTranslation();
     const location = useLocation();
     const [loginUser] = useUserLoginMutation();
-    const isMobile = useMediaQuery("(max-width:1080px)");
     const navigate = useNavigate();
-    const registered = location.state?.registered;
-    const dispatch = useDispatch();
     const { openDialog } = useConfirmDialog()
-    // ✅ React Hook Form
+
     const {
         register,
         handleSubmit,
@@ -71,87 +60,183 @@ function LoginPage() {
 
 
     return (
-        <Row>
-            <ChildBox
+        <Box
+            sx={{
+                minHeight: "100vh",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                background: "#dde0ffff",
+                p: 2,
+            }}>
+            <Paper
+                elevation={4}
                 sx={{
-                    background: THEME.MENU_BACKGROUND,
-                    display: isMobile ? "none" : "block",
                     width: "50%",
-                }}
-            >
-                <Column sx={{ justifyContent: "center", alignItems: "center", height: "100%", gap: "2rem" }}>
-                    <Typography variant="18800" color={THEME.MAIN_TEXT_BUTTON}>
-                        Pig Farm
-                    </Typography>
-                    <img src={pigFarm} style={{ width: "90%", borderRadius: "1.2rem" }} alt="Pig farm" />
-                </Column>
-            </ChildBox>
-
-            <ChildBox sx={{ width: isMobile ? "100%" : "50%" }}>
-                <Box
-                    onClick={() => { changeLanguage(langSelect == LANGUAGE_CODE_EN ? LANGUAGE_CODE_VI : LANGUAGE_CODE_EN) }}
-                    sx={{
-                        display: 'flex',
-                        justifyContent: 'flex-end',
-                        width: '100%', padding: '1rem',
-                        cursor: 'pointer'
-                    }}>
-                    <TranslateIcon />
+                    maxWidth: 500,
+                    p: 4,
+                    borderRadius: 3,
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    gap: 2,
+                    background: "#FFFFF",
+                }}>
+                <Box sx={{ width: '100%', display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '0.2rem' }}>
+                    <LanguageOutlinedIcon />
+                    <Typography>Tiếng Việt</Typography>
                 </Box>
-                <Column sx={{ justifyContent: "center", alignItems: "center", height: "80%", gap: "4rem" }}>
-                    <Box>
-                        <Typography variant="18700" color={THEME.SECONDARY_TEXT_BUTTON}>
-                            {registered ? t("login.registerSuccess") : t("login.welcomeBack")}
-                        </Typography>
-                    </Box>
+                {/* Icon circle */}
+                <Box
+                    sx={{
+                        width: 70,
+                        height: 70,
+                        borderRadius: "50%",
+                        backgroundColor: "#2563eb",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                    }}
+                >
+                    <LockOutlinedIcon sx={{ color: "#fff", width: 32, height: 32 }} />
+                </Box>
 
-                    {/* ✅ Login Form */}
-                    <form onSubmit={handleSubmit(onSubmit)} style={{ width: "50%" }}>
-                        <Column sx={{ gap: "1rem" }}>
-                            <TextFieldStyle
-                                placeholder="Tên đăng nhập"
-                                {...register("email", { required: "Vui lòng nhập tên đăng nhập" })}
+                {/* Title */}
+                <Box sx={{ textAlign: "center" }}>
+                    <Typography variant="h5" fontWeight={700}>
+                        Đăng nhập
+                    </Typography>
+
+                    <Typography
+                        variant="body2"
+                        sx={{ marginTop: "0.5rem" }}
+                    >
+                        Nhập thông tin để truy cập hệ thống
+                    </Typography>
+                </Box>
+
+                {/* FORM */}
+                <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ width: "70%" }}>
+                    <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+                        {/* EMAIL */}
+                        <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+                            <Typography variant="body2" >
+                                Email
+                            </Typography>
+
+                            <TextField
+                                fullWidth
+                                placeholder="admin@example.com"
+                                {...register("email", { required: "Vui lòng nhập email" })}
                                 error={!!errors.email}
+                                helperText={errors.email?.message}
+                                InputProps={{
+                                    startAdornment: (
+                                        <InputAdornment position="start">
+                                            <EmailOutlinedIcon sx={{ color: "gray" }} />
+                                        </InputAdornment>
+                                    ),
+                                }}
+                                sx={{
+                                    input: { color: "black" },
+                                    "& .MuiOutlinedInput-root": {
+                                        "& fieldset": { borderColor: "black" },
+                                        "&:hover fieldset": { borderColor: "#black" },
+                                        "&.Mui-focused fieldset": { borderColor: "#black" },
+                                    },
+                                }}
                             />
-                            {errors.email && (
-                                <Typography variant="10400" color="red">
-                                    {errors.email.message}
-                                </Typography>
-                            )}
+                        </Box>
 
-                            <TextFieldStyle
-                                placeholder="Mật khẩu"
+                        {/* PASSWORD */}
+                        <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+                            <Typography variant="body2" color="black">
+                                Mật khẩu
+                            </Typography>
+
+                            <TextField
+                                fullWidth
+                                placeholder="••••••••"
                                 type="password"
                                 {...register("password", { required: "Vui lòng nhập mật khẩu" })}
                                 error={!!errors.password}
+                                helperText={errors.password?.message}
+                                InputProps={{
+                                    startAdornment: (
+                                        <InputAdornment position="start">
+                                            <LockOutlinedIcon sx={{ color: "gray" }} />
+                                        </InputAdornment>
+                                    ),
+                                }}
+                                sx={{
+                                    input: { color: "black" },
+                                    "& .MuiOutlinedInput-root": {
+                                        "& fieldset": { borderColor: "black" },
+                                        "&:hover fieldset": { borderColor: "black" },
+                                        "&.Mui-focused fieldset": { borderColor: "black" },
+                                    },
+                                }}
                             />
-                            {errors.password && (
-                                <Typography variant="10400" color="red">
-                                    {errors.password.message}
-                                </Typography>
-                            )}
+                        </Box>
 
-                            <Row sx={{ gap: "0.5rem", justifyContent: "flex-end" }}>
-                                <Typography variant="12400" color={THEME.SECONDARY_TEXT_BUTTON}>
-                                    Chưa có tài khoản?
-                                </Typography>
-                                <Typography
-                                    variant="12400"
-                                    sx={{ color: THEME.SECONDARY_TEXT_BUTTON, cursor: "pointer", textDecoration: "underline" }}
-                                    onClick={() => navigate(ROUTES.REGISTER)}
-                                >
-                                    Đăng ký
-                                </Typography>
-                            </Row>
-                        </Column>
+                        {/* REMEMBER + FORGOT */}
+                        <Box
+                            sx={{
+                                display: "flex",
+                                justifyContent: "space-between",
+                                alignItems: "center",
+                            }}
+                        >
+                            <FormControlLabel
+                                control={<Checkbox sx={{ color: "black" }} />}
+                                label={
+                                    <Typography variant="body2" color="black">
+                                        Ghi nhớ đăng nhập
+                                    </Typography>
+                                }
+                            />
 
-                        <MainButton sx={{ width: "100%", marginTop: "2rem" }} type="submit" disabled={isSubmitting}>
+                            <Link
+                                underline="hover"
+                                sx={{ color: "#2563eb", cursor: "pointer" }}
+                            >
+                                Quên mật khẩu?
+                            </Link>
+                        </Box>
+
+                        {/* BUTTON */}
+                        <Button
+                            type="submit"
+                            variant="contained"
+                            fullWidth
+                            disabled={isSubmitting}
+                            sx={{ mt: 2 }}
+                        >
                             {isSubmitting ? "Đang đăng nhập..." : "Đăng nhập"}
-                        </MainButton>
-                    </form>
-                </Column>
-            </ChildBox>
-        </Row>
+                        </Button>
+                    </Box>
+                </Box>
+
+                {/* REGISTER */}
+                <Box sx={{ display: "flex", gap: 1 }}>
+                    <Typography variant="body2" color="black">
+                        Chưa có tài khoản?
+                    </Typography>
+
+                    <Typography
+                        variant="body2"
+                        sx={{
+                            color: "#2563eb",
+                            cursor: "pointer",
+                            textDecoration: "underline",
+                        }}
+                        onClick={() => navigate("/register")}
+                    >
+                        Đăng ký ngay
+                    </Typography>
+                </Box>
+            </Paper>
+        </Box>
     )
 }
 
