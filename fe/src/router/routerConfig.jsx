@@ -15,6 +15,7 @@ import MeditionWarehousePage from "../pages/warehouse/meditionWarehousePage";
 import InvoicePage from "../pages/invoice/invoicePage";
 import ProtectedRoute from "./ProtectedRoute";
 import ListUserPage from "../pages/users/listUserPage";
+import { ProfilePage } from "../pages/profile/profilePage";
 
 export const RouterConfig = () => {
     return (
@@ -29,6 +30,16 @@ export const RouterConfig = () => {
                 element={
                     <ProtectedRoute>
                         <Home />
+                    </ProtectedRoute>
+                }
+            />
+
+            {/* Profile page */}
+            <Route
+                path={ROUTES.PROFILE}
+                element={
+                    <ProtectedRoute>
+                        <ProfilePage />
                     </ProtectedRoute>
                 }
             />

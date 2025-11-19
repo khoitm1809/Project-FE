@@ -447,7 +447,7 @@ export default function CustomTable({ title, data, isEdit, detailNavigate, mutat
                                                         <ModeEditOutlineOutlinedIcon />
                                                     </EditButton>
                                                     <DeleteButton
-                                                        onClick={() => handleDelete(item?._id)}
+                                                        onClick={() => handleDelete(item?.id)}
                                                         sx={{ '& svg': { fontSize: '1.1rem' } }}
                                                     >
                                                         <DeleteOutlineOutlinedIcon />

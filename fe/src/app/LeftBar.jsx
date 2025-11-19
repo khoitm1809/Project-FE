@@ -18,9 +18,6 @@ import { ROLES } from '../utils/rolesConstant'
 import { useSelector } from "react-redux";
 
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
-import PhotoCameraFrontOutlinedIcon from '@mui/icons-material/PhotoCameraFrontOutlined';
-import HomeRepairServiceOutlinedIcon from '@mui/icons-material/HomeRepairServiceOutlined';
-import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import GroupAddOutlinedIcon from '@mui/icons-material/GroupAddOutlined';
 import AgricultureOutlinedIcon from '@mui/icons-material/AgricultureOutlined';
 import SoupKitchenOutlinedIcon from '@mui/icons-material/SoupKitchenOutlined';
@@ -56,11 +53,6 @@ export default function LeftBar({ open, onClose, drawerWidth, isMobile }) {
 
     }, [role])
     const menuItems = [
-        //adm
-        // { text: "Home", icon: <HomeOutlinedIcon />, path: ROUTES.HOME, role: ROLES.ADMIN },
-        // { text: "Quản lý tài khoản", icon: <PhotoCameraFrontOutlinedIcon />, path: ROUTES.LIST_ACCOUNT, role: ROLES.ADMIN },
-        // { text: "Quản lý gói dịch vụ", icon: <HomeRepairServiceOutlinedIcon />, path: ROUTES.SERVICE_PACKAGES, role: ROLES.ADMIN },
-        // { text: "Settings", icon: <SettingsOutlinedIcon />, path: ROUTES.SETTINGS, role: ROLES.ADMIN },
         // chu trai
         { text: "Home", icon: <HomeOutlinedIcon />, path: ROUTES.HOME, role: ROLES.OWNER },
         { text: "Tạo tài khoản cho nhân công", icon: <GroupAddOutlinedIcon />, path: ROUTES.LIST_USER, role: ROLES.OWNER },
@@ -97,13 +89,14 @@ export default function LeftBar({ open, onClose, drawerWidth, isMobile }) {
                 },
             }}
         >
-            <Box sx={{ p: 3, display: "flex", flexDirection: "column", height: "100%" }}>
+            <Box sx={{ p: 3, display: "flex", flexDirection: "column", height: "100%", cursor: 'pointer' }}>
                 <Box
                     display="flex"
                     alignItems="center"
                     gap={2}
                     mb={3}
                     p={2}
+                    onClick={() => navigate(ROUTES.PROFILE)}
                     sx={{
                         backgroundColor: "grey.50",
                         borderRadius: 2,
