@@ -16,6 +16,17 @@ export const authApi = createApi({
                 data: body,
             }),
         }),
+
+        getUserRole: builder.query({
+            query: (params) => ({
+                url: API_URL.ROLE,
+                method: 'GET',
+                params: {
+                    ...params,
+                },
+            }),
+        }),
+
         userRegister: builder.mutation({
             query: (body) => ({
                 url: API_URL.REGISTER,
@@ -27,4 +38,4 @@ export const authApi = createApi({
     }),
 });
 
-export const { useUserLoginMutation, useUserRegisterMutation } = authApi;
+export const { useUserLoginMutation, useLazyGetUserRoleQuery, useUserRegisterMutation } = authApi;

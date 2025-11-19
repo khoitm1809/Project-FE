@@ -4,7 +4,7 @@ import { useDispatch } from "react-redux";
 import { useLocation, useNavigate } from 'react-router';
 import { Box, Button, Checkbox, FormControlLabel, InputAdornment, Link, Paper, TextField, Typography, useMediaQuery } from "@mui/material";
 import { ROUTES } from '../router/routerConstants';
-import { useUserLoginMutation } from "../store/auth/authAction";
+import { useLazyGetUserRoleQuery, useUserLoginMutation } from "../store/auth/authAction";
 import { useConfirmDialog } from "../components/confirmDialog";
 import { LOCAL_STORAGE_NAME, MESSAGE_TYPE } from "../utils/constant";
 import { useTranslation } from "react-i18next";
@@ -20,14 +20,14 @@ function LoginPage() {
     const [loginUser] = useUserLoginMutation();
     const navigate = useNavigate();
     const { openDialog } = useConfirmDialog()
-
+    const [getUserRole] = useLazyGetUserRoleQuery();
     const {
         register,
         handleSubmit,
         formState: { errors, isSubmitting },
     } = useForm({
         defaultValues: {
-            email: "",
+            identifier: "",
             password: "",
         },
     });
@@ -36,8 +36,13 @@ function LoginPage() {
     const onSubmit = async (data) => {
         try {
             const res = await loginUser(data).unwrap();
-            localStorage.setItem("token", res.token);
-            localStorage.setItem("role", res.user.role);
+
+            localStorage.setItem(LOCAL_STORAGE_NAME.TOKEN, res.jwt);
+
+            const roleRes = await getUserRole().unwrap();
+            localStorage.setItem("role", roleRes.role.type);
+
+            // 5. Chuyển trang
             navigate(ROUTES.HOME);
         } catch (err) {
             openDialog({
@@ -127,7 +132,7 @@ function LoginPage() {
                             <TextField
                                 fullWidth
                                 placeholder="admin@example.com"
-                                {...register("email", { required: "Vui lòng nhập email" })}
+                                {...register("identifier", { required: "Vui lòng nhập email" })}
                                 error={!!errors.email}
                                 helperText={errors.email?.message}
                                 InputProps={{

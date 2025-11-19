@@ -183,7 +183,8 @@ export default function LeftBar({ open, onClose, drawerWidth, isMobile }) {
                 <Box
                     sx={{ display: "flex", alignItems: "center", gap: 1, cursor: "pointer" }}
                     onClick={() => {
-                        localStorage.removeItem("token");
+                        localStorage.removeItem("access_token");
+                        localStorage.removeItem("role");
                         navigate({ pathname: ROUTES.LOGIN });
                     }}
                 >
