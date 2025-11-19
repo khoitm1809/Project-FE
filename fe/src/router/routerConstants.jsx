@@ -12,4 +12,5 @@ export const ROUTES = {
   FOOD_WAREHOUSE: "/foodWarehouse",
   MEDITION_WAREHOUSE: "/meditionWarehouse",
   INVOICE: "/invoice",
+  LIST_USER: "/list-user"
 };

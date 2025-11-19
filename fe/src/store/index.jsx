@@ -11,27 +11,25 @@ import { invoiceApi } from "./invoice/invoiceAction";
 import { serviceApi } from "./service/serviceAction";
 
 const persistConfig = {
-    key: 'root',
+    key: "auth",
     storage,
+    whitelist: ["auth"], 
 };
 
 const rootReducer = combineReducers({
     auth: authReducer,
+    [authApi.reducerPath]: authApi.reducer,
+    [breedingApi.reducerPath]: breedingApi.reducer,
+    [offSpringApi.reducerPath]: offSpringApi.reducer,
+    [warehouseApi.reducerPath]: warehouseApi.reducer,
+    [invoiceApi.reducerPath]: invoiceApi.reducer,
+    [serviceApi.reducerPath]: serviceApi.reducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 export const store = configureStore({
-    reducer: {
-        ...persistedReducer,
-        [authApi.reducerPath]: authApi.reducer,
-        [breedingApi.reducerPath]: breedingApi.reducer,
-        [offSpringApi.reducerPath]: offSpringApi.reducer,
-        [warehouseApi.reducerPath]: warehouseApi.reducer,
-        [invoiceApi.reducerPath]: invoiceApi.reducer,
-        [serviceApi.reducerPath]: serviceApi.reducer,
-        auth: authReducer,
-    },
+    reducer: persistedReducer,
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({
             serializableCheck: false,
@@ -43,8 +41,7 @@ export const store = configureStore({
             invoiceApi.middleware,
             serviceApi.middleware
         ),
-})
-
+});
 
 export const persistor = persistStore(store);
 export default store;

@@ -341,7 +341,7 @@ export default function CustomTable({ title, data, isEdit, detailNavigate, mutat
 
                     <TableHead>
                         <TableRow sx={{ backgroundColor: (theme) => theme.palette.grey[50] }}> 
-                            {title?.map((col, i) => (
+                            {title?.filter(col => col.key !== "password")?.map((col, i) => (
                                 <TableCell
                                     key={i}
                                     sx={{
@@ -403,7 +403,7 @@ export default function CustomTable({ title, data, isEdit, detailNavigate, mutat
                                             },
                                         }}
                                     >
-                                        {title?.map((col, colIndex) => {
+                                        {title?.filter(col => col.key !== "password")?.map((col, colIndex) => {
                                             const rawValue = getValueByPath(item, col.key);
                                             const isStatusField = col.key.toLowerCase().includes('status');
                                             const cellContent = formatValue(col.key, rawValue);

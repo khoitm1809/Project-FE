@@ -1,6 +1,7 @@
 export const API_URL = {
   LOGIN: '/api/auth/local',
   ROLE: 'api/users/me?populate=role',
+  LIST_USER: '/api/users',
   REGISTER: '/api/auth/register',
   BREEDING: '/api/breedingarea',
   BARN: '/api/barn',

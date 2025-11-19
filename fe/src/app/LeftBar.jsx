@@ -43,6 +43,7 @@ import LanguageOutlinedIcon from '@mui/icons-material/LanguageOutlined';
 
 
 export default function LeftBar({ open, onClose, drawerWidth, isMobile }) {
+    const user = useSelector((state) => state.auth.user);
     const navigate = useNavigate();
     const [langSelect, setlangSelect] = useState(localStorage.getItem(LOCAL_STORAGE_NAME.LANGUAGE))
     const role = localStorage.getItem("role");
@@ -56,20 +57,20 @@ export default function LeftBar({ open, onClose, drawerWidth, isMobile }) {
     }, [role])
     const menuItems = [
         //adm
-        { text: "Home", icon: <HomeOutlinedIcon />, path: ROUTES.HOME, role: ROLES.ADMIN },
-        { text: "Quản lý tài khoản", icon: <PhotoCameraFrontOutlinedIcon />, path: ROUTES.LIST_ACCOUNT, role: ROLES.ADMIN },
-        { text: "Quản lý gói dịch vụ", icon: <HomeRepairServiceOutlinedIcon />, path: ROUTES.SERVICE_PACKAGES, role: ROLES.ADMIN },
-        { text: "Settings", icon: <SettingsOutlinedIcon />, path: ROUTES.SETTINGS, role: ROLES.ADMIN },
+        // { text: "Home", icon: <HomeOutlinedIcon />, path: ROUTES.HOME, role: ROLES.ADMIN },
+        // { text: "Quản lý tài khoản", icon: <PhotoCameraFrontOutlinedIcon />, path: ROUTES.LIST_ACCOUNT, role: ROLES.ADMIN },
+        // { text: "Quản lý gói dịch vụ", icon: <HomeRepairServiceOutlinedIcon />, path: ROUTES.SERVICE_PACKAGES, role: ROLES.ADMIN },
+        // { text: "Settings", icon: <SettingsOutlinedIcon />, path: ROUTES.SETTINGS, role: ROLES.ADMIN },
         // chu trai
         { text: "Home", icon: <HomeOutlinedIcon />, path: ROUTES.HOME, role: ROLES.OWNER },
-        { text: "Tạo tài khoản cho nhân công", icon: <GroupAddOutlinedIcon />, path: ROUTES.HOME, role: ROLES.OWNER },
+        { text: "Tạo tài khoản cho nhân công", icon: <GroupAddOutlinedIcon />, path: ROUTES.LIST_USER, role: ROLES.OWNER },
         { text: "Quản lý giống và đàn lợn", icon: <AgricultureOutlinedIcon />, path: ROUTES.OFF_SPRING, role: ROLES.OWNER },
         { text: "Quản lý khu và chuồng nuôi", icon: <AgricultureOutlinedIcon />, path: ROUTES.HERD_BREED_MANAGEMENT, role: ROLES.OWNER },
         { text: "Thiết lập thức ăn và dinh dưỡng", icon: <SoupKitchenOutlinedIcon />, path: ROUTES.HOME, role: ROLES.OWNER },
         { text: "Quản lý hóa đơn nhập hàng", icon: <InventoryOutlinedIcon />, path: ROUTES.INVOICE, role: ROLES.OWNER },
         { text: "Quản lý  kho hàng hóa", icon: <WarehouseOutlinedIcon />, path: ROUTES.FOOD_WAREHOUSE, role: ROLES.OWNER },
         { text: "Giao việc cho công nhân", icon: <ContactMailOutlinedIcon />, path: ROUTES.HOME, role: ROLES.OWNER },
-        { text: "Mua gói dịch vụ", icon: <HomeRepairServiceOutlinedIcon />, path: ROUTES.HOME, role: ROLES.OWNER },
+        // { text: "Mua gói dịch vụ", icon: <HomeRepairServiceOutlinedIcon />, path: ROUTES.HOME, role: ROLES.OWNER },
         // cong nhan
         { text: "Home", icon: <HomeOutlinedIcon />, path: ROUTES.HOME, role: ROLES.WORKER },
         { text: "Nhập nguồn gốc giống lợn", icon: <UploadFileOutlinedIcon />, path: ROUTES.HOME, role: ROLES.WORKER },
@@ -86,7 +87,7 @@ export default function LeftBar({ open, onClose, drawerWidth, isMobile }) {
             variant={isMobile ? "temporary" : "persistent"}
             anchor="left"
             open={open}
-            onClose={onClose}  
+            onClose={onClose}
             sx={{
                 width: drawerWidth,
                 "& .MuiDrawer-paper": {
@@ -124,7 +125,7 @@ export default function LeftBar({ open, onClose, drawerWidth, isMobile }) {
                             noWrap
                             sx={{ fontWeight: 500 }}
                         >
-                            Nguyễn Văn A
+                            {user?.username}
                         </Typography>
 
                         <Typography
@@ -132,7 +133,12 @@ export default function LeftBar({ open, onClose, drawerWidth, isMobile }) {
                             color="text.secondary"
                             noWrap
                         >
-                            admin@example.com
+                            {user?.email}
+                        </Typography>
+                        <Typography
+                            variant="body2"
+                            color="text.secondary">
+                            {role}
                         </Typography>
                     </Box>
                 </Box>

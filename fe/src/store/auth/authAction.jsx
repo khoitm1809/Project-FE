@@ -27,6 +27,16 @@ export const authApi = createApi({
             }),
         }),
 
+        getListUser: builder.query({
+            query: (params) => ({
+                url: API_URL.LIST_USER,
+                method: 'GET',
+                params: {
+                    ...params,
+                },
+            }),
+        }),
+
         userRegister: builder.mutation({
             query: (body) => ({
                 url: API_URL.REGISTER,
@@ -35,7 +45,25 @@ export const authApi = createApi({
             }),
         }),
 
+        // edit user
+        editUser: builder.mutation({
+            query: (body) => ({
+                url: API_URL.LIST_USER + "/" + body.id,
+                method: 'PUT',
+                data: body,
+            }),
+        }),
+
+        // delete user
+        deleteUser: builder.mutation({
+            query: (id) => ({
+                url: API_URL.LIST_USER + "/" + id,
+                method: 'DELETE',
+            }),
+        }),
+
+
     }),
 });
 
-export const { useUserLoginMutation, useLazyGetUserRoleQuery, useUserRegisterMutation } = authApi;
+export const { useUserLoginMutation, useLazyGetUserRoleQuery, useGetListUserQuery, useUserRegisterMutation, useDeleteUserMutation, useEditUserMutation } = authApi;

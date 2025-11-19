@@ -12,10 +12,12 @@ import i18next from "i18next";
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import LanguageOutlinedIcon from '@mui/icons-material/LanguageOutlined';
+import { setUser } from "../store/auth/authSlice";
 
 function LoginPage() {
     const [langSelect, setlangSelect] = useState(localStorage.getItem(LOCAL_STORAGE_NAME.LANGUAGE))
     const { t } = useTranslation();
+    const dispatch = useDispatch();
     const location = useLocation();
     const [loginUser] = useUserLoginMutation();
     const navigate = useNavigate();
@@ -41,6 +43,8 @@ function LoginPage() {
 
             const roleRes = await getUserRole().unwrap();
             localStorage.setItem("role", roleRes.role.type);
+
+            dispatch(setUser(res.user));
 
             // 5. Chuyển trang
             navigate(ROUTES.HOME);
@@ -223,7 +227,7 @@ function LoginPage() {
                 </Box>
 
                 {/* REGISTER */}
-                <Box sx={{ display: "flex", gap: 1 }}>
+                {/* <Box sx={{ display: "flex", gap: 1 }}>
                     <Typography variant="body2" color="black">
                         Chưa có tài khoản?
                     </Typography>
@@ -239,7 +243,7 @@ function LoginPage() {
                     >
                         Đăng ký ngay
                     </Typography>
-                </Box>
+                </Box> */}
             </Paper>
         </Box>
     )
