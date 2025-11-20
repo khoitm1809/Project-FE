@@ -246,7 +246,7 @@ export default function CustomTable({ title, data, isEdit, detailNavigate, mutat
                     variant="subtitle1"
                     color="text.secondary"
                 >
-                    Quản lý toàn bộ sản phẩm 
+                    Quản lý toàn bộ sản phẩm
                 </Typography>
             </Box>
 
@@ -290,7 +290,7 @@ export default function CustomTable({ title, data, isEdit, detailNavigate, mutat
                     startIcon={<TuneOutlinedIcon />}
                     sx={{
                         height: "44px",
-                        minWidth: { xs: "100%", sm: "auto" }, 
+                        minWidth: { xs: "100%", sm: "auto" },
                         bgcolor: "#fff",
                         borderColor: "#ccc",
                         color: "#333",
@@ -311,7 +311,7 @@ export default function CustomTable({ title, data, isEdit, detailNavigate, mutat
                     onClick={handleClickOpen}
                     sx={{
                         height: "44px",
-                        width: { xs: "100%", sm: "10rem" }, 
+                        width: { xs: "100%", sm: "10rem" },
                         bgcolor: "#000",
                         color: "#fff",
                         textTransform: "none",
@@ -340,14 +340,14 @@ export default function CustomTable({ title, data, isEdit, detailNavigate, mutat
                 <Table aria-label="customized table">
 
                     <TableHead>
-                        <TableRow sx={{ backgroundColor: (theme) => theme.palette.grey[50] }}> 
+                        <TableRow sx={{ backgroundColor: (theme) => theme.palette.grey[50] }}>
                             {title?.filter(col => col.key !== "password")?.map((col, i) => (
                                 <TableCell
                                     key={i}
                                     sx={{
                                         fontWeight: 600,
-                                        color: (theme) => theme.palette.text.primary, 
-                                        padding: '12px 16px' 
+                                        color: (theme) => theme.palette.text.primary,
+                                        padding: '12px 16px'
                                     }}
                                 >
                                     {col.label}
@@ -377,97 +377,99 @@ export default function CustomTable({ title, data, isEdit, detailNavigate, mutat
                                     )}
                                 </TableRow>
                             ))
-                        ) : filteredData?.length > 0 ? (
-                            // Hiển thị Dữ liệu
-                            filteredData?.map((item, rowIndex) => {
-                                const getStatusStyleMui = (value) => {
-                                    const lowerValue = String(value).toLowerCase();
-                                    switch (lowerValue) {
-                                        case "active":
-                                            return { background: '#e8f5e9', color: '#388e3c' };
-                                        case "inactive":
-                                            return { background: '#fff3e0', color: '#f57c00' };
-                                        case "pending":
-                                            return { background: '#ffebee', color: '#d32f2f' };
-                                        default:
-                                            return { background: (theme) => theme.palette.grey[100], color: (theme) => theme.palette.text.secondary };
-                                    }
-                                };
-                                return (
-                                    <TableRow
-                                        key={rowIndex}
-                                        sx={{
-                                            '&:last-child td': { borderBottom: 'none' },
-                                            '&:hover': {
-                                                backgroundColor: detailNavigate ? (theme) => theme.palette.action.hover : 'inherit'
-                                            },
-                                        }}
-                                    >
-                                        {title?.filter(col => col.key !== "password")?.map((col, colIndex) => {
-                                            const rawValue = getValueByPath(item, col.key);
-                                            const isStatusField = col.key.toLowerCase().includes('status');
-                                            const cellContent = formatValue(col.key, rawValue);
-                                            const statusStyles = isStatusField ? getStatusStyleMui(rawValue) : {};
+                        )
+                            : filteredData?.length > 0 ? (
+                                // Hiển thị Dữ liệu
+                                filteredData?.map((item, rowIndex) => {
+                                    const getStatusStyleMui = (value) => {
+                                        const lowerValue = String(value)?.toLowerCase();
+                                        switch (lowerValue) {
+                                            case "true":
+                                                return { background: '#e8f5e9', color: '#388e3c' };
+                                            case "inactive":
+                                                return { background: '#fff3e0', color: '#f57c00' };
+                                            case "false":
+                                                return { background: '#ffebee', color: '#d32f2f' };
+                                            default:
+                                                return { background: (theme) => theme.palette.grey[100], color: (theme) => theme.palette.text.secondary };
+                                        }
+                                    };
+                                    return (
+                                        <TableRow
+                                            key={rowIndex}
+                                            sx={{
+                                                '&:last-child td': { borderBottom: 'none' },
+                                                '&:hover': {
+                                                    backgroundColor: detailNavigate ? (theme) => theme.palette.action.hover : 'inherit'
+                                                },
+                                            }}
+                                        >
+                                            {title?.filter(col => col.key !== "password")?.map((col, colIndex) => {
+                                                const rawValue = getValueByPath(item, col?.key);
+                                                const isStatusField = col?.key.toLowerCase().includes('status');
+                                                const cellContent = formatValue(col?.key, rawValue);
+                                                const statusStyles = isStatusField ? getStatusStyleMui(rawValue) : {};
 
-                                            return (
-                                                <TableCell
-                                                    key={colIndex}
-                                                    onClick={() => detailNavigate && navigate(detailNavigate)}
-                                                    sx={{
-                                                        cursor: detailNavigate ? "pointer" : "default",
-                                                    }}
-                                                >
-                                                    <Typography
-                                                        variant="body2"
-                                                        component="span"
+                                                return (
+                                                    <TableCell
+                                                        key={colIndex}
+                                                        onClick={() => detailNavigate && navigate(detailNavigate)}
                                                         sx={{
-                                                            ...(isStatusField ? {
-                                                                padding: '4px 10px', 
-                                                                borderRadius: '16px', 
-                                                                fontWeight: 500,
-                                                                textTransform: "capitalize",
-                                                                ...statusStyles,
-                                                                display: 'inline-block',
-                                                            } : {}),
-                                                            color: isStatusField ? statusStyles.color : (theme) => theme.palette.text.secondary
+                                                            cursor: detailNavigate ? "pointer" : "default",
                                                         }}
                                                     >
-                                                        {cellContent}
-                                                    </Typography>
+                                                        <Typography
+                                                            variant="body2"
+                                                            component="span"
+                                                            sx={{
+                                                                ...(isStatusField ? {
+                                                                    padding: '4px 10px',
+                                                                    borderRadius: '16px',
+                                                                    fontWeight: 500,
+                                                                    textTransform: "capitalize",
+                                                                    ...statusStyles,
+                                                                    display: 'inline-block',
+                                                                } : {}),
+                                                                color: isStatusField ? statusStyles.color : (theme) => theme.palette.text.secondary
+                                                            }}
+                                                        >
+                                                            {cellContent}
+                                                        </Typography>
+                                                    </TableCell>
+                                                );
+                                            })}
+                                            {isEdit && (
+                                                <TableCell>
+                                                    <Row gap={'0.5rem'}>
+                                                        <EditButton
+                                                            onClick={() => handleOpenEdit(item)}
+                                                            sx={{ '& svg': { fontSize: '1.1rem' } }}
+                                                        >
+                                                            <ModeEditOutlineOutlinedIcon />
+                                                        </EditButton>
+                                                        <DeleteButton
+                                                            onClick={() => handleDelete(item?.id)}
+                                                            sx={{ '& svg': { fontSize: '1.1rem' } }}
+                                                        >
+                                                            <DeleteOutlineOutlinedIcon />
+                                                        </DeleteButton>
+                                                    </Row>
                                                 </TableCell>
-                                            );
-                                        })}
-                                        {isEdit && (
-                                            <TableCell>
-                                                <Row gap={'0.5rem'}>
-                                                    <EditButton
-                                                        onClick={() => handleOpenEdit(item)}
-                                                        sx={{ '& svg': { fontSize: '1.1rem' } }}
-                                                    >
-                                                        <ModeEditOutlineOutlinedIcon />
-                                                    </EditButton>
-                                                    <DeleteButton
-                                                        onClick={() => handleDelete(item?.id)}
-                                                        sx={{ '& svg': { fontSize: '1.1rem' } }}
-                                                    >
-                                                        <DeleteOutlineOutlinedIcon />
-                                                    </DeleteButton>
-                                                </Row>
-                                            </TableCell>
-                                        )}
+                                            )}
+                                        </TableRow>
+                                    );
+                                })
+                            )
+                                : (
+                                    <TableRow>
+                                        <TableCell colSpan={title?.length + (isEdit ? 1 : 0)} align="center">
+                                            <Typography variant="body1" sx={{ color: 'text.secondary', py: 3 }}>
+                                                Không có dữ liệu nào phù hợp.
+                                            </Typography>
+                                        </TableCell>
                                     </TableRow>
-                                );
-                            })
-                        ) : (
-                            // Trường hợp không có dữ liệu
-                            <TableRow>
-                                <TableCell colSpan={title?.length + (isEdit ? 1 : 0)} align="center">
-                                    <Typography variant="body1" sx={{ color: 'text.secondary', py: 3 }}>
-                                        Không có dữ liệu nào phù hợp.
-                                    </Typography>
-                                </TableCell>
-                            </TableRow>
-                        )}
+                                )
+                        }
                     </TableBody>
 
                 </Table>

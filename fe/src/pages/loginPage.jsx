@@ -40,6 +40,8 @@ function LoginPage() {
             const res = await loginUser(data).unwrap();
 
             localStorage.setItem(LOCAL_STORAGE_NAME.TOKEN, res.jwt);
+            localStorage.setItem("UID", res.user.id);
+            localStorage.setItem("username", res.user.username);
 
             const roleRes = await getUserRole().unwrap();
             localStorage.setItem("role", roleRes.role.type);

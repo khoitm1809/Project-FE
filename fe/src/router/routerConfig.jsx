@@ -16,6 +16,7 @@ import InvoicePage from "../pages/invoice/invoicePage";
 import ProtectedRoute from "./ProtectedRoute";
 import ListUserPage from "../pages/users/listUserPage";
 import { ProfilePage } from "../pages/profile/profilePage";
+import PigPage from "../pages/pig/pigPage";
 
 export const RouterConfig = () => {
     return (
@@ -129,6 +130,15 @@ export const RouterConfig = () => {
                 element={
                     <ProtectedRoute>
                         <ListUserPage />
+                    </ProtectedRoute>
+                }
+            />
+
+            <Route
+                path={ROUTES.PIG_PAGE}
+                element={
+                    <ProtectedRoute>
+                        <PigPage />
                     </ProtectedRoute>
                 }
             />

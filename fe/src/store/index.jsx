@@ -9,11 +9,13 @@ import { offSpringApi } from "./offSpring/offSpringAction";
 import { warehouseApi } from "./warehouse/warehouseAction";
 import { invoiceApi } from "./invoice/invoiceAction";
 import { serviceApi } from "./service/serviceAction";
+import { pigApi } from "./pig/pigAction";
+import { typePig } from "./typePig/typePigAction";
 
 const persistConfig = {
     key: "auth",
     storage,
-    whitelist: ["auth"], 
+    whitelist: ["auth"],
 };
 
 const rootReducer = combineReducers({
@@ -24,6 +26,8 @@ const rootReducer = combineReducers({
     [warehouseApi.reducerPath]: warehouseApi.reducer,
     [invoiceApi.reducerPath]: invoiceApi.reducer,
     [serviceApi.reducerPath]: serviceApi.reducer,
+    [pigApi.reducerPath]: pigApi.reducer,
+    [typePig.reducerPath]: typePig.reducer
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -39,7 +43,10 @@ export const store = configureStore({
             offSpringApi.middleware,
             warehouseApi.middleware,
             invoiceApi.middleware,
-            serviceApi.middleware
+            serviceApi.middleware,
+            pigApi.middleware,
+            typePig.middleware
+
         ),
 });
 
