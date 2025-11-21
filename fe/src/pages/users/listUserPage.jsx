@@ -20,9 +20,6 @@ const ListUserPage = () => {
     } = useGetListUserQuery({}, { refetchOnMountOrArgChange: true })
     return (
         <BoxContainer padding={'2rem'}>
-            <Box sx={{ alignContent: 'center', marginBottom: '2rem', display: 'flex', justifyContent: 'center' }}>
-                <Typography variant="14500" >Tiêu đề</Typography>
-            </Box>
             <CustomTable
                 title={title}
                 data={listUser}

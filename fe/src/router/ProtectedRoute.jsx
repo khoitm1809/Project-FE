@@ -7,7 +7,6 @@ export default function ProtectedRoute({ children }) {
   const token = localStorage.getItem("access_token");
   const role = localStorage.getItem("role");
   const location = useLocation();
-  console.log(token, role,"????")
   
   if (!token) {
     return <Navigate to={ROUTES.LOGIN} replace />;

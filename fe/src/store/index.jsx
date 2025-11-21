@@ -5,7 +5,8 @@ import storage from "redux-persist/lib/storage";
 import authReducer from "./auth/authSlice";
 import { authApi } from "./auth/authAction";
 import { pigApi } from "./pig/pigAction";
-import { typePig } from "./typePig/typePigAction";
+import { typePigApi } from "./typePig/typePigAction";
+import { areaApi } from "./area/areaAction";
 
 const persistConfig = {
     key: "auth",
@@ -17,7 +18,8 @@ const rootReducer = combineReducers({
     auth: authReducer,
     [authApi.reducerPath]: authApi.reducer,
     [pigApi.reducerPath]: pigApi.reducer,
-    [typePig.reducerPath]: typePig.reducer
+    [typePigApi.reducerPath]: typePigApi.reducer,
+    [areaApi.reducerPath]: areaApi.reducer
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -30,7 +32,8 @@ export const store = configureStore({
         }).concat(
             authApi.middleware,
             pigApi.middleware,
-            typePig.middleware
+            typePigApi.middleware,
+            areaApi.middleware
 
         ),
 });

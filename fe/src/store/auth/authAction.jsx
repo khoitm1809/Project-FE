@@ -28,13 +28,17 @@ export const authApi = createApi({
         }),
 
         getListUser: builder.query({
-            query: (params) => ({
-                url: API_URL.LIST_USER,
-                method: 'GET',
-                params: {
-                    ...params,
-                },
-            }),
+            query: (params) => {
+                const { role, ...rest } = params || {};
+                return {
+                    url: API_URL.LIST_USER,
+                    method: "GET",
+                    params: {
+                        ...rest,
+                        ...(role ? { "filters[role][type]": role } : {}),
+                    },
+                };
+            },
         }),
 
         userRegister: builder.mutation({

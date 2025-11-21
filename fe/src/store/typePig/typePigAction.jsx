@@ -3,7 +3,7 @@ import { API_URL } from '../../utils/ApiConstants';
 import { LOCAL_STORAGE_NAME } from '../../utils/constant';
 import { axiosBaseQuery } from '../../services/axiosBaseQuery';
 
-export const typePig = createApi({
+export const typePigApi = createApi({
     reducerPath: 'typePig',
     baseQuery: axiosBaseQuery(),
     endpoints: (builder) => ({
@@ -52,4 +52,4 @@ export const {
     useAddTypePigMutation,
     useDeleteTypePigMutation,
     useEditTypePigMutation
-} = typePig;
+} = typePigApi;

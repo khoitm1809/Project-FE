@@ -7,25 +7,23 @@ import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import TuneOutlinedIcon from '@mui/icons-material/TuneOutlined';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import CardInfo from "../../components/CardInfo";
-import { useAddAreaMutation, useDeleteAreaMutation, useEditAreaMutation, useGetListAreaQuery } from "../../store/area/areaAction";
-import { ROUTES } from "../../router/routerConstants";
+import { useAddAreaMutation, useAddBarnMutation, useDeleteAreaMutation, useDeleteBarnMutation, useEditAreaMutation, useEditBarnMutation, useGetListAreaQuery, useGetListBarnQuery } from "../../store/area/areaAction";
 
-const AreaPage = () => {
+const DetailBarnPage = () => {
     const navigate = useNavigate();
     const [searchTerm, setSearchTerm] = useState('');
     const [openAddDialog, setOpenAddDialog] = useState(false);
-    const [addArea] = useAddAreaMutation();
-    const [editArea] = useEditAreaMutation();
-    const [deleteArea] = useDeleteAreaMutation();
+    const [addArea] = useAddBarnMutation();
+    const [editArea] = useEditBarnMutation();
+    const [deleteArea] = useDeleteBarnMutation();
 
     const {
-        data: listArea,
-        isLoading: loadingArea,
+        data: listBarn,
+        isLoading: loadingBarn,
         refetch
-    } = useGetListAreaQuery({}, { refetchOnMountOrArgChange: true })
+    } = useGetListBarnQuery({}, { refetchOnMountOrArgChange: true })
 
     const toggleAddDialog = () => setOpenAddDialog(prev => !prev);
-
     return (
         <BoxContainer padding={'2rem'}>
             <Box mb={4}>
@@ -35,7 +33,7 @@ const AreaPage = () => {
                         fontWeight={700}
                         sx={{ mb: 1 }}
                     >
-                        Quản lý khu vực
+                        Quản lý Chuồng
                     </Typography>
 
                     {/* SUBTITLE */}
@@ -123,22 +121,19 @@ const AreaPage = () => {
                 </Box>
 
                 {/* CardInfor */}
-                <Row sx={{
+                {/* <Row sx={{
                     width: '100%',
                     flexWrap: 'wrap',
                     gap: '2rem',
                 }}>
-                    {listArea?.data?.map((area, index) => (
-                        <Box key={index}
-                            sx={{
-                                flex: {
-                                    xs: "1 1 50%",
-                                    sm: "1 1 calc(50% - 1rem)",
-                                },
-                            }}
-                            onClick={() => navigate(ROUTES.BARN, { state: area?.id })}>
+                    {listBarn?.data?.map((area, index) => (
+                        <Box sx={{
+                            flex: {
+                                xs: "1 1 50%",
+                                sm: "1 1 calc(50% - 1rem)",
+                            },
+                        }}>
                             <CardInfo
-                                isShowAction={false}
                                 name={area?.name}
                                 description={area?.description}
                                 publishedAt={area?.publishedAt}
@@ -147,7 +142,7 @@ const AreaPage = () => {
                             />
                         </Box>
                     ))}
-                </Row>
+                </Row> */}
 
                 {/* ADD ZONE DIALOG */}
                 <Dialog
@@ -272,4 +267,4 @@ const AreaPage = () => {
     )
 }
 
-export default AreaPage;
+export default DetailBarnPage;

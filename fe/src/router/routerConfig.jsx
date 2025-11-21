@@ -2,13 +2,13 @@ import { Route, Routes, Navigate } from "react-router";
 import { ROUTES } from "./routerConstants";
 import Home from "../pages/homePage";
 import LoginPage from "../pages/loginPage";
-import ListAccount from "../pages/accountControl/listAccount";
 import RegisterPage from "../pages/registerPage";
 import BarnPage from "../pages/area/barnPage";
 import ProtectedRoute from "./ProtectedRoute";
 import ListUserPage from "../pages/users/listUserPage";
 import { ProfilePage } from "../pages/profile/profilePage";
 import PigPage from "../pages/pig/pigPage";
+import AreaPage from "../pages/area/areaPage";
 
 export const RouterConfig = () => {
     return (
@@ -36,19 +36,20 @@ export const RouterConfig = () => {
                     </ProtectedRoute>
                 }
             />
+
+            <Route
+                path={ROUTES.AREA}
+                element={
+                    <ProtectedRoute>
+                        <AreaPage />
+                    </ProtectedRoute>
+                }
+            />
             <Route
                 path={ROUTES.BARN}
                 element={
                     <ProtectedRoute>
                         <BarnPage />
-                    </ProtectedRoute>
-                }
-            />
-            <Route
-                path={ROUTES.LIST_ACCOUNT}
-                element={
-                    <ProtectedRoute>
-                        <ListAccount />
                     </ProtectedRoute>
                 }
             />

@@ -5,5 +5,6 @@ export const API_URL = {
   REGISTER: '/api/auth/register',
   PIG: '/api/pigs',
   BARN: '/api/barns',
-  TYPE_PIG: 'api/type-pigs'
+  TYPE_PIG: 'api/type-pigs',
+  AREA: 'api/areas'
 };
