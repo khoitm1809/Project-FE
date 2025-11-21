@@ -4,11 +4,6 @@ import persistStore from "redux-persist/es/persistStore";
 import storage from "redux-persist/lib/storage";
 import authReducer from "./auth/authSlice";
 import { authApi } from "./auth/authAction";
-import { breedingApi } from "./breeding/breedingAction";
-import { offSpringApi } from "./offSpring/offSpringAction";
-import { warehouseApi } from "./warehouse/warehouseAction";
-import { invoiceApi } from "./invoice/invoiceAction";
-import { serviceApi } from "./service/serviceAction";
 import { pigApi } from "./pig/pigAction";
 import { typePig } from "./typePig/typePigAction";
 
@@ -21,11 +16,6 @@ const persistConfig = {
 const rootReducer = combineReducers({
     auth: authReducer,
     [authApi.reducerPath]: authApi.reducer,
-    [breedingApi.reducerPath]: breedingApi.reducer,
-    [offSpringApi.reducerPath]: offSpringApi.reducer,
-    [warehouseApi.reducerPath]: warehouseApi.reducer,
-    [invoiceApi.reducerPath]: invoiceApi.reducer,
-    [serviceApi.reducerPath]: serviceApi.reducer,
     [pigApi.reducerPath]: pigApi.reducer,
     [typePig.reducerPath]: typePig.reducer
 });
@@ -39,11 +29,6 @@ export const store = configureStore({
             serializableCheck: false,
         }).concat(
             authApi.middleware,
-            breedingApi.middleware,
-            offSpringApi.middleware,
-            warehouseApi.middleware,
-            invoiceApi.middleware,
-            serviceApi.middleware,
             pigApi.middleware,
             typePig.middleware
 
