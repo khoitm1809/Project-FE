@@ -9,6 +9,7 @@ import ListUserPage from "../pages/users/listUserPage";
 import { ProfilePage } from "../pages/profile/profilePage";
 import PigPage from "../pages/pig/pigPage";
 import AreaPage from "../pages/area/areaPage";
+import DetailBarnPage from "../pages/area/DetailBarn";
 
 export const RouterConfig = () => {
     return (
@@ -66,7 +67,7 @@ export const RouterConfig = () => {
                 path={ROUTES.PIG_PAGE}
                 element={
                     <ProtectedRoute>
-                        <PigPage />
+                        <DetailBarnPage />
                     </ProtectedRoute>
                 }
             />

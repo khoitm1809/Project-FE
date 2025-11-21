@@ -7,15 +7,19 @@ export const pigApi = createApi({
     reducerPath: 'piggApi',
     baseQuery: axiosBaseQuery(),
     endpoints: (builder) => ({
-        // Get List Off Spring
+        //get list pig
         getListPig: builder.query({
-            query: (params) => ({
-                url: API_URL.PIG + "?populate=*" + "&filters[users_permissions_user][id][$eq]=" + UID,
-                method: 'GET',
-                params: {
-                    ...params,
-                },
-            }),
+            query: (params) => {
+                const { barnId, ...rest } = params || {};
+                return {
+                    url: API_URL.PIG + "?populate=*",
+                    method: "GET",
+                    params: {
+                        ...rest,
+                        ...(barnId ? { "filters[barn][id]": barnId } : {}),
+                    },
+                };
+            },
         }),
 
         // add off spring

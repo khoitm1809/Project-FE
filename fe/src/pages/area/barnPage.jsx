@@ -154,12 +154,14 @@ const BarnPage = () => {
                     gap: '2rem',
                 }}>
                     {listBarn?.data?.map((barn, index) => (
-                        <Box sx={{
-                            flex: {
-                                xs: "1 1 50%",
-                                sm: "1 1 calc(50% - 1rem)",
-                            },
-                        }}>
+                        <Box key={index}
+                            sx={{
+                                flex: {
+                                    xs: "1 1 50%",
+                                    sm: "1 1 calc(50% - 1rem)",
+                                },
+                            }}
+                            onClick={() => navigate(ROUTES.PIG_PAGE, { state: barn?.id })}>
                             <CardInfo
                                 name={barn?.name}
                                 description={barn?.description}
