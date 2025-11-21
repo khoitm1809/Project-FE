@@ -1,4 +1,4 @@
-import { Box, Button, Card, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, TextField, Typography } from "@mui/material";
+import { Box, Button, Card, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, Grid, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material";
 import { BoxContainer, Row } from "../../components/commonStyled";
 import CustomTable from "../../components/CustomTable";
 import { useLocation, useNavigate } from "react-router";
@@ -316,6 +316,31 @@ const BarnPage = () => {
                             gap: 2,
                             py: 1,
                         }}>
+                            <FormControl fullWidth>
+                                <Select
+                                    displayEmpty
+                                    // value={selectedWorker || ""}
+                                    // onChange={(e) => setSelectedWorker(e.target.value)}
+                                    renderValue={(selected) => {
+                                        if (!selected) {
+                                            return <span style={{ color: "#888" }}>Chọn nhân viên</span>;
+                                        }
+
+                                        const user = listWorker.find(w => w.id === selected);
+                                        return user?.username;
+                                    }}
+                                    sx={{
+                                        height: 44,
+                                        borderRadius: 2,
+                                    }}
+                                >
+                                    {listWorker?.map((worker) => (
+                                        <MenuItem key={worker.id} value={worker.id}>
+                                            {worker.username}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
                         </Box>
                     </DialogContent>
 
