@@ -5,6 +5,7 @@ export const API_URL = {
   LIST_USER: '/api/users',
   REGISTER: '/api/auth/local/register',
   PIG: '/api/pigs',
+  PIG_GROWTH_RECORDS: '/api/pig-growth-records',
   BARN: '/api/barns',
   TYPE_PIG: 'api/type-pigs',
   AREA: 'api/areas',

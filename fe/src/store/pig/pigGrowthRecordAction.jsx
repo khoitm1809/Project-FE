@@ -3,27 +3,27 @@ import { API_URL } from '../../utils/ApiConstants';
 import { LOCAL_STORAGE_NAME } from '../../utils/constant';
 import { axiosBaseQuery } from '../../services/axiosBaseQuery';
 const UID = localStorage.getItem("UID")
-export const pigApi = createApi({
-    reducerPath: 'piggApi',
+export const pigGrowthRecordApi = createApi({
+    reducerPath: 'pigGrowthRecordApi',
     baseQuery: axiosBaseQuery(),
     endpoints: (builder) => ({
         //get list pig
-        getListPig: builder.query({
+        getListPigGrowthRecord: builder.query({
             query: (params) => {
-                const { barnId, ...rest } = params || {};
+                const { UID, ...rest } = params || {};
                 return {
-                    url: API_URL.PIG + "?populate=*",
+                    url: API_URL.PIG_GROWTH_RECORDS + "?populate=*",
                     method: "GET",
                     params: {
                         ...rest,
-                        ...(barnId ? { "filters[barn][id]": barnId } : {}),
+                        ...(UID ? { "filters[users_permissions_user][id]": UID } : {}),
                     },
                 };
             },
         }),
 
         // add off spring
-        addPig: builder.mutation({
+        addPigGrowthRecord: builder.mutation({
             query: (payload) => ({
                 url: API_URL.PIG,
                 method: 'POST',
@@ -32,16 +32,16 @@ export const pigApi = createApi({
         }),
 
         // edit off spring
-        editPig: builder.mutation({
+        editPigGrowthRecord: builder.mutation({
             query: (body) => ({
                 url: API_URL.PIG + "/" + body.id,
                 method: 'PUT',
-                data: { data: body },
+                data: body,
             }),
         }),
 
         // delete off spring
-        deletePig: builder.mutation({
+        deletePigGrowthRecord: builder.mutation({
             query: (id) => ({
                 url: API_URL.PIG + "/" + id,
                 method: 'DELETE',
@@ -52,8 +52,8 @@ export const pigApi = createApi({
 });
 
 export const {
-    useGetListPigQuery,
-    useAddPigMutation,
-    useDeletePigMutation,
-    useEditPigMutation
-} = pigApi;
+    useGetListPigGrowthRecordQuery,
+    useAddPigGrowthRecordMutation,
+    useDeletePigGrowthRecordMutation,
+    useEditPigGrowthRecordMutation
+} = pigGrowthRecordApi;

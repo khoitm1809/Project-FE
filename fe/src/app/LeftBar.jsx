@@ -66,7 +66,7 @@ export default function LeftBar({ open, onClose, drawerWidth, isMobile }) {
         { text: "Khu vực của tôi", icon: <GroupAddOutlinedIcon />, path: ROUTES.BARN, role: ROLES.WORKER },
 
         // { text: "Nhập nguồn gốc giống lợn", icon: <UploadFileOutlinedIcon />, path: ROUTES.PIG_PAGE, role: ROLES.WORKER },
-        { text: "Ghi nhận tốc độ tăng trưởng", icon: <AreaChartOutlinedIcon />, path: ROUTES.HOME, role: ROLES.WORKER },
+        { text: "Ghi nhận tốc độ tăng trưởng", icon: <AreaChartOutlinedIcon />, path: ROUTES.PIG_GROWTH_RECORD, role: ROLES.WORKER },
         { text: "Nhập vào kho hàng, vacxin ", icon: <WarehouseOutlinedIcon />, path: ROUTES.WAREHOUSE_CATEGORY, role: ROLES.WORKER },
         { text: "To do list các việc mà chủ trang trại giao", icon: <ChecklistOutlinedIcon />, path: ROUTES.HOME, role: ROLES.WORKER },
         { text: "Thiết lập thức ăn và dinh dưỡng", icon: <SoupKitchenOutlinedIcon />, path: ROUTES.HOME, role: ROLES.WORKER },

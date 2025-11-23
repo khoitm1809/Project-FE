@@ -163,8 +163,8 @@ const WareHouseCategory = () => {
                                 name={category?.name}
                                 description={category?.description}
                                 publishedAt={category?.publishedAt}
-                                nameCount={"Số lợn: "}
-                                // arrayCount={category?.pigs?.length}
+                                nameCount={"Số lượng: "}
+                                arrayCount={category?.warehouse_items?.length}
                                 isOwner={role == ROLES.OWNER}
                                 isShowAction={true}
                                 onActionAdd={handleOpenAssignPigDialog}

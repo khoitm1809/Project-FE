@@ -37,6 +37,7 @@ const DetailBarnPage = () => {
         { key: "healthStatus", label: "Sức khỏe" },
         { key: "weight", label: "Cân nặng", },
         { key: "barn.name", label: "Chuồng" },
+        { key: "pig_growth_records.weight", label: "Tăng trưởng" }
 
     ];
 
@@ -45,33 +46,31 @@ const DetailBarnPage = () => {
         { key: "weight", label: "Cân nặng", isNumber: true },
         { key: "age", label: "Tuổi", isNumber: true },
         { key: "healthStatus", label: "Sức khỏe" },
+        { key: "note", label: "Ghi chú" },
 
-     
         {
-            key: "users_permissions_user",
-            label: "Người phụ trách",
-            isDropDown: true, 
-            isNumber: true, 
-            mappingKey: "users_permissions_user.id"
+            key: "barn",
+            label: "Chuồng",
+            isDropDown: true,
+            // list: convertToDropdown(listBarns), 
+            mappingKey: "barn.id"
         },
 
         {
             key: "type_pig",
             label: "Loại heo",
             isDropDown: true,
-            list: convertToDropdown(listPigType?.data),
-            mappingKey: "type_pig.id" 
+            list: convertToDropdown(listPigType?.data), // Giả định list Loại Lợn được truyền vào
+            mappingKey: "type_pig.id"
         },
 
         {
-            key: "barn",
-            label: "Chuồng",
+            key: "users_permissions_user",
+            label: "Người phụ trách",
             isDropDown: true,
-            // list: Tùy thuộc vào nơi bạn load list Chuồng
-            mappingKey: "barn.id" 
+            // list: convertToDropdown(listUsers), // Giả định list User được truyền vào
+            mappingKey: "users_permissions_user.id"
         },
-
-        { key: "note", label: "Ghi chú" }, 
     ];
 
     return (

@@ -13,6 +13,7 @@ import DetailBarnPage from "../pages/area/DetailBarn";
 import { PigTypesPage } from "../pages/pig/pigType";
 import WareHouseCategory from "../pages/warehouseCategory/warehouseCategory";
 import WareHouseItem from "../pages/warehouseCategory/WarehouseItem";
+import PigGrowthRecord from "../pages/pig/pigGrowthRecord";
 
 export const RouterConfig = () => {
     return (
@@ -102,6 +103,15 @@ export const RouterConfig = () => {
                 }
             />
 
+
+            <Route
+                path={ROUTES.PIG_GROWTH_RECORD}
+                element={
+                    <ProtectedRoute>
+                        <PigGrowthRecord />
+                    </ProtectedRoute>
+                }
+            />
             {/* Nếu không khớp route nào => quay về Home */}
             <Route path="*" element={<Navigate to={ROUTES.HOME} replace />} />
         </Routes>

@@ -10,7 +10,7 @@ export const warehouseApi = createApi({
         // Get List Off Spring
         getListWarehouseCategory: builder.query({
             query: (params) => ({
-                url: API_URL.WAREHOUSE_CATEGORY,
+                url: API_URL.WAREHOUSE_CATEGORY + "?populate=*",
                 method: 'GET',
                 params: {
                     ...params,

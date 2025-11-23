@@ -9,8 +9,10 @@ import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import CardInfo from "../../components/CardInfo";
 import { useAddAreaMutation, useDeleteAreaMutation, useEditAreaMutation, useGetListAreaQuery } from "../../store/area/areaAction";
 import { ROUTES } from "../../router/routerConstants";
+import { ROLES } from "../../utils/rolesConstant";
 
 const AreaPage = () => {
+    const role = localStorage.getItem("role");
     const navigate = useNavigate();
     const [searchTerm, setSearchTerm] = useState('');
     const [openAddDialog, setOpenAddDialog] = useState(false);
@@ -138,12 +140,13 @@ const AreaPage = () => {
                             }}
                             onClick={() => navigate(ROUTES.BARN, { state: area?.id })}>
                             <CardInfo
-                                isShowAction={false}
                                 name={area?.name}
                                 description={area?.description}
                                 publishedAt={area?.publishedAt}
-                                nameCount={"Số chuồng: "}
                                 arrayCount={area?.barns?.length}
+                                isOwner={role === ROLES.OWNER}
+                                nameCount={"Số chuồng: "}
+                                isShowAction={true}
                             />
                         </Box>
                     ))}

@@ -9,11 +9,13 @@ import EditDataDialog from "../../components/EditDataDialog";
 import AddDataDialog from "../../components/AddDataDialog";
 import { useLocation } from "react-router";
 import { useGetListWarehouseCategoryQuery } from "../../store/warehouse/warehouseAction";
+import { ROLES } from "../../utils/rolesConstant";
 
 const WareHouseItem = () => {
     const location = useLocation();
     const warehouseCategoryID = location?.state;
     const UID = localStorage.getItem("UID");
+    const role = localStorage.getItem("role");
     const [addWareHouseItem] = useAddWarehouseItemMutation();
     const [editWareHouseItem] = useEditWarehouseItemMutation();
     const [deleteWareHouseItem] = useDeleteWarehouseItemMutation();
@@ -25,7 +27,7 @@ const WareHouseItem = () => {
         refetch
     } = useGetListWarehouseItemQuery({
         warehouseCategoryID: warehouseCategoryID,
-        UID: UID
+        UID: role == ROLES.OWNER ? null : UID
     }, { refetchOnMountOrArgChange: true })
 
     const {
@@ -43,7 +45,7 @@ const WareHouseItem = () => {
         { key: "createdAt", label: "Ngày tạo" },
     ];
 
-    const dialogTitle = [ 
+    const dialogTitle = [
         { key: "name", label: "Tên vật phẩm" },
         { key: "quantity", label: "Số lượng", isNumber: true },
         { key: "unit", label: "Đơn vị" },
@@ -53,7 +55,7 @@ const WareHouseItem = () => {
             label: "Danh mục",
             isDropDown: true,
             list: convertToDropdown(listWareHouseCategory?.data),
-            mappingKey: "warehouse_category.id" 
+            mappingKey: "warehouse_category.id"
         },
 
         {
@@ -61,7 +63,7 @@ const WareHouseItem = () => {
             label: "Người phụ trách",
             isDropDown: true,
             // list: convertToDropdown(listUser), 
-            mappingKey: "users_permissions_user.id" 
+            mappingKey: "users_permissions_user.id"
         },
     ];
 
