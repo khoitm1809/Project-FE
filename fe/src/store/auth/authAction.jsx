@@ -27,11 +27,21 @@ export const authApi = createApi({
             }),
         }),
 
+        getListRole: builder.query({
+            query: (params) => ({
+                url: API_URL.LIST_ROLE,
+                method: 'GET',
+                params: {
+                    ...params,
+                },
+            }),
+        }),
+
         getListUser: builder.query({
             query: (params) => {
                 const { role, ...rest } = params || {};
                 return {
-                    url: API_URL.LIST_USER,
+                    url: API_URL.LIST_USER + "?populate=*",
                     method: "GET",
                     params: {
                         ...rest,
@@ -43,7 +53,7 @@ export const authApi = createApi({
 
         userRegister: builder.mutation({
             query: (body) => ({
-                url: API_URL.REGISTER,
+                url: API_URL.LIST_USER,
                 method: 'POST',
                 data: body,
             }),
@@ -70,4 +80,4 @@ export const authApi = createApi({
     }),
 });
 
-export const { useUserLoginMutation, useLazyGetUserRoleQuery, useGetListUserQuery, useUserRegisterMutation, useDeleteUserMutation, useEditUserMutation } = authApi;
+export const { useUserLoginMutation, useGetListRoleQuery, useLazyGetUserRoleQuery, useGetListUserQuery, useUserRegisterMutation, useDeleteUserMutation, useEditUserMutation } = authApi;

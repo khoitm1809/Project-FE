@@ -10,6 +10,9 @@ import { ProfilePage } from "../pages/profile/profilePage";
 import PigPage from "../pages/pig/pigPage";
 import AreaPage from "../pages/area/areaPage";
 import DetailBarnPage from "../pages/area/DetailBarn";
+import { PigTypesPage } from "../pages/pig/pigType";
+import WareHouseCategory from "../pages/warehouseCategory/warehouseCategory";
+import WareHouseItem from "../pages/warehouseCategory/WarehouseItem";
 
 export const RouterConfig = () => {
     return (
@@ -68,6 +71,33 @@ export const RouterConfig = () => {
                 element={
                     <ProtectedRoute>
                         <DetailBarnPage />
+                    </ProtectedRoute>
+                }
+            />
+
+            <Route
+                path={ROUTES.PIG_TYPE}
+                element={
+                    <ProtectedRoute>
+                        <PigTypesPage />
+                    </ProtectedRoute>
+                }
+            />
+
+            <Route
+                path={ROUTES.WAREHOUSE_CATEGORY}
+                element={
+                    <ProtectedRoute>
+                        <WareHouseCategory />
+                    </ProtectedRoute>
+                }
+            />
+
+            <Route
+                path={ROUTES.WAREHOUSE_ITEM}
+                element={
+                    <ProtectedRoute>
+                        <WareHouseItem />
                     </ProtectedRoute>
                 }
             />

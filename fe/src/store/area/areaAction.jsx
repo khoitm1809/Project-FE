@@ -47,7 +47,7 @@ export const areaApi = createApi({
             query: (body) => ({
                 url: API_URL.BARN,
                 method: 'POST',
-                data: body,
+                data: { data: body },
             }),
         }),
 

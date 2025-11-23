@@ -1,90 +1,53 @@
 import { Box, Button, Card, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, Grid, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material";
 import { BoxContainer, Row } from "../../components/commonStyled";
-import CustomTable from "../../components/CustomTable";
-import { useLocation, useNavigate } from "react-router";
+import { ROUTES } from "../../router/routerConstants";
+import { convertToDropdown } from "../../components/convertToDropdown";
+import { useAddWarehouseCategoryMutation, useDeleteWarehouseCategoryMutation, useEditWarehouseCategoryMutation, useGetListWarehouseCategoryQuery } from "../../store/warehouse/warehouseAction";
 import { useState } from "react";
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import TuneOutlinedIcon from '@mui/icons-material/TuneOutlined';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import CardInfo from "../../components/CardInfo";
-import { useAddBarnMutation, useDeleteBarnMutation, useEditBarnMutation, useGetListBarnQuery } from "../../store/area/areaAction";
-import { ROUTES } from "../../router/routerConstants";
 import { ROLES } from "../../utils/rolesConstant";
-import { useGetListUserQuery } from "../../store/auth/authAction";
+import { useNavigate } from "react-router";
 
-const BarnPage = () => {
-    const location = useLocation();
-    const areaId = location?.state 
-    const role = localStorage.getItem("role");
-    const UID = localStorage.getItem("UID");
-    const navigate = useNavigate();
+export const status = [
+    { value: "true", label: "Khỏe" },
+    { value: "false", label: "yếu" },
+];
+
+
+const WareHouseCategory = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [openAddDialog, setOpenAddDialog] = useState(false);
     const [isAssignDialogOpen, setIsAssignDialogOpen] = useState(false);
+    const role = localStorage.getItem("role");
+    const navigate = useNavigate();
 
-    const [newBarnData, setNewBarnData] = useState({
-        name: '',
-        description: '',
-    });
-
-    const [addBarn, { isLoading: isAddingBarn }] = useAddBarnMutation();
-    const [editBarn] = useEditBarnMutation();
-    const [deleteBarn] = useDeleteBarnMutation();
-
+    const [addWareHouseCategory] = useAddWarehouseCategoryMutation();
+    const [editWareHouseCategory] = useEditWarehouseCategoryMutation();
+    const [deleteWareHouseCategory] = useDeleteWarehouseCategoryMutation();
     const {
-        data: listBarn,
-        isLoading: loadingBarn,
-        refetch
-    } = useGetListBarnQuery({
-        areaId: areaId,
-        UID: role === ROLES.WORKER ? UID : null
-    }, { refetchOnMountOrArgChange: true })
+        data: listWareHouseCategory,
+        isLoading: loadingListWareHouseCategory,
+    } = useGetListWarehouseCategoryQuery({}, { refetchOnMountOrArgChange: true })
 
-    const {
-        data: listWorker,
-    } = useGetListUserQuery({
-        role: ROLES.WORKER
-    }, {
-        skip: role === ROLES.WORKER,
-        refetchOnMountOrArgChange: true
-    })
+    // const titleAdd = [
+    //     { key: "pigCode", label: "pigCode" }, //hiện
+    //     { key: "weight", label: "weight" }, //hiện
+    //     { key: "age", label: "age" }, // hiện
+    //     { key: "healthStatus", label: "healthStatus", isDropDown: true, list: status }, // true, false
+    //     { key: "barn", label: "barn", isDropDown: true, list: convertToDropdown(listBarn?.data) }, //api list barn 
+    //     { key: "type_pig", label: "type_pig", isDropDown: true, list: convertToDropdown(listTypePig?.data) }, //api type pig
+    //     { key: "pig_growth_records", label: "pig_growth_records" }, // ẩn trên dialog
+    //     { key: "users_permissions_user", label: "users_permissions_user" }, //người tạo
+    // ];
 
-    const toggleAddDialog = () => {
-        setOpenAddDialog(prev => !prev);
-        setNewBarnData({ name: '', description: '' });
-    };
-
+    const toggleAddDialog = () => setOpenAddDialog(prev => !prev);
     const handleOpenAssignPigDialog = () => setIsAssignDialogOpen(true);
     const handleAssignEmployees = () => {
+
     };
-
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setNewBarnData(prev => ({
-            ...prev,
-            [name]: value,
-        }));
-    };
-
-    const handleAddBarnSubmit = async (e) => {
-        e.preventDefault();
-
-        if (!newBarnData.name || !newBarnData.description) {
-            return;
-        }
-
-        try {
-            await addBarn({
-                area: areaId,
-                ...newBarnData,
-            }).unwrap();
-
-
-        } catch (error) {
-            console.error("Lỗi khi thêm chuồng:", error);
-        }
-    };
-
     return (
         <BoxContainer padding={'2rem'}>
             <Box mb={4}>
@@ -162,7 +125,7 @@ const BarnPage = () => {
                     </Button>
 
                     {/* Nút Thêm */}
-                    {role === ROLES.OWNER && <Button
+                    {role == ROLES.OWNER && <Button
                         variant="contained"
                         startIcon={<AddOutlinedIcon />}
                         onClick={toggleAddDialog}
@@ -187,33 +150,27 @@ const BarnPage = () => {
                     flexWrap: 'wrap',
                     gap: '2rem',
                 }}>
-                    {loadingBarn ? (
-                        <Typography>Đang tải danh sách chuồng...</Typography>
-                    ) : listBarn?.data?.length === 0 ? (
-                        <Typography>Chưa có chuồng nào trong khu vực này.</Typography>
-                    ) : (
-                        listBarn?.data?.map((barn, index) => (
-                            <Box key={index}
-                                sx={{
-                                    flex: {
-                                        xs: "1 1 50%",
-                                        sm: "1 1 calc(50% - 1rem)",
-                                    },
-                                }}
-                                onClick={() => navigate(ROUTES.PIG_PAGE, { state: barn?.id })}>
-                                <CardInfo
-                                    name={barn?.name}
-                                    description={barn?.description}
-                                    publishedAt={barn?.publishedAt}
-                                    nameCount={"Số lợn: "}
-                                    arrayCount={barn?.pigs?.length}
-                                    isOwner={role === ROLES.OWNER}
-                                    isShowAction={true}
-                                    onActionAdd={handleOpenAssignPigDialog}
-                                />
-                            </Box>
-                        ))
-                    )}
+                    {listWareHouseCategory?.data?.map((category, index) => (
+                        <Box key={index}
+                            sx={{
+                                flex: {
+                                    xs: "1 1 50%",
+                                    sm: "1 1 calc(50% - 1rem)",
+                                },
+                            }}
+                            onClick={() => navigate(ROUTES.WAREHOUSE_ITEM, { state: category?.id })}>
+                            <CardInfo
+                                name={category?.name}
+                                description={category?.description}
+                                publishedAt={category?.publishedAt}
+                                nameCount={"Số lợn: "}
+                                // arrayCount={category?.pigs?.length}
+                                isOwner={role == ROLES.OWNER}
+                                isShowAction={true}
+                                onActionAdd={handleOpenAssignPigDialog}
+                            />
+                        </Box>
+                    ))}
                 </Row>
 
                 {/* ADD ZONE DIALOG */}
@@ -238,8 +195,7 @@ const BarnPage = () => {
                         Tạo khu mới
                     </DialogTitle>
 
-                    {/* 3. GÁN HÀM XỬ LÝ SUBMIT CHO FORM */}
-                    <form onSubmit={handleAddBarnSubmit}>
+                    <form>
                         <DialogContent
                             dividers
                             sx={{
@@ -251,12 +207,10 @@ const BarnPage = () => {
                                 },
                             }}
                         >
-                            {/* TextField Tên khu */}
                             <TextField
                                 fullWidth
                                 placeholder="Tên khu..."
                                 name="name"
-                                value={newBarnData.name}
                                 required
                                 sx={{
                                     mb: 2,
@@ -270,6 +224,7 @@ const BarnPage = () => {
                                         "&:hover fieldset": { border: "none" },
                                         "&.Mui-focused fieldset": { border: "none" },
 
+                                        // text style
                                         "& input": {
                                             fontSize: "0.95rem",
                                         },
@@ -280,12 +235,10 @@ const BarnPage = () => {
                                 }}
                             />
 
-                            {/* TextField Mô tả */}
                             <TextField
                                 fullWidth
                                 placeholder="Mô tả..."
                                 name="description"
-                                value={newBarnData.description}
                                 required
                                 multiline
                                 rows={3}
@@ -324,6 +277,7 @@ const BarnPage = () => {
                             </Button>
 
                             <Button
+                                type="submit"
                                 variant="contained"
                                 sx={{
                                     textTransform: "none",
@@ -331,7 +285,7 @@ const BarnPage = () => {
                                     px: 3,
                                 }}
                             >
-                                {isAddingBarn ? 'Đang tạo...' : 'Tạo'}
+                                Tạo
                             </Button>
                         </DialogActions>
                     </form>
@@ -364,24 +318,26 @@ const BarnPage = () => {
                             <FormControl fullWidth>
                                 <Select
                                     displayEmpty
+                                    // value={selectedWorker || ""}
+                                    // onChange={(e) => setSelectedWorker(e.target.value)}
                                     renderValue={(selected) => {
                                         if (!selected) {
                                             return <span style={{ color: "#888" }}>Chọn nhân viên</span>;
                                         }
 
-                                        const user = listWorker.find(w => w.id === selected);
-                                        return user?.username;
+                                        // const user = listWorker.find(w => w.id === selected);
+                                        // return user?.username;
                                     }}
                                     sx={{
                                         height: 44,
                                         borderRadius: 2,
                                     }}
                                 >
-                                    {listWorker?.map((worker) => (
+                                    {/* {listWorker?.map((worker) => (
                                         <MenuItem key={worker.id} value={worker.id}>
                                             {worker.username}
                                         </MenuItem>
-                                    ))}
+                                    ))} */}
                                 </Select>
                             </FormControl>
                         </Box>
@@ -409,4 +365,4 @@ const BarnPage = () => {
     )
 }
 
-export default BarnPage;
+export default WareHouseCategory;

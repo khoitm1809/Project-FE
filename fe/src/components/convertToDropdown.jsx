@@ -3,10 +3,10 @@ export const convertToDropdown = (list) => {
         return [];
     }
 
-    return list?.map((barn) => ({
+    return list?.map((item) => ({
         // Lấy ID làm giá trị (value), đảm bảo chuyển thành chuỗi (String)
-        value: String(barn?.id),
+        value: String(item?.id),
         // Lấy tên chuồng làm nhãn hiển thị (label)
-        label: barn?.name,
+        label: item?.name,
     }));
 };
