@@ -14,14 +14,19 @@ import { useGetListUserQuery } from "../../store/auth/authAction";
 
 const BarnPage = () => {
     const location = useLocation();
-    const areaId = location?.state 
+    const areaId = location?.state
     const role = localStorage.getItem("role");
     const UID = localStorage.getItem("UID");
     const navigate = useNavigate();
     const [searchTerm, setSearchTerm] = useState('');
     const [openAddDialog, setOpenAddDialog] = useState(false);
     const [isAssignDialogOpen, setIsAssignDialogOpen] = useState(false);
-
+    // THÊM STATE CHO CHỨC NĂNG XÓA
+    const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+    const [barnToDelete, setBarnToDelete] = useState(null); // Lưu thông tin chuồng cần xóa (bao gồm ID)
+    // Thêm state để lưu ID chuồng đang được chọn và ID nhân viên được chọn
+    const [selectedBarnId, setSelectedBarnId] = useState(null);
+    const [selectedWorkerId, setSelectedWorkerId] = useState(null);
     const [newBarnData, setNewBarnData] = useState({
         name: '',
         description: '',
@@ -29,7 +34,7 @@ const BarnPage = () => {
 
     const [addBarn, { isLoading: isAddingBarn }] = useAddBarnMutation();
     const [editBarn] = useEditBarnMutation();
-    const [deleteBarn] = useDeleteBarnMutation();
+    const [deleteBarn, { isLoading: isDeletingBarn }] = useDeleteBarnMutation(); // Lấy loading state của delete
 
     const {
         data: listBarn,
@@ -54,9 +59,35 @@ const BarnPage = () => {
         setNewBarnData({ name: '', description: '' });
     };
 
-    const handleOpenAssignPigDialog = () => setIsAssignDialogOpen(true);
-    const handleAssignEmployees = () => {
+    // THÊM HÀM MỞ/ĐÓNG VÀ XỬ LÝ XÓA
+    const handleOpenDeleteDialog = (barn) => {
+        setBarnToDelete(barn);
+        setOpenDeleteDialog(true);
     };
+
+    const handleCloseDeleteDialog = () => {
+        setBarnToDelete(null);
+        setOpenDeleteDialog(false);
+    };
+
+    const handleDeleteBarn = async () => {
+        if (!barnToDelete?.documentId) return;
+
+        try {
+            // Gọi mutation xóa
+            await deleteBarn(barnToDelete.documentId).unwrap();
+
+            // Xử lý thành công
+            handleCloseDeleteDialog();
+            await refetch(); // Lấy lại dữ liệu sau khi xóa thành công
+        } catch (error) {
+            console.error("Lỗi khi xóa chuồng:", error);
+            // Xử lý lỗi (ví dụ: hiển thị thông báo)
+        }
+    };
+    // KẾT THÚC THÊM HÀM XÓA
+
+    const handleOpenAssignPigDialog = () => setIsAssignDialogOpen(true);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -66,6 +97,7 @@ const BarnPage = () => {
         }));
     };
 
+    // CẬP NHẬT HÀM THÊM CHUỒNG
     const handleAddBarnSubmit = async (e) => {
         e.preventDefault();
 
@@ -79,9 +111,56 @@ const BarnPage = () => {
                 ...newBarnData,
             }).unwrap();
 
-
+            // THÊM: Đóng dialog và refetch sau khi thêm thành công
+            toggleAddDialog();
+            await refetch();
         } catch (error) {
             console.error("Lỗi khi thêm chuồng:", error);
+        }
+    };
+    // KẾT THÚC CẬP NHẬT HÀM THÊM CHUỒNG
+
+    const handleOpenAssignWorkerDialog = (barnId) => {
+        setSelectedBarnId(barnId); // Lưu lại ID chuồng
+
+        // 1. Tìm chuồng hiện tại trong listBarn.data
+        const currentBarn = listBarn?.data?.find(barn => barn?.documentId === barnId);
+
+        // 2. Lấy ID của nhân viên đã được phân công (nếu có)
+        // users_permissions_user thường là một object hoặc null/undefined.
+        // Cần kiểm tra cấu trúc dữ liệu trả về từ API của bạn.
+        // Giả sử API trả về user object có trường 'id' hoặc 'documentId'
+
+        const currentWorkerId = currentBarn?.users_permissions_user?.id || null;
+
+        // 3. Cập nhật state selectedWorkerId
+        setSelectedWorkerId(currentWorkerId);
+
+        setIsAssignDialogOpen(true);
+    };
+
+    const handleWorkerSelect = (event) => {
+        setSelectedWorkerId(event.target.value); // Lưu lại ID nhân viên được chọn
+    };
+
+    const handleAssignEmployees = async () => {
+        if (!selectedBarnId) {
+            console.error("Vui lòng chọn chuồng.");
+            return;
+        }
+
+        // Nếu selectedWorkerId là null hoặc undefined, gán null để xóa liên kết.
+        const workerId = selectedWorkerId || null;
+
+        try {
+            await editBarn({
+                id: selectedBarnId, // <-- Đây là Barn ID để ghép vào URL
+                users_permissions_user: workerId // <-- Đây là payload, sẽ được bọc trong { data: ... }
+            }).unwrap();
+            setIsAssignDialogOpen(false)
+            await refetch();
+        } catch (error) {
+            console.error("Lỗi khi phân công nhân viên:", error);
         }
     };
 
@@ -194,13 +273,14 @@ const BarnPage = () => {
                     ) : (
                         listBarn?.data?.map((barn, index) => (
                             <Box key={index}
+                                onClick={() => navigate(ROUTES.PIG_PAGE, { state: barn?.documentId })}
                                 sx={{
                                     flex: {
                                         xs: "1 1 50%",
                                         sm: "1 1 calc(50% - 1rem)",
                                     },
                                 }}
-                                onClick={() => navigate(ROUTES.PIG_PAGE, { state: barn?.id })}>
+                            >
                                 <CardInfo
                                     name={barn?.name}
                                     description={barn?.description}
@@ -208,15 +288,19 @@ const BarnPage = () => {
                                     nameCount={"Số lợn: "}
                                     arrayCount={barn?.pigs?.length}
                                     isOwner={role === ROLES.OWNER}
-                                    isShowAction={true}
-                                    onActionAdd={handleOpenAssignPigDialog}
+                                    isAssign={true}
+                                    onActionAssign={() => handleOpenAssignWorkerDialog(barn?.documentId)}
+
+                                    isEdit={true}
+                                    isDelete={true}
+                                    onActionDelete={() => handleOpenDeleteDialog(barn)}
                                 />
                             </Box>
                         ))
                     )}
                 </Row>
 
-                {/* ADD ZONE DIALOG */}
+                {/* ADD BARN DIALOG */}
                 <Dialog
                     fullWidth
                     open={openAddDialog}
@@ -235,10 +319,10 @@ const BarnPage = () => {
                             pb: 1.5,
                         }}
                     >
-                        Tạo khu mới
+                        Tạo Chuồng mới
                     </DialogTitle>
 
-                    {/* 3. GÁN HÀM XỬ LÝ SUBMIT CHO FORM */}
+                    {/* GÁN HÀM XỬ LÝ SUBMIT CHO FORM */}
                     <form onSubmit={handleAddBarnSubmit}>
                         <DialogContent
                             dividers
@@ -251,11 +335,12 @@ const BarnPage = () => {
                                 },
                             }}
                         >
-                            {/* TextField Tên khu */}
+                            {/* TextField Tên chuồng */}
                             <TextField
                                 fullWidth
-                                placeholder="Tên khu..."
+                                placeholder="Tên chuồng..."
                                 name="name"
+                                onChange={handleInputChange}
                                 value={newBarnData.name}
                                 required
                                 sx={{
@@ -285,6 +370,7 @@ const BarnPage = () => {
                                 fullWidth
                                 placeholder="Mô tả..."
                                 name="description"
+                                onChange={handleInputChange}
                                 value={newBarnData.description}
                                 required
                                 multiline
@@ -325,6 +411,8 @@ const BarnPage = () => {
 
                             <Button
                                 variant="contained"
+                                type="submit" // QUAN TRỌNG: GÁN type="submit" cho nút trong form
+                                disabled={isAddingBarn} // Vô hiệu hóa khi đang load
                                 sx={{
                                     textTransform: "none",
                                     borderRadius: "8px",
@@ -335,6 +423,42 @@ const BarnPage = () => {
                             </Button>
                         </DialogActions>
                     </form>
+                </Dialog>
+
+                {/* DELETE BARN DIALOG (THÊM MỚI) */}
+                <Dialog
+                    open={openDeleteDialog}
+                    onClose={handleCloseDeleteDialog}
+                    maxWidth="xs"
+                >
+                    <DialogTitle sx={{ color: 'error.main', fontWeight: 700 }}>
+                        Xác nhận xóa chuồng
+                    </DialogTitle>
+                    <DialogContent>
+                        <DialogContentText>
+                            Bạn có chắc chắn muốn xóa chuồng **{barnToDelete?.name}** không?
+                            <br />
+                            Hành động này không thể hoàn tác.
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button
+                            onClick={handleCloseDeleteDialog}
+                            disabled={isDeletingBarn}
+                            sx={{ textTransform: "none" }}
+                        >
+                            Hủy
+                        </Button>
+                        <Button
+                            onClick={handleDeleteBarn}
+                            color="error"
+                            variant="contained"
+                            disabled={isDeletingBarn}
+                            sx={{ textTransform: "none" }}
+                        >
+                            {isDeletingBarn ? 'Đang xóa...' : 'Xóa'}
+                        </Button>
+                    </DialogActions>
                 </Dialog>
 
 
@@ -349,7 +473,7 @@ const BarnPage = () => {
 
                     <DialogContent dividers>
                         <DialogContentText sx={{ mb: 2 }}>
-                            Chọn nhân viên phụ trách:
+                            Chọn nhân viên phụ trách chuồng **{listBarn?.data?.find(barn => barn.documentId === selectedBarnId)?.name}**:
                         </DialogContentText>
 
                         {/* LIST NHÂN VIÊN */}
@@ -363,20 +487,18 @@ const BarnPage = () => {
                         }}>
                             <FormControl fullWidth>
                                 <Select
+                                    value={selectedWorkerId || ''} // Gán giá trị state đã chọn vào Select
+                                    onChange={handleWorkerSelect}  // Gán hàm xử lý thay đổi
                                     displayEmpty
-                                    renderValue={(selected) => {
-                                        if (!selected) {
-                                            return <span style={{ color: "#888" }}>Chọn nhân viên</span>;
-                                        }
-
-                                        const user = listWorker.find(w => w.id === selected);
-                                        return user?.username;
-                                    }}
                                     sx={{
                                         height: 44,
                                         borderRadius: 2,
                                     }}
                                 >
+                                    <MenuItem value="">
+                                        <span style={{ color: "#888" }}>Không phân công (Chủ trang trại phụ trách)</span>
+                                    </MenuItem>
+                                    {/* Đảm bảo listWorker là mảng trước khi map */}
                                     {listWorker?.map((worker) => (
                                         <MenuItem key={worker.id} value={worker.id}>
                                             {worker.username}

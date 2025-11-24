@@ -16,7 +16,7 @@ export const pigGrowthRecordApi = createApi({
                     method: "GET",
                     params: {
                         ...rest,
-                        ...(UID ? { "filters[users_permissions_user][id]": UID } : {}),
+                        // ...(UID ? { "filters[users_permissions_user][id]": UID } : {}),
                     },
                 };
             },

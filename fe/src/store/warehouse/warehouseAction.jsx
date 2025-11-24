@@ -23,7 +23,7 @@ export const warehouseApi = createApi({
             query: (body) => ({
                 url: API_URL.WAREHOUSE_CATEGORY,
                 method: 'POST',
-                data: body,
+                data: { data: body },
             }),
         }),
 

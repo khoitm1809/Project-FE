@@ -60,7 +60,7 @@ export default function LeftBar({ open, onClose, drawerWidth, isMobile }) {
         { text: "Quản lý giống và đàn lợn", icon: <AgricultureOutlinedIcon />, path: ROUTES.PIG_TYPE, role: ROLES.OWNER },
         { text: "Quản lý  kho hàng hóa", icon: <WarehouseOutlinedIcon />, path: ROUTES.WAREHOUSE_CATEGORY, role: ROLES.OWNER },
         // { text: "Nhập vào kho hàng, vacxin ", icon: <WarehouseOutlinedIcon />, path: ROUTES.WAREHOUSE_ITEM, role: ROLES.OWNER },
-        { text: "Giao việc cho công nhân", icon: <ContactMailOutlinedIcon />, path: ROUTES.HOME, role: ROLES.OWNER },
+        { text: "Giao việc cho công nhân", icon: <ContactMailOutlinedIcon />, path: ROUTES.TODO, role: ROLES.OWNER },
         // cong nhan
         { text: "Home", icon: <HomeOutlinedIcon />, path: ROUTES.HOME, role: ROLES.WORKER },
         { text: "Khu vực của tôi", icon: <GroupAddOutlinedIcon />, path: ROUTES.BARN, role: ROLES.WORKER },
@@ -68,7 +68,7 @@ export default function LeftBar({ open, onClose, drawerWidth, isMobile }) {
         // { text: "Nhập nguồn gốc giống lợn", icon: <UploadFileOutlinedIcon />, path: ROUTES.PIG_PAGE, role: ROLES.WORKER },
         { text: "Ghi nhận tốc độ tăng trưởng", icon: <AreaChartOutlinedIcon />, path: ROUTES.PIG_GROWTH_RECORD, role: ROLES.WORKER },
         { text: "Nhập vào kho hàng, vacxin ", icon: <WarehouseOutlinedIcon />, path: ROUTES.WAREHOUSE_CATEGORY, role: ROLES.WORKER },
-        { text: "To do list các việc mà chủ trang trại giao", icon: <ChecklistOutlinedIcon />, path: ROUTES.HOME, role: ROLES.WORKER },
+        { text: "To do list các việc mà chủ trang trại giao", icon: <ChecklistOutlinedIcon />, path: ROUTES.TODO, role: ROLES.WORKER },
         { text: "Thiết lập thức ăn và dinh dưỡng", icon: <SoupKitchenOutlinedIcon />, path: ROUTES.HOME, role: ROLES.WORKER },
 
     ];

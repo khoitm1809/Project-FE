@@ -20,10 +20,10 @@ export const typePigApi = createApi({
 
         // add off spring
         addTypePig: builder.mutation({
-            query: (body) => ({
+            query: (payload) => ({
                 url: API_URL.TYPE_PIG,
                 method: 'POST',
-                data: body,
+                data: { data: payload },
             }),
         }),
 
@@ -32,7 +32,7 @@ export const typePigApi = createApi({
             query: (body) => ({
                 url: API_URL.TYPE_PIG + "/" + body.id,
                 method: 'PUT',
-                data: body,
+                data: { data: body },
             }),
         }),
 

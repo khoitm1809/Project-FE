@@ -57,11 +57,11 @@ const DetailBarnPage = () => {
         },
 
         {
-            key: "type_pig",
+            key: "pig_type",
             label: "Loại heo",
             isDropDown: true,
             list: convertToDropdown(listPigType?.data), // Giả định list Loại Lợn được truyền vào
-            mappingKey: "type_pig.id"
+            mappingKey: "pig_type.documentId"
         },
 
         {

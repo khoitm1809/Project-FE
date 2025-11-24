@@ -14,6 +14,7 @@ import { PigTypesPage } from "../pages/pig/pigType";
 import WareHouseCategory from "../pages/warehouseCategory/warehouseCategory";
 import WareHouseItem from "../pages/warehouseCategory/WarehouseItem";
 import PigGrowthRecord from "../pages/pig/pigGrowthRecord";
+import TodoPage from "../pages/todo/todoPage";
 
 export const RouterConfig = () => {
     return (
@@ -109,6 +110,15 @@ export const RouterConfig = () => {
                 element={
                     <ProtectedRoute>
                         <PigGrowthRecord />
+                    </ProtectedRoute>
+                }
+            />
+
+            <Route
+                path={ROUTES.TODO}
+                element={
+                    <ProtectedRoute>
+                        <TodoPage />
                     </ProtectedRoute>
                 }
             />

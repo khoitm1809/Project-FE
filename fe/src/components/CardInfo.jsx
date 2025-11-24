@@ -23,8 +23,12 @@ const CardInfo = ({
     onEdit,
     onDelete,
     onClick,
-    isShowAction,
-    onActionAdd
+    isEdit,
+    isAssign,
+    isDelete,
+    onActionAssign,
+    onActionEdit,
+    onActionDelete
 
 }) => {
     return (
@@ -56,25 +60,31 @@ const CardInfo = ({
                     {name}
                 </Typography>
 
-                {isOwner && isShowAction && <Box>
-                    <Tooltip title="Phân công" >
+                {isOwner && <Box>
+                    {isAssign && <Tooltip title="Phân công" >
                         <IconButton size="small" onClick={(e) => {
                             e.stopPropagation();
-                            onActionAdd?.();
+                            onActionAssign?.();
                         }}>
                             <AddIcon fontSize="small" />
                         </IconButton>
-                    </Tooltip>
-                    <Tooltip title="Edit">
-                        <IconButton size="small" onClick={onEdit}>
+                    </Tooltip>}
+                    {isEdit && <Tooltip title="Edit">
+                        <IconButton size="small" onClick={(e) => {
+                            e.stopPropagation();
+                            onActionEdit?.();
+                        }}>
                             <EditIcon fontSize="small" />
                         </IconButton>
-                    </Tooltip>
-                    <Tooltip title="Xóa">
-                        <IconButton size="small" color="error" onClick={onDelete}>
+                    </Tooltip>}
+                    {isDelete && <Tooltip title="Xóa">
+                        <IconButton size="small" color="error" onClick={(e) => {
+                            e.stopPropagation();
+                            onActionDelete?.();
+                        }}>
                             <DeleteIcon fontSize="small" />
                         </IconButton>
-                    </Tooltip>
+                    </Tooltip>}
                 </Box>}
             </Box>
 

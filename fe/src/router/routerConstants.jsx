@@ -10,5 +10,6 @@ export const ROUTES = {
   PIG_TYPE: "pig-type",
   WAREHOUSE_CATEGORY: "/warehouse-category",
   WAREHOUSE_ITEM: "/warehouse-item",
-  PIG_GROWTH_RECORD: "/pig-growth-records"
+  PIG_GROWTH_RECORD: "/pig-growth-records",
+  TODO: "/todo"
 };

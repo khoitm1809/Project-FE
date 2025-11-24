@@ -7,7 +7,7 @@ export const API_URL = {
   PIG: '/api/pigs',
   PIG_GROWTH_RECORDS: '/api/pig-growth-records',
   BARN: '/api/barns',
-  TYPE_PIG: 'api/type-pigs',
+  TYPE_PIG: 'api/pig-types',
   AREA: 'api/areas',
   WAREHOUSE_CATEGORY: '/api/warehouse-categories',
   WAREHOUSE_ITEM: '/api/warehouse-items'
