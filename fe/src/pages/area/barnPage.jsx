@@ -14,7 +14,7 @@ import { useGetListUserQuery } from "../../store/auth/authAction";
 
 const BarnPage = () => {
     const location = useLocation();
-    const areaId = location?.state
+    const areaId = location?.state;
     const role = localStorage.getItem("role");
     const UID = localStorage.getItem("UID");
     const navigate = useNavigate();
@@ -273,7 +273,12 @@ const BarnPage = () => {
                     ) : (
                         listBarn?.data?.map((barn, index) => (
                             <Box key={index}
-                                onClick={() => navigate(ROUTES.PIG_PAGE, { state: barn?.documentId })}
+                                onClick={() => navigate(ROUTES.PIG_PAGE, {
+                                    state: {
+                                        barnId: barn?.id,
+                                        areaId: areaId
+                                    }
+                                })}
                                 sx={{
                                     flex: {
                                         xs: "1 1 50%",

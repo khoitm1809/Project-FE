@@ -56,7 +56,6 @@ export default function CustomTable({
 }) {
     const navigate = useNavigate();
     const dispatch = useDispatch(); // Hook để bắn action Redux
-    console.log(isListUser)
     // --- 1. State Search Local ---
     const [searchTerm, setSearchTerm] = React.useState('');
 

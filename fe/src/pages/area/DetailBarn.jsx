@@ -7,10 +7,14 @@ import { convertToDropdown } from "../../components/convertToDropdown";
 import AddDataDialog from "../../components/AddDataDialog";
 import EditDataDialog from "../../components/EditDataDialog";
 import { useSelector } from "react-redux";
+import { useGetListUserQuery } from "../../store/auth/authAction";
+import { useGetListBarnQuery } from "../../store/area/areaAction";
 
 const DetailBarnPage = () => {
     const location = useLocation();
-    const barnId = location?.state;
+    const { state } = location;
+    const barnId = state?.barnId;
+    const areaId = state?.areaId;
     const { modalType } = useSelector((state) => state.helper);
     // API Hooks
     const [addPig] = useAddPigMutation();
@@ -31,6 +35,18 @@ const DetailBarnPage = () => {
     } = useGetListTypePigQuery(
         { refetchOnMountOrArgChange: true }
     );
+
+    const {
+        data: listUser,
+        isLoading: loadingListUser,
+    } = useGetListUserQuery({}, { refetchOnMountOrArgChange: true })
+
+    const {
+        data: listBarn,
+        isLoading: loadingBarn,
+    } = useGetListBarnQuery({
+        areaId: areaId,
+    }, { refetchOnMountOrArgChange: true })
     // Config Table
     const title = [
         { key: "pigCode", label: "Mã heo" },
@@ -52,8 +68,8 @@ const DetailBarnPage = () => {
             key: "barn",
             label: "Chuồng",
             isDropDown: true,
-            // list: convertToDropdown(listBarns), 
-            mappingKey: "barn.id"
+            list: convertToDropdown(listBarn?.data),
+            mappingKey: "barn.documentId"
         },
 
         {
@@ -68,7 +84,7 @@ const DetailBarnPage = () => {
             key: "users_permissions_user",
             label: "Người phụ trách",
             isDropDown: true,
-            // list: convertToDropdown(listUsers), // Giả định list User được truyền vào
+            list: convertToDropdown(listUser?.data), // Giả định list User được truyền vào
             mappingKey: "users_permissions_user.id"
         },
     ];

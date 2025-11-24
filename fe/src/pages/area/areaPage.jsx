@@ -236,8 +236,7 @@ const AreaPage = () => {
                                 isAssign={false}
                                 isDelete={true}
                                 // THÊM PROPS CHO HÀNH ĐỘNG
-                                onActionEdit={(e) => {
-                                    e.stopPropagation(); // Ngăn chặn sự kiện navigate của Box cha
+                                onActionEdit={() => {
                                     handleOpenEditDialog(area);
                                 }}
                                 onActionDelete={() => {
