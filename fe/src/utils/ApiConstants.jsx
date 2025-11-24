@@ -10,5 +10,6 @@ export const API_URL = {
   TYPE_PIG: 'api/pig-types',
   AREA: 'api/areas',
   WAREHOUSE_CATEGORY: '/api/warehouse-categories',
-  WAREHOUSE_ITEM: '/api/warehouse-items'
+  WAREHOUSE_ITEM: '/api/warehouse-items',
+  FEED_SETTING: '/api/feed-settings'
 };

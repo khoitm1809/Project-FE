@@ -26,7 +26,7 @@ export const warehouseItemApi = createApi({
             query: (body) => ({
                 url: API_URL.WAREHOUSE_ITEM,
                 method: 'POST',
-                data: body,
+                data: { data: body },
             }),
         }),
 

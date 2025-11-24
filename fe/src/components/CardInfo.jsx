@@ -12,6 +12,9 @@ import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import dayjs from "dayjs";
+import { Row } from "./commonStyled";
+import { useGetListFeedSettingQuery } from "../store/warehouse/feedSettingsAction";
+import { SettingsIcon } from "lucide-react";
 
 const CardInfo = ({
     name,
@@ -28,9 +31,14 @@ const CardInfo = ({
     isDelete,
     onActionAssign,
     onActionEdit,
-    onActionDelete
-
+    onActionDelete,
+    feedSetting
 }) => {
+    const {
+        data: listfeedSettings,
+    } = useGetListFeedSettingQuery({}, { skip: !feedSetting, refetchOnMountOrArgChange: true })
+    console.log(listfeedSettings?.data)
+
     return (
         <Card
             onClick={onClick}
@@ -60,32 +68,43 @@ const CardInfo = ({
                     {name}
                 </Typography>
 
-                {isOwner && <Box>
-                    {isAssign && <Tooltip title="Phân công" >
-                        <IconButton size="small" onClick={(e) => {
-                            e.stopPropagation();
-                            onActionAssign?.();
+                <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+
+                    {isOwner && <Box>
+                        {isAssign && <Tooltip title="Phân công" >
+                            <IconButton size="small" onClick={(e) => {
+                                e.stopPropagation();
+                                onActionAssign?.();
+                            }}>
+                                <AddIcon fontSize="small" />
+                            </IconButton>
+                        </Tooltip>}
+                        {isEdit && <Tooltip title="Edit">
+                            <IconButton size="small" onClick={(e) => {
+                                e.stopPropagation();
+                                onActionEdit?.();
+                            }}>
+                                <EditIcon fontSize="small" />
+                            </IconButton>
+                        </Tooltip>}
+                        {isDelete && <Tooltip title="Xóa">
+                            <IconButton size="small" color="error" onClick={(e) => {
+                                e.stopPropagation();
+                                onActionDelete?.();
+                            }}>
+                                <DeleteIcon fontSize="small" />
+                            </IconButton>
+                        </Tooltip>}
+                    </Box>}
+                    {feedSetting && <Tooltip title="Cài đặt Thức ăn">
+                        <IconButton size="small" color="primary" onClick={(e) => {
+                            e.stopPropagation(); // Ngăn chặn sự kiện click lan truyền lên Card
                         }}>
-                            <AddIcon fontSize="small" />
+                            <SettingsIcon fontSize="small" />
                         </IconButton>
                     </Tooltip>}
-                    {isEdit && <Tooltip title="Edit">
-                        <IconButton size="small" onClick={(e) => {
-                            e.stopPropagation();
-                            onActionEdit?.();
-                        }}>
-                            <EditIcon fontSize="small" />
-                        </IconButton>
-                    </Tooltip>}
-                    {isDelete && <Tooltip title="Xóa">
-                        <IconButton size="small" color="error" onClick={(e) => {
-                            e.stopPropagation();
-                            onActionDelete?.();
-                        }}>
-                            <DeleteIcon fontSize="small" />
-                        </IconButton>
-                    </Tooltip>}
-                </Box>}
+                </Box>
+
             </Box>
 
             <CardContent>

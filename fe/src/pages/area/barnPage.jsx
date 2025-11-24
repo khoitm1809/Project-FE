@@ -295,10 +295,10 @@ const BarnPage = () => {
                                     isOwner={role === ROLES.OWNER}
                                     isAssign={true}
                                     onActionAssign={() => handleOpenAssignWorkerDialog(barn?.documentId)}
-
                                     isEdit={true}
                                     isDelete={true}
                                     onActionDelete={() => handleOpenDeleteDialog(barn)}
+                                    feedSetting={true}
                                 />
                             </Box>
                         ))
