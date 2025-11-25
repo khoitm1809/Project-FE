@@ -55,12 +55,17 @@ export default function AddDataDialog({
     React.useEffect(() => {
         if (isOpen) {
             const defaults = dialogTitle.reduce((acc, f) => {
-                acc[f.key] = "";
+                // Lấy giá trị mặc định từ 'defaultValue' nếu có, ngược lại là chuỗi rỗng.
+                const defaultValue = f.defaultValue !== undefined && f.defaultValue !== null 
+                                     ? f.defaultValue 
+                                     : "";
+                                     
+                acc[f.key] = defaultValue;
                 return acc;
             }, {});
             setFormData(defaults);
         }
-    }, [isOpen, dialogTitle]);
+    }, [isOpen, dialogTitle]); // Không cần dependency là user
 
     const handleChange = (key, value) => {
         setFormData(prev => ({ ...prev, [key]: value }));
@@ -96,6 +101,8 @@ export default function AddDataDialog({
                             field={field}
                             value={formData[field.key]}
                             onChange={handleChange}
+                            // TRUYỀN PROP DISABLED
+                            disabled={field.isDisable} 
                         />
                     ))}
                 </Grid>

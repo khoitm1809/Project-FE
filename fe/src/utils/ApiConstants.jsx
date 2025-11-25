@@ -11,5 +11,6 @@ export const API_URL = {
   AREA: 'api/areas',
   WAREHOUSE_CATEGORY: '/api/warehouse-categories',
   WAREHOUSE_ITEM: '/api/warehouse-items',
-  FEED_SETTING: '/api/feed-settings'
+  FEED_SETTING: '/api/feed-settings',
+  TODO: '/api/todos',
 };

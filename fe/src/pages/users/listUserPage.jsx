@@ -6,6 +6,7 @@ import AddDataDialog from "../../components/AddDataDialog";
 import EditDataDialog from "../../components/EditDataDialog";
 import { useSelector } from "react-redux";
 import { convertToDropdown } from "../../components/convertToDropdown";
+import { ROLES } from "../../utils/rolesConstant";
 
 const ListUserPage = () => {
     const [registerUser] = useUserRegisterMutation();
@@ -34,7 +35,9 @@ const ListUserPage = () => {
         data: listUser,
         isLoading: loadingListUser,
         refetch
-    } = useGetListUserQuery({}, { refetchOnMountOrArgChange: true })
+    } = useGetListUserQuery({
+        role: ROLES.WORKER
+    }, { refetchOnMountOrArgChange: true })
 
     return (
         <BoxContainer padding={'2rem'}>

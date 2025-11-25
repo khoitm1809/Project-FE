@@ -1,4 +1,4 @@
-import { Box, Button, Card, Dialog, DialogActions, DialogContent, DialogTitle, Grid, TextField, Typography } from "@mui/material";
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Typography } from "@mui/material";
 import { BoxContainer, Row } from "../../components/commonStyled";
 import { useNavigate } from "react-router";
 import { useState } from "react";
@@ -9,33 +9,29 @@ import CardInfo from "../../components/CardInfo";
 import { useAddAreaMutation, useDeleteAreaMutation, useEditAreaMutation, useGetListAreaQuery } from "../../store/area/areaAction";
 import { ROUTES } from "../../router/routerConstants";
 import { ROLES } from "../../utils/rolesConstant";
+import { MESSAGE_TYPE } from "../../utils/constant";
+import { useConfirmDialog } from "../../components/confirmDialog";
 
 const AreaPage = () => {
     const role = localStorage.getItem("role");
     const UID = localStorage.getItem("UID");
     const navigate = useNavigate();
 
-    // --- State cho UI và Dữ liệu ---
     const [searchTerm, setSearchTerm] = useState('');
     const [openAddDialog, setOpenAddDialog] = useState(false);
     const [openEditDialog, setOpenEditDialog] = useState(false);
-    const [editingArea, setEditingArea] = useState(null); // Lưu khu vực đang chỉnh sửa
-    const [isSubmitting, setIsSubmitting] = useState(false); // Ngăn chặn double click khi submit
-    // ---
+    const [editingArea, setEditingArea] = useState(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
-    // --- RTK Query Mutations ---
     const [addArea] = useAddAreaMutation();
     const [editArea] = useEditAreaMutation();
     const [deleteArea] = useDeleteAreaMutation();
-    // ---
-
-    // --- RTK Query Data Fetching ---
+    const { openDialog } = useConfirmDialog()
     const {
         data: listArea,
         isLoading: loadingArea,
         refetch
     } = useGetListAreaQuery({}, { refetchOnMountOrArgChange: true })
-    // ---
 
     const toggleAddDialog = () => setOpenAddDialog(prev => !prev);
 
@@ -48,13 +44,13 @@ const AreaPage = () => {
         setOpenEditDialog(false);
         setEditingArea(null);
     };
+    
     const handleSubmitAdd = async (e) => {
         e.preventDefault();
         setIsSubmitting(true);
         const formData = new FormData(e.currentTarget);
         const name = formData.get('name');
         const description = formData.get('description');
-        const users_permissions_user = formData.get('users_permissions_user');
 
         try {
             await addArea({ name, description, users_permissions_user: UID }).unwrap();
@@ -63,14 +59,18 @@ const AreaPage = () => {
             refetch();
         } catch (error) {
             console.error("Lỗi khi thêm khu vực:", error);
+            const errorMessage = error.data?.message || error.error || "Không thể thêm khu vực. Vui lòng thử lại.";
+            openDialog({
+                type: MESSAGE_TYPE.ERROR,
+                message: `Lỗi khi thêm khu vực: ${errorMessage}`,
+                isShowCloseBtn: true,
+                isHideAction: true,
+            });
         } finally {
             setIsSubmitting(false);
         }
     };
 
-    /**
-     * Xử lý Chỉnh sửa Khu vực (Truyền vào prop onEdit của CardInfo)
-     */
     const handleSubmitEdit = async (e) => {
         e.preventDefault();
         if (!editingArea) return;
@@ -81,35 +81,68 @@ const AreaPage = () => {
         const description = formData.get('description');
 
         const updateData = {
-            id: editingArea.documentId, // Giả định ID nằm trong editingArea
             name,
             description
         };
 
         try {
-            await editArea(updateData).unwrap();
+            await editArea({
+                id: editingArea.documentId,
+                updateData
+            }).unwrap();
 
             handleCloseEditDialog();
-            refetch(); // Tải lại danh sách
+            refetch();
         } catch (error) {
-            console.error("Lỗi khi sửa khu vực:", error);
+            const errorMessage = error.data?.message || error.error || "Không thể sửa khu vực. Vui lòng thử lại.";
+            openDialog({
+                type: MESSAGE_TYPE.ERROR,
+                message: `Lỗi khi sửa khu vực: ${errorMessage}`,
+                isShowCloseBtn: true,
+                isHideAction: true,
+            });
         } finally {
             setIsSubmitting(false);
         }
     };
 
+    /**
+     * @description Xử lý xóa khu vực và hiển thị lỗi bằng openDialog nếu xóa thất bại.
+     */
     const handleDelete = async (areaId) => {
+        // Tìm khu vực cụ thể cần xóa để kiểm tra số chuồng liên quan
+        const areaToDelete = listArea?.data?.find(area => area.documentId === areaId);
+        const barnCount = areaToDelete?.barns?.length || 0;
 
-        try {
-            await deleteArea(areaId).unwrap();
+        if (barnCount > 0) {
+            openDialog({
+                type: MESSAGE_TYPE.WARNING,
+                // Hiển thị số lượng chuồng cần xóa
+                message: `Bạn phải xóa ${barnCount} chuồng mới được xóa khu này`,
+                isShowCloseBtn: true,
+                isHideAction: true,
+                customSecondText: "Xác nhận"
+            });
+        } else {
+            try {
+                await deleteArea(areaId).unwrap();
+                refetch();
+            } catch (error) {
+                console.error("Lỗi khi xóa khu vực:", error);
 
-            refetch(); // Tải lại danh sách
-        } catch (error) {
-            console.error("Lỗi khi xóa khu vực:", error);
+                // THAY THẾ console.error bằng openDialog để hiển thị lỗi cho người dùng
+                const errorMessage = error.data?.message || error.error || "Không thể xóa khu vực. Vui lòng thử lại.";
+
+                openDialog({
+                    type: MESSAGE_TYPE.ERROR,
+                    message: `Lỗi khi xóa khu vực: ${errorMessage}`,
+                    isShowCloseBtn: true,
+                    isHideAction: true,
+                });
+            }
         }
     };
 
-    // Áp dụng tìm kiếm
     const filteredArea = listArea?.data?.filter(area =>
         area?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         area?.description?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -118,6 +151,7 @@ const AreaPage = () => {
     return (
         <BoxContainer padding={'2rem'}>
             <Box mb={4}>
+                {/* Tiêu đề trang */}
                 <Box sx={{ marginBottom: '2rem' }}>
                     <Typography
                         variant="h4"
@@ -126,8 +160,6 @@ const AreaPage = () => {
                     >
                         Quản lý khu vực
                     </Typography>
-
-                    {/* SUBTITLE */}
                     <Typography
                         variant="subtitle1"
                         color="text.secondary"
@@ -135,19 +167,16 @@ const AreaPage = () => {
                         Quản lý toàn bộ khu vực
                     </Typography>
                 </Box>
-
-                {/* SEARCH + BUTTON */}
+                
+                {/* Thanh tìm kiếm, lọc và nút thêm mới */}
                 <Box
                     display="flex"
                     flexDirection={{ xs: "column", sm: "row" }}
                     alignItems={{ xs: "stretch", sm: "center" }}
                     gap={2}
                     mb={2}
-                    sx={{
-                        width: "100%",
-                    }}
+                    sx={{ width: "100%" }}
                 >
-                    {/* Search Input */}
                     <TextField
                         fullWidth
                         placeholder="Tìm kiếm..."
@@ -170,7 +199,6 @@ const AreaPage = () => {
                         }}
                     />
 
-                    {/* Nút Lọc */}
                     <Button
                         variant="outlined"
                         startIcon={<TuneOutlinedIcon />}
@@ -190,7 +218,6 @@ const AreaPage = () => {
                         Lọc
                     </Button>
 
-                    {/* Nút Thêm */}
                     <Button
                         variant="contained"
                         startIcon={<AddOutlinedIcon />}
@@ -209,8 +236,8 @@ const AreaPage = () => {
                         Thêm mới
                     </Button>
                 </Box>
-
-                {/* CardInfor List */}
+                
+                {/* Danh sách thẻ khu vực */}
                 <Row sx={{
                     width: '100%',
                     flexWrap: 'wrap',
@@ -221,7 +248,7 @@ const AreaPage = () => {
                             sx={{
                                 flex: {
                                     xs: "1 1 100%",
-                                    sm: "1 1 calc(50% - 1rem)",
+                                    sm: "0 0 calc(50% - 1rem)",
                                 },
                             }}
                             onClick={() => navigate(ROUTES.BARN, { state: area?.id })}>
@@ -235,7 +262,6 @@ const AreaPage = () => {
                                 isEdit={true}
                                 isAssign={false}
                                 isDelete={true}
-                                // THÊM PROPS CHO HÀNH ĐỘNG
                                 onActionEdit={() => {
                                     handleOpenEditDialog(area);
                                 }}
@@ -248,9 +274,9 @@ const AreaPage = () => {
                     {!loadingArea && filteredArea.length === 0 && (
                         <Typography sx={{ p: 2, color: 'text.secondary' }}>Không tìm thấy khu vực nào.</Typography>
                     )}
-                    {/* Bạn có thể thêm một loader ở đây nếu cần */}
                 </Row>
 
+                {/* Dialog Thêm mới */}
                 <Dialog
                     fullWidth
                     open={openAddDialog}
@@ -302,14 +328,9 @@ const AreaPage = () => {
                                         "&:hover fieldset": { border: "none" },
                                         "&.Mui-focused fieldset": { border: "none" },
 
-                                        // text style
-                                        "& input": {
-                                            fontSize: "0.95rem",
-                                        },
+                                        "& input": { fontSize: "0.95rem" },
                                     },
-                                    "& .MuiInputBase-input::placeholder": {
-                                        color: "#999",
-                                    },
+                                    "& .MuiInputBase-input::placeholder": { color: "#999" },
                                 }}
                             />
 
@@ -330,13 +351,9 @@ const AreaPage = () => {
                                         "&:hover fieldset": { border: "none" },
                                         "&.Mui-focused fieldset": { border: "none" },
 
-                                        "& textarea": {
-                                            fontSize: "0.95rem",
-                                        },
+                                        "& textarea": { fontSize: "0.95rem" },
                                     },
-                                    "& .MuiInputBase-input::placeholder": {
-                                        color: "#999",
-                                    },
+                                    "& .MuiInputBase-input::placeholder": { color: "#999" },
                                 }}
                             />
                         </DialogContent>
@@ -372,9 +389,7 @@ const AreaPage = () => {
                     </form>
                 </Dialog>
 
-                {/* ========================================================= */}
-                {/* 2. EDIT ZONE DIALOG (Sử dụng handleSubmitEdit)              */}
-                {/* ========================================================= */}
+                {/* Dialog Chỉnh sửa */}
                 <Dialog
                     fullWidth
                     open={openEditDialog}
@@ -396,7 +411,6 @@ const AreaPage = () => {
                         Chỉnh sửa Khu vực: {editingArea?.name}
                     </DialogTitle>
 
-                    {/* Form chỉ được render khi có editingArea để tránh lỗi undefined */}
                     {editingArea && (
                         <form onSubmit={handleSubmitEdit}>
                             <DialogContent
@@ -410,13 +424,11 @@ const AreaPage = () => {
                                     },
                                 }}
                             >
-                                {/* Input Tên Khu */}
                                 <TextField
                                     fullWidth
                                     placeholder="Tên khu..."
                                     name="name"
                                     required
-                                    // Sử dụng defaultValue để form được kiểm soát tốt hơn khi chỉnh sửa
                                     defaultValue={editingArea?.name || ''}
                                     disabled={isSubmitting}
                                     sx={{
@@ -435,7 +447,6 @@ const AreaPage = () => {
                                     }}
                                 />
 
-                                {/* Input Mô tả */}
                                 <TextField
                                     fullWidth
                                     placeholder="Mô tả..."

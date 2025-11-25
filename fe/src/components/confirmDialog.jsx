@@ -6,6 +6,7 @@ import { MESSAGE_TYPE } from '../utils/constant';
 import CheckCircleOutlineOutlinedIcon from '@mui/icons-material/CheckCircleOutlineOutlined';
 import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 import WarningAmberOutlinedIcon from '@mui/icons-material/WarningAmberOutlined';
+import { t } from 'i18next';
 
 const ConfirmDialogContext = createContext();
 
@@ -135,7 +136,7 @@ export const ConfirmDialogProvider = ({ children }) => {
                                         dialogConfig?.actionCancel();
                                     }
                                 }}>
-                                    {dialogConfig?.customSecondText ?? t("common.close")}
+                                    {dialogConfig?.customSecondText ?? t("Đóng")}
                                 </MainButton>
                             </Box>
                         }

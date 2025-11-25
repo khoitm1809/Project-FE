@@ -12,6 +12,7 @@ import { warehouseApi } from "./warehouse/warehouseAction";
 import { warehouseItemApi } from "./warehouse/warehouseItemAction";
 import { pigGrowthRecordApi } from "./pig/pigGrowthRecordAction";
 import { feedSettingApi } from "./warehouse/feedSettingsAction";
+import { todoApi } from "./todo/todoAction";
 
 const persistConfig = {
     key: "auth",
@@ -29,7 +30,8 @@ const rootReducer = combineReducers({
     [warehouseApi.reducerPath]: warehouseApi.reducer,
     [warehouseItemApi.reducerPath]: warehouseItemApi.reducer,
     [pigGrowthRecordApi.reducerPath]: pigGrowthRecordApi.reducer,
-    [feedSettingApi.reducerPath]: feedSettingApi.reducer
+    [feedSettingApi.reducerPath]: feedSettingApi.reducer,
+    [todoApi.reducerPath]: todoApi.reducer
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -47,7 +49,8 @@ export const store = configureStore({
             warehouseApi.middleware,
             warehouseItemApi.middleware,
             pigGrowthRecordApi.middleware,
-            feedSettingApi.middleware
+            feedSettingApi.middleware,
+            todoApi.middleware
         ),
 });
 

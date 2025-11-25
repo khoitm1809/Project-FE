@@ -28,10 +28,12 @@ export const areaApi = createApi({
         }),
 
         editArea: builder.mutation({
-            query: (body) => ({
-                url: API_URL.AREA + "/" + body.id,
+            query: ({ id, updateData }) => ({
+                url: API_URL.AREA + "/" + id,
                 method: 'PUT',
-                data: { data: body },
+                data: {
+                    data: updateData,
+                },
             }),
         }),
 

@@ -33,10 +33,10 @@ export const pigApi = createApi({
 
         // edit off spring
         editPig: builder.mutation({
-            query: (body) => ({
-                url: API_URL.PIG + "/" + body.id,
+            query: ({ id, ...rest }) => ({
+                url: API_URL.PIG + "/" + id,
                 method: 'PUT',
-                data: { data: body },
+                data: { data: rest },
             }),
         }),
 

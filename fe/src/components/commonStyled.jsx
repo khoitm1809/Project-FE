@@ -59,7 +59,7 @@ export const TextFieldStyle = styled(TextField)(() => ({
 export const MainButton = styled(Button)(({ theme }) => ({
     background: THEME.MAIN_BUTTON,
     color: THEME.MAIN_TEXT_BUTTON,
-    borderRadius: "1rem",
+    borderRadius: "0.5rem",
     height: "3rem",
     textTransform: "none",
 }));
