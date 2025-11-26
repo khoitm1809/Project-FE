@@ -10,7 +10,7 @@ export const todoApi = createApi({
         // Get List Off Spring
         getListTodo: builder.query({
             query: (params) => ({
-                url: API_URL.TODO,
+                url: API_URL.TODO + "?populate=*",
                 method: 'GET',
                 params: {
                     ...params,
@@ -29,10 +29,10 @@ export const todoApi = createApi({
 
         // edit off spring
         editTodo: builder.mutation({
-            query: (body) => ({
-                url: API_URL.TODO + "/" + body.id,
+            query: ({ id, ...updateData }) => ({
+                url: API_URL.TODO + "/" + id,
                 method: 'PUT',
-                data: { data: body },
+                data: { data: updateData },
             }),
         }),
 

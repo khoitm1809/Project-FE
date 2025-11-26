@@ -55,17 +55,20 @@ const DetailBarnPage = () => {
         { key: "healthStatus", label: "Sức khỏe" },
         { key: "weight", label: "Cân nặng", },
         { key: "barn.name", label: "Chuồng" },
-        { key: "pig_growth_records.weight", label: "Tăng trưởng" },
-        { key: "price", label: "Giá" }
+        { key: "age", label: "Tuổi" },
+        { key: "pig_growth_records.weight", label: "Tăng trưởng", isArray: true },
+        { key: "price", label: "Giá" },
+        { key: "pig_type.name", label: "Loại heo" },
+        { key: "users_permissions_user.username", label: "Người tạo" }
 
     ];
 
     const dialogTitle = [
         { key: "pigCode", label: "Mã heo" },
+        { key: "healthStatus", label: "Sức khỏe" },
         { key: "weight", label: "Cân nặng", isNumber: true },
         { key: "age", label: "Tuổi", isNumber: true },
-        { key: "healthStatus", label: "Sức khỏe" },
-        { key: "note", label: "Ghi chú" },
+        { key: "price", label: "Giá", isNumber: true },
 
         {
             key: "barn",
@@ -90,6 +93,7 @@ const DetailBarnPage = () => {
             defaultValue: user?.id,
             mappingKey: "users_permissions_user.id"
         },
+        { key: "note", label: "Ghi chú" },
     ];
 
     return (

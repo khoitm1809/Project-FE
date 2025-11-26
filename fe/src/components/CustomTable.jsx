@@ -16,17 +16,60 @@ import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import ModeEditOutlineOutlinedIcon from '@mui/icons-material/ModeEditOutlineOutlined';
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import dayjs from 'dayjs';
-import { Row, EditButton, DeleteButton } from './commonStyled';
 import { openAddModal, openEditModal } from '../store/helper/helperSlice';
+import { DeleteButton, EditButton, Row } from './commonStyled';
 
 // --- Helper Functions ---
+/**
+ * Lấy giá trị theo đường dẫn (Path). KHÔNG xử lý logic sắp xếp/định dạng array tại đây.
+ * Thay đổi: Để xử lý array linh hoạt hơn (ví dụ: lấy toàn bộ mảng records)
+ */
 const getValueByPath = (obj, path) => {
     if (!obj || !path) return null;
-    return path.split('.')?.reduce((acc, key) => (acc && acc[key] !== undefined ? acc[key] : null), obj);
+    
+    const parts = path.split('.');
+    
+    // Nếu path là "pig_growth_records.weight", ta sẽ chỉ lấy mảng pig_growth_records
+    // và để logic xử lý cân nặng (map, sort) cho formatValue.
+    if (path.startsWith("pig_growth_records.")) {
+        return obj.pig_growth_records;
+    }
+
+    // Xử lý thông thường cho các path khác
+    return parts.reduce((acc, key) => (acc && acc[key] !== undefined ? acc[key] : null), obj);
 };
 
-const formatValue = (key, value) => {
+/**
+ * Định dạng giá trị, có xử lý riêng cho mảng pig_growth_records.
+ * @param {string} key - key của cột.
+ * @param {*} value - Giá trị thô.
+ * @param {boolean} isArrayField - Cờ báo hiệu đây là trường array cần xử lý.
+ */
+const formatValue = (key, value, isArrayField = false) => {
     if (value === null || value === undefined) return "-";
+    
+    // --- Logic xử lý MẢNG đặc biệt (Chỉ áp dụng cho các cột được đánh dấu isArray) ---
+    if (isArrayField && Array.isArray(value)) {
+        // Trường hợp cụ thể: Cân nặng lợn
+        if (key === "pig_growth_records.weight" && value.length > 0) {
+            
+            // 1. Sắp xếp theo recordDate tăng dần (từ cũ đến mới)
+            const sortedRecords = value
+                .slice() 
+                .sort((a, b) => new Date(a.recordDate).getTime() - new Date(b.recordDate).getTime());
+
+            // 2. Lấy mảng cân nặng và định dạng
+            const weights = sortedRecords.map(record => record.weight);
+            // Trả về chuỗi định dạng mong muốn: [65kg, 70kg]
+            return `[${weights.map(w => `${w}kg`).join(', ')}]`;
+        } 
+        
+        // Trường hợp mảng chung khác (nếu có, có thể cần logic tùy chỉnh khác)
+        // Ví dụ: return value.join(', ');
+        return value.toString();
+    }
+
+    // --- Logic xử lý giá trị đơn giản ---
     if (typeof value === "boolean") return value ? "true" : "false";
     if (key.toLowerCase().includes("date") || key.toLowerCase().includes("created_at")) {
         return dayjs(value).isValid() ? dayjs(value).format("DD/MM/YYYY") : value;
@@ -35,6 +78,7 @@ const formatValue = (key, value) => {
 };
 
 const getStatusStyleMui = (value) => {
+    // Giá trị đầu vào phải là chuỗi 'true'/'false' hoặc 'active'/'inactive'
     const lowerValue = String(value)?.toLowerCase();
     switch (lowerValue) {
         case "true": case "active": return { background: '#e8f5e9', color: '#388e3c' };
@@ -45,7 +89,7 @@ const getStatusStyleMui = (value) => {
 };
 
 export default function CustomTable({
-    title,
+    title, // Thêm cấu trúc mới: { key: "...", label: "...", isArray: true }
     data,
     isEdit,
     detailNavigate, // Nếu có click vào row để sang trang chi tiết
@@ -66,7 +110,12 @@ export default function CustomTable({
 
         return data?.filter((item) =>
             title?.some((col) => {
-                const value = getValueByPath(item, col.key);
+                const rawValue = getValueByPath(item, col.key);
+                
+                // Sử dụng formatValue để có được giá trị đã định dạng (bao gồm cả chuỗi mảng)
+                const value = formatValue(col.key, rawValue, col.isArray); 
+                
+                // Chuyển đổi giá trị sang chuỗi để tìm kiếm
                 return value?.toString()?.toLowerCase()?.includes(lowerSearch);
             })
         );
@@ -75,8 +124,14 @@ export default function CustomTable({
     // --- 3. Handle Delete ---
     const handleDelete = async (id) => {
         try {
-            await mutationDeleteFunction(id).unwrap();
-            refetch();
+            // Kiểm tra xem mutationDeleteFunction có tồn tại không
+            if (mutationDeleteFunction) {
+                await mutationDeleteFunction(id).unwrap();
+                // Kiểm tra xem refetch có tồn tại không
+                if (refetch) refetch();
+            } else {
+                console.warn("Delete function (mutationDeleteFunction) is not provided.");
+            }
         } catch (error) {
             console.error("Error deleting data:", error);
         }
@@ -144,6 +199,7 @@ export default function CustomTable({
                 <Button
                     variant="contained"
                     startIcon={<AddOutlinedIcon />}
+                    // Phải đảm bảo openAddModal được import đúng
                     onClick={() => dispatch(openAddModal())}
                     sx={{
                         height: "44px",
@@ -178,9 +234,10 @@ export default function CustomTable({
 
                     <TableBody>
                         {loading ? (
+                            // Hiển thị Skeleton khi đang tải dữ liệu
                             [...Array(5)].map((_, rowIndex) => (
                                 <TableRow key={rowIndex}>
-                                    {title?.map((_, colIndex) => (
+                                    {title?.filter(col => col.key !== "password")?.map((_, colIndex) => (
                                         <TableCell key={colIndex}>
                                             <Skeleton variant="rectangular" width="90%" height={24} sx={{ borderRadius: 1 }} />
                                         </TableCell>
@@ -189,6 +246,7 @@ export default function CustomTable({
                                 </TableRow>
                             ))
                         ) : filteredData?.length > 0 ? (
+                            // Hiển thị Dữ liệu
                             filteredData?.map((item, rowIndex) => (
                                 <TableRow
                                     key={rowIndex}
@@ -199,9 +257,17 @@ export default function CustomTable({
                                 >
                                     {title?.filter(col => col.key !== "password")?.map((col, colIndex) => {
                                         const rawValue = getValueByPath(item, col?.key);
+
+                                        // 1. Ép kiểu boolean thành chuỗi 'true'/'false' cho logic status
                                         const isStatusField = col?.key.toLowerCase().includes('status');
-                                        const cellContent = formatValue(col?.key, rawValue);
-                                        const statusStyles = isStatusField ? getStatusStyleMui(rawValue) : {};
+                                        const cellRawValue = isStatusField ? String(rawValue) : rawValue; 
+                                        
+                                        // 2. Định dạng nội dung hiển thị (sử dụng formatValue và truyền cờ isArray)
+                                        const displayContent = formatValue(col?.key, cellRawValue, col.isArray);
+                                        
+                                        // 3. Lấy style cho status
+                                        const statusStyles = isStatusField ? getStatusStyleMui(cellRawValue) : {};
+
 
                                         return (
                                             <TableCell
@@ -223,13 +289,14 @@ export default function CustomTable({
                                                         color: isStatusField ? statusStyles.color : (theme) => theme.palette.text.secondary
                                                     }}
                                                 >
-                                                    {cellContent}
+                                                    {displayContent}
                                                 </Typography>
                                             </TableCell>
                                         );
                                     })}
                                     {isEdit && (
                                         <TableCell>
+                                            {/* Phải đảm bảo Row, EditButton, DeleteButton được import đúng */}
                                             <Row gap={'0.5rem'}>
                                                 {/* Nút Sửa (Gọi Redux Action, truyền item) */}
                                                 <EditButton onClick={() => dispatch(openEditModal(item))} sx={{ '& svg': { fontSize: '1.1rem' } }}>
@@ -246,6 +313,7 @@ export default function CustomTable({
                                 </TableRow>
                             ))
                         ) : (
+                            // Hiển thị thông báo không có dữ liệu
                             <TableRow>
                                 <TableCell colSpan={title?.length + (isEdit ? 1 : 0)} align="center">
                                     <Typography variant="body1" sx={{ color: 'text.secondary', py: 3 }}>

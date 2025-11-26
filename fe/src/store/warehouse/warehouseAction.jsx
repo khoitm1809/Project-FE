@@ -29,10 +29,10 @@ export const warehouseApi = createApi({
 
         // edit off spring
         editWarehouseCategory: builder.mutation({
-            query: (body) => ({
-                url: API_URL.WAREHOUSE_CATEGORY + "/" + body.id,
+            query: ({ id, ...data }) => ({
+                url: API_URL.WAREHOUSE_CATEGORY + "/" + id,
                 method: 'PUT',
-                data: body,
+                data: { data: data },
             }),
         }),
 

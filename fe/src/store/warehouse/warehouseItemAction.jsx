@@ -31,10 +31,10 @@ export const warehouseItemApi = createApi({
         }),
 
         editWarehouseItem: builder.mutation({
-            query: (body) => ({
-                url: API_URL.WAREHOUSE_ITEM + "/" + body.id,
+            query: ({ id, ...bodyData }) => ({
+                url: API_URL.WAREHOUSE_ITEM + "/" + id,
                 method: 'PUT',
-                data: body,
+                data: { data: bodyData },
             }),
         }),
 

@@ -53,7 +53,7 @@ const WareHouseCategory = () => {
             name: item.name,
             description: item.description
         });
-        setEditingId(item.id); // Chế độ Edit (Lưu ID)
+        setEditingId(item.documentId); // Chế độ Edit (Lưu ID)
         setOpenAddDialog(true);
     };
 
@@ -87,19 +87,17 @@ const WareHouseCategory = () => {
         // Mở dialog xác nhận xóa
         openDialog({
             type: MESSAGE_TYPE.CONFIRM,
-            message: `Bạn có chắc chắn muốn xóa danh mục **${category.name}**?`,
-            onConfirm: async () => {
+            message: `Bạn có chắc chắn muốn xóa danh mục ?`,
+            actionConfirm: async () => {
                 try {
                     // category.id là ID để API biết xóa cái nào
-                    await deleteWareHouseCategory(category.id).unwrap();
+                    await deleteWareHouseCategory(category?.documentId).unwrap();
                     refetch();
-                    // Có thể thêm thông báo thành công ở đây nếu cần
                 } catch (error) {
-                    console.error("Lỗi khi xóa danh mục:", error);
-                    const errorMessage = error.data?.message || error.error || "Không thể xóa danh mục. Vui lòng thử lại.";
+                    console.error("Lỗi khi xóa danh mục");
                     openDialog({
                         type: MESSAGE_TYPE.ERROR,
-                        message: `Lỗi khi xóa danh mục: ${errorMessage}`,
+                        message: `Lỗi khi xóa danh mục`,
                         isShowCloseBtn: true,
                         isHideAction: true,
                     });
@@ -108,9 +106,6 @@ const WareHouseCategory = () => {
         });
     };
 
-    /**
-     * @description Xử lý SUBMIT (Chung cho cả Add và Edit), sử dụng openDialog để báo lỗi.
-     */
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -136,12 +131,10 @@ const WareHouseCategory = () => {
 
         } catch (error) {
             console.error("Lỗi khi lưu:", error);
-            const errorMessage = error.data?.message || error.error || `Không thể ${editingId ? 'sửa' : 'thêm'} danh mục. Vui lòng thử lại.`;
 
-            // Hiển thị lỗi bằng openDialog
             openDialog({
                 type: MESSAGE_TYPE.ERROR,
-                message: `Lỗi khi lưu danh mục: ${errorMessage}`,
+                message: `Lỗi khi lưu danh mục:`,
                 isShowCloseBtn: true,
                 isHideAction: true,
             });

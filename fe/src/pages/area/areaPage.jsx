@@ -44,7 +44,7 @@ const AreaPage = () => {
         setOpenEditDialog(false);
         setEditingArea(null);
     };
-    
+
     const handleSubmitAdd = async (e) => {
         e.preventDefault();
         setIsSubmitting(true);
@@ -58,11 +58,9 @@ const AreaPage = () => {
             toggleAddDialog();
             refetch();
         } catch (error) {
-            console.error("Lỗi khi thêm khu vực:", error);
-            const errorMessage = error.data?.message || error.error || "Không thể thêm khu vực. Vui lòng thử lại.";
             openDialog({
                 type: MESSAGE_TYPE.ERROR,
-                message: `Lỗi khi thêm khu vực: ${errorMessage}`,
+                message: `Lỗi khi thêm khu vực`,
                 isShowCloseBtn: true,
                 isHideAction: true,
             });
@@ -106,11 +104,7 @@ const AreaPage = () => {
         }
     };
 
-    /**
-     * @description Xử lý xóa khu vực và hiển thị lỗi bằng openDialog nếu xóa thất bại.
-     */
     const handleDelete = async (areaId) => {
-        // Tìm khu vực cụ thể cần xóa để kiểm tra số chuồng liên quan
         const areaToDelete = listArea?.data?.find(area => area.documentId === areaId);
         const barnCount = areaToDelete?.barns?.length || 0;
 
@@ -128,14 +122,9 @@ const AreaPage = () => {
                 await deleteArea(areaId).unwrap();
                 refetch();
             } catch (error) {
-                console.error("Lỗi khi xóa khu vực:", error);
-
-                // THAY THẾ console.error bằng openDialog để hiển thị lỗi cho người dùng
-                const errorMessage = error.data?.message || error.error || "Không thể xóa khu vực. Vui lòng thử lại.";
-
                 openDialog({
                     type: MESSAGE_TYPE.ERROR,
-                    message: `Lỗi khi xóa khu vực: ${errorMessage}`,
+                    message: `Lỗi khi xóa khu vực`,
                     isShowCloseBtn: true,
                     isHideAction: true,
                 });
@@ -167,7 +156,7 @@ const AreaPage = () => {
                         Quản lý toàn bộ khu vực
                     </Typography>
                 </Box>
-                
+
                 {/* Thanh tìm kiếm, lọc và nút thêm mới */}
                 <Box
                     display="flex"
@@ -236,7 +225,7 @@ const AreaPage = () => {
                         Thêm mới
                     </Button>
                 </Box>
-                
+
                 {/* Danh sách thẻ khu vực */}
                 <Row sx={{
                     width: '100%',
@@ -259,6 +248,7 @@ const AreaPage = () => {
                                 arrayCount={area?.barns?.length}
                                 isOwner={role === ROLES.OWNER}
                                 nameCount={"Số chuồng: "}
+                                createBy={`Người tạo: ${area?.users_permissions_user?.username}`}
                                 isEdit={true}
                                 isAssign={false}
                                 isDelete={true}
