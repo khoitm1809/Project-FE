@@ -25,7 +25,6 @@ export const BoxBeetwen = styled(Box)(({ theme }) => ({
 
 export const Row = styled(Box)(({ theme }) => ({
     display: "flex",
-    alignItems: "center",
 }));
 
 export const Column = styled(Box)(({ theme }) => ({

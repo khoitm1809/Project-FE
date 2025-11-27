@@ -61,6 +61,7 @@ export default function LeftBar({ open, onClose, drawerWidth, isMobile }) {
         { text: "Quản lý  kho hàng hóa", icon: <WarehouseOutlinedIcon />, path: ROUTES.WAREHOUSE_CATEGORY, role: ROLES.OWNER },
         // { text: "Nhập vào kho hàng, vacxin ", icon: <WarehouseOutlinedIcon />, path: ROUTES.WAREHOUSE_ITEM, role: ROLES.OWNER },
         { text: "Giao việc cho công nhân", icon: <ContactMailOutlinedIcon />, path: ROUTES.TODO, role: ROLES.OWNER },
+        { text: "Xuất chuồng", icon: <ContactMailOutlinedIcon />, path: ROUTES.INVOICE, role: ROLES.OWNER },
         // cong nhan
         { text: "Home", icon: <HomeOutlinedIcon />, path: ROUTES.HOME, role: ROLES.WORKER },
         { text: "Khu vực của tôi", icon: <GroupAddOutlinedIcon />, path: ROUTES.BARN, role: ROLES.WORKER },

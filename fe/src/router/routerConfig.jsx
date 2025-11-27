@@ -14,6 +14,8 @@ import WareHouseCategory from "../pages/warehouseCategory/warehouseCategory";
 import WareHouseItem from "../pages/warehouseCategory/WarehouseItem";
 import PigGrowthRecord from "../pages/pig/pigGrowthRecord";
 import TodoPage from "../pages/todo/todoPage";
+import { DetailPig } from "../pages/pig/detailPig";
+import { Invoice } from "../pages/invoice/invoice";
 
 export const RouterConfig = () => {
     return (
@@ -118,6 +120,24 @@ export const RouterConfig = () => {
                 element={
                     <ProtectedRoute>
                         <TodoPage />
+                    </ProtectedRoute>
+                }
+            />
+
+            <Route
+                path={ROUTES.DETAIL_PIG}
+                element={
+                    <ProtectedRoute>
+                        <DetailPig />
+                    </ProtectedRoute>
+                }
+            />
+
+            <Route
+                path={ROUTES.INVOICE}
+                element={
+                    <ProtectedRoute>
+                        <Invoice />
                     </ProtectedRoute>
                 }
             />

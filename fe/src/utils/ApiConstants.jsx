@@ -13,4 +13,5 @@ export const API_URL = {
   WAREHOUSE_ITEM: '/api/warehouse-items',
   FEED_SETTING: '/api/feed-settings',
   TODO: '/api/todos',
+  INVOICE: '/api/invoices',
 };

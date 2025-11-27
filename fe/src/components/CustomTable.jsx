@@ -96,7 +96,7 @@ export default function CustomTable({
     mutationDeleteFunction,
     loading,
     refetch,
-    isListUser
+    isListUser,
 }) {
     const navigate = useNavigate();
     const dispatch = useDispatch(); // Hook để bắn action Redux
@@ -136,7 +136,6 @@ export default function CustomTable({
             console.error("Error deleting data:", error);
         }
     };
-
     return (
         <Box>
             {/* Title Section */}
@@ -272,7 +271,7 @@ export default function CustomTable({
                                         return (
                                             <TableCell
                                                 key={colIndex}
-                                                onClick={() => detailNavigate && navigate(detailNavigate)}
+                                                onClick={() => detailNavigate && navigate(detailNavigate,{state: item?.documentId})}
                                                 sx={{ cursor: detailNavigate ? "pointer" : "default" }}
                                             >
                                                 <Typography

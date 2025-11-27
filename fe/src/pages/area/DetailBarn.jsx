@@ -9,6 +9,7 @@ import EditDataDialog from "../../components/EditDataDialog";
 import { useSelector } from "react-redux";
 import { useGetCurrentUserQuery, useGetListUserQuery } from "../../store/auth/authAction";
 import { useGetListBarnQuery } from "../../store/area/areaAction";
+import { ROUTES } from "../../router/routerConstants";
 
 const DetailBarnPage = () => {
     const UID = localStorage.getItem("UID");
@@ -122,6 +123,7 @@ const DetailBarnPage = () => {
                 mutationDeleteFunction={deletePig}
                 loading={loadingListPig}
                 refetch={refetch}
+                detailNavigate={ROUTES.DETAIL_PIG}
             />
         </BoxContainer>
     );

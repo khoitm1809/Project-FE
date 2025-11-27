@@ -115,6 +115,10 @@ export const TypographyConfig = createTheme({
       fontSize: "2rem",
       fontWeight: 300,
     },
+    20500: {
+      fontSize: "2rem",
+      fontWeight: 500,
+    },
     20700: {
       fontSize: "2rem",
       fontWeight: 700,
@@ -122,6 +126,10 @@ export const TypographyConfig = createTheme({
     20800: {
       fontSize: "2rem",
       fontWeight: 800,
+    },
+    24500: {
+      fontSize: "2.4rem",
+      fontWeight: 500,
     },
     24700: {
       fontSize: "2.4rem",

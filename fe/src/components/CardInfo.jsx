@@ -38,7 +38,6 @@ const CardInfo = ({
     const {
         data: listfeedSettings,
     } = useGetListFeedSettingQuery({}, { skip: !feedSetting, refetchOnMountOrArgChange: true })
-    console.log(listfeedSettings?.data)
 
     return (
         <Card

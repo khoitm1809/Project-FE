@@ -55,7 +55,7 @@ export const authApi = createApi({
             query: (params) => {
                 const { UID, ...rest } = params || {};
                 return {
-                    url: API_URL.LIST_USER + "/" + UID,
+                    url: API_URL.LIST_USER + '/' + UID + "?populate=*",
                     method: "GET",
                     params: {
                         ...rest,
