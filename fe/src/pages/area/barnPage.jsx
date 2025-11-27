@@ -336,12 +336,10 @@ const BarnPage = () => {
                                     onActionAssign={() => handleOpenAssignWorkerDialog(barn?.documentId)}
                                     isEdit={true}
                                     onActionEdit={(e) => {
-                                        e.stopPropagation();
                                         handleOpenEditDialog(barn);
                                     }}
                                     isDelete={true}
                                     onActionDelete={(e) => {
-                                        e.stopPropagation();
                                         handleDeleteBarn(barn);
                                     }}
                                     feedSetting={true}

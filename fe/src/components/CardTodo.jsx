@@ -51,7 +51,8 @@ const CardTodo = ({
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    minHeight: '80px', // Đảm bảo chiều cao cố định
+                    minHeight: '7rem',
+                    maxHeight: '7rem',
                 }}
             >
                 <Box display="flex" alignItems="center" gap={2}>

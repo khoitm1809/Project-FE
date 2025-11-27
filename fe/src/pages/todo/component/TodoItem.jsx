@@ -47,7 +47,7 @@ const getInitialAssignedUserId = (todo) => {
         return todo.users_permissions_user.id || '';
     }
     // Trường này nên được sử dụng nếu user là ID thuần túy (ít phổ biến trong quan hệ)
-    return todo.users_permissions_user || ''; 
+    return todo.users_permissions_user || '';
 };
 
 // Hàm lấy tên người được phân công (được sử dụng cho lần render đầu tiên)
@@ -59,12 +59,14 @@ const getInitialAssignedUserName = (todo) => {
     return 'Chưa phân công';
 }
 
-export const TodoItem = ({ todo, onChangeStatus, onAssign }) => {
+export const TodoItem = ({ todo, onChangeStatus, onAssign, role }) => {
     const [status, setStatus] = useState(todo.toDoStatus);
-    // Sử dụng hàm khởi tạo mới để đọc ID
     const [assignedUserId, setAssignedUserId] = useState(getInitialAssignedUserId(todo));
     const [openAssignDialog, setOpenAssignDialog] = useState(false);
     const [openStatusDialog, setOpenStatusDialog] = useState(false);
+
+    const isWorker = role === ROLES.WORKER;
+    console.log(isWorker)
 
     const {
         data: listUser,
@@ -73,35 +75,43 @@ export const TodoItem = ({ todo, onChangeStatus, onAssign }) => {
         role: ROLES.WORKER
     }, { refetchOnMountOrArgChange: true });
 
-    // 1. Tìm tên người được phân công trong danh sách worker
     const assignedUser = listUser?.find(user => user.id === assignedUserId);
 
-    // 2. Tên hiển thị: Nếu tìm thấy trong listUser, dùng username. 
-    // Nếu chưa tìm thấy (do listUser đang load hoặc ID tồn tại nhưng user không có trong list), dùng tên từ dữ liệu todo ban đầu.
     const assignedUserName = assignedUser
         ? assignedUser.username
-        : getInitialAssignedUserName(todo); // Dùng tên ban đầu nếu có
+        : getInitialAssignedUserName(todo); 
 
     const currentStatusProps = getStatusProps(status);
 
     useEffect(() => {
-        // Cập nhật state khi prop todo thay đổi (chủ yếu sau khi API gọi thành công)
         setStatus(todo.toDoStatus);
         setAssignedUserId(getInitialAssignedUserId(todo));
     }, [todo]);
 
-    // --- Xử lý trạng thái ---
     const handleStatusChange = (newStatus) => {
+        if (newStatus === 'unAssigned' && isWorker) {
+            console.warn("Worker không được phép thay đổi trạng thái thành 'Chưa giao'.");
+            return;
+        }
+
+        if (newStatus === 'unAssigned' && assignedUserId) {
+            setAssignedUserId('');
+            onAssign(todo.documentId, '');
+        }
+
+        // 3. Cập nhật trạng thái
         setStatus(newStatus);
-        // TRUYỀN todo.documentId (ID thực sự của document) và trạng thái mới
         onChangeStatus(todo.documentId, newStatus);
         setOpenStatusDialog(false);
     };
 
-    // --- Xử lý phân công ---
     const handleAssign = (userId) => {
         setAssignedUserId(userId);
-        // TRUYỀN todo.documentId (ID thực sự của document) và userId mới
+        if (userId && status === 'unAssigned') {
+            setStatus('assigned');
+            onChangeStatus(todo.documentId, 'assigned');
+        }
+
         onAssign(todo.documentId, userId);
         setOpenAssignDialog(false);
     };
@@ -113,8 +123,9 @@ export const TodoItem = ({ todo, onChangeStatus, onAssign }) => {
                 borderRadius: '10px',
                 boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
                 mb: 1.5,
-                // Lấy màu từ theme palette
-                borderLeft: `5px solid ${currentStatusProps.color === 'default' ? '#ccc' : (theme) => theme.palette[currentStatusProps.color].main}`
+                borderLeft: `5px solid ${currentStatusProps.color === 'default' ? '#ccc' : (theme) => theme.palette[currentStatusProps.color].main}`,
+                minHeight: '13rem',
+                maxHeight: '18rem'
             }}
         >
             <Box display="flex" justifyContent="space-between" alignItems="flex-start" mb={1}>
@@ -153,7 +164,7 @@ export const TodoItem = ({ todo, onChangeStatus, onAssign }) => {
                     size="small"
                     startIcon={assignedUserId ? <PersonIcon /> : <PersonAddIcon />}
                     onClick={() => setOpenAssignDialog(true)}
-                    disabled={isLoadingUsers}
+                    disabled={isLoadingUsers || isWorker}
                     color={assignedUserId ? 'primary' : 'secondary'}
                     sx={{ textTransform: 'none', borderRadius: '20px' }}
                 >
@@ -161,81 +172,114 @@ export const TodoItem = ({ todo, onChangeStatus, onAssign }) => {
                 </Button>
             </Box>
 
-            {/* Dialog Thay đổi Trạng thái (Giữ nguyên) */}
-            <Dialog onClose={() => setOpenStatusDialog(false)} open={openStatusDialog}>
+            {/* Dialog Thay đổi Trạng thái */}
+            <Dialog
+                onClose={() => setOpenStatusDialog(false)}
+                open={openStatusDialog}
+                // NÂNG KÍCH THƯỚC DIALOG LÊN SM
+                maxWidth="sm"
+                fullWidth
+            >
                 <DialogTitle>
-                    Thay đổi Trạng thái
+                    <Typography variant="h6">Thay đổi Trạng thái</Typography>
                     <IconButton
                         aria-label="close"
                         onClick={() => setOpenStatusDialog(false)}
                         sx={{ position: 'absolute', right: 8, top: 8, color: (theme) => theme.palette.grey[500] }}
                     >
-                        <CloseIcon />
+                        {/* ICON TO HƠN */}
+                        <CloseIcon fontSize="large" />
                     </IconButton>
                 </DialogTitle>
-                <DialogContent dividers>
-                    <List dense>
-                        {todoStatus.map((s) => (
-                            <ListItem
-                                button
-                                key={s.value}
-                                onClick={() => handleStatusChange(s.value)}
-                                selected={status === s.value}
-                                sx={{
-                                    '&.Mui-selected': {
-                                        backgroundColor: (theme) => theme.palette[s.color === 'default' ? 'grey' : s.color].light,
-                                    },
-                                    '&:hover': {
-                                        backgroundColor: (theme) => theme.palette[s.color === 'default' ? 'grey' : s.color].light,
-                                        opacity: 0.8
-                                    }
-                                }}
-                            >
-                                <Chip
-                                    label={s.label}
-                                    size="small"
-                                    color={s.color === 'default' ? 'default' : s.color}
-                                    icon={s.icon}
-                                    variant={status === s.value ? 'filled' : 'outlined'}
-                                    sx={{ minWidth: 100 }}
-                                />
-                                <ListItemText primary={status === s.value ? ' (Đang chọn)' : ''} sx={{ ml: 1 }} />
-                            </ListItem>
-                        ))}
+                <DialogContent dividers sx={{ minHeight: 300 }}>
+                    <List> {/* Bỏ dense để List Items to hơn */}
+                        {todoStatus.map((s) => {
+                            // LOGIC: Ngăn Worker chuyển về "unAssigned"
+                            const isDisabled = isWorker && s.value === 'unAssigned';
+
+                            return (
+                                <ListItem
+                                    button
+                                    key={s.value}
+                                    onClick={() => !isDisabled && handleStatusChange(s.value)}
+                                    selected={status === s.value}
+                                    disabled={isDisabled}
+                                    sx={{
+                                        py: 1.5, // Tăng padding
+                                        '&.Mui-selected': {
+                                            backgroundColor: (theme) => theme.palette[s.color === 'default' ? 'grey' : s.color].light,
+                                        },
+                                        '&:hover': {
+                                            backgroundColor: (theme) => theme.palette[s.color === 'default' ? 'grey' : s.color].light,
+                                            opacity: 0.8
+                                        },
+                                        // Thêm kiểu để làm mờ khi bị vô hiệu hóa
+                                        ...(isDisabled && { opacity: 0.5, pointerEvents: 'none' })
+                                    }}
+                                >
+                                    <Chip
+                                        // NÂNG KÍCH THƯỚC CHIP
+                                        label={s.label}
+                                        size="medium" // Tăng từ small lên medium
+                                        color={s.color === 'default' ? 'default' : s.color}
+                                        // Dùng icon lớn hơn nếu cần, nhưng Chip thường giới hạn size icon
+                                        icon={s.icon}
+                                        variant={status === s.value ? 'filled' : 'outlined'}
+                                        sx={{ minWidth: 150, fontSize: '1rem', height: 32 }} // Tăng minWidth và fontSize
+                                    />
+                                    <ListItemText
+                                        // NÂNG KÍCH THƯỚC CHỮ
+                                        primary={status === s.value ? ' (Đang chọn)' : (isDisabled ? ' (Worker không được chọn)' : '')}
+                                        primaryTypographyProps={{ fontSize: '1.1rem', fontWeight: status === s.value ? 600 : 400 }}
+                                        sx={{ ml: 2 }}
+                                    />
+                                </ListItem>
+                            );
+                        })}
                     </List>
                 </DialogContent>
             </Dialog>
 
 
-            {/* Dialog Phân công (Giữ nguyên) */}
-            <Dialog onClose={() => setOpenAssignDialog(false)} open={openAssignDialog}>
+            {/* Dialog Phân công */}
+            <Dialog
+                onClose={() => setOpenAssignDialog(false)}
+                open={openAssignDialog}
+                // NÂNG KÍCH THƯỚC DIALOG LÊN SM
+                maxWidth="sm"
+                fullWidth
+            >
                 <DialogTitle>
-                    Chọn người để phân công
+                    <Typography variant="h6">Chọn người để phân công</Typography>
                     <IconButton
                         aria-label="close"
                         onClick={() => setOpenAssignDialog(false)}
                         sx={{ position: 'absolute', right: 8, top: 8, color: (theme) => theme.palette.grey[500] }}
                     >
-                        <CloseIcon />
+                        {/* ICON TO HƠN */}
+                        <CloseIcon fontSize="large" />
                     </IconButton>
                 </DialogTitle>
-                <DialogContent dividers>
+                <DialogContent dividers sx={{ minHeight: 300 }}>
                     {isLoadingUsers ? (
                         <Box display="flex" justifyContent="center" p={2}>
-                            <CircularProgress />
+                            <CircularProgress size={40} /> {/* Icon Loading to hơn */}
                         </Box>
                     ) : (
-                        <List dense>
+                        <List> {/* Bỏ dense để List Items to hơn */}
                             {/* Option 'Chưa phân công' */}
                             <ListItem
                                 button
                                 onClick={() => handleAssign('')}
                                 selected={assignedUserId === ''}
+                                sx={{ py: 1 }} // Tăng padding
                             >
                                 <ListItemText
+                                    // NÂNG KÍCH THƯỚC CHỮ
                                     primary="Chưa phân công"
                                     secondary="Gỡ bỏ phân công"
-                                    primaryTypographyProps={{ fontWeight: assignedUserId === '' ? 'bold' : 'normal' }}
+                                    primaryTypographyProps={{ fontSize: '1.1rem', fontWeight: assignedUserId === '' ? 'bold' : 'normal' }}
+                                    secondaryTypographyProps={{ fontSize: '0.9rem' }}
                                 />
                             </ListItem>
                             {/* Danh sách người dùng */}
@@ -245,10 +289,12 @@ export const TodoItem = ({ todo, onChangeStatus, onAssign }) => {
                                     key={user.id}
                                     onClick={() => handleAssign(user.id)}
                                     selected={assignedUserId === user.id}
+                                    sx={{ py: 1 }} // Tăng padding
                                 >
                                     <ListItemText
+                                        // NÂNG KÍCH THƯỚC CHỮ
                                         primary={user.username}
-                                        primaryTypographyProps={{ fontWeight: assignedUserId === user.id ? 'bold' : 'normal' }}
+                                        primaryTypographyProps={{ fontSize: '1.1rem', fontWeight: assignedUserId === user.id ? 'bold' : 'normal' }}
                                     />
                                 </ListItem>
                             ))}
