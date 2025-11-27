@@ -18,6 +18,7 @@ import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined
 import dayjs from 'dayjs';
 import { openAddModal, openEditModal } from '../store/helper/helperSlice';
 import { DeleteButton, EditButton, Row } from './commonStyled';
+import CardStatus from './CardStatus';
 
 // --- Helper Functions ---
 /**
@@ -26,9 +27,9 @@ import { DeleteButton, EditButton, Row } from './commonStyled';
  */
 const getValueByPath = (obj, path) => {
     if (!obj || !path) return null;
-    
+
     const parts = path.split('.');
-    
+
     // Nếu path là "pig_growth_records.weight", ta sẽ chỉ lấy mảng pig_growth_records
     // và để logic xử lý cân nặng (map, sort) cho formatValue.
     if (path.startsWith("pig_growth_records.")) {
@@ -47,23 +48,23 @@ const getValueByPath = (obj, path) => {
  */
 const formatValue = (key, value, isArrayField = false) => {
     if (value === null || value === undefined) return "-";
-    
+
     // --- Logic xử lý MẢNG đặc biệt (Chỉ áp dụng cho các cột được đánh dấu isArray) ---
     if (isArrayField && Array.isArray(value)) {
         // Trường hợp cụ thể: Cân nặng lợn
         if (key === "pig_growth_records.weight" && value.length > 0) {
-            
+
             // 1. Sắp xếp theo recordDate tăng dần (từ cũ đến mới)
             const sortedRecords = value
-                .slice() 
+                .slice()
                 .sort((a, b) => new Date(a.recordDate).getTime() - new Date(b.recordDate).getTime());
 
             // 2. Lấy mảng cân nặng và định dạng
             const weights = sortedRecords.map(record => record.weight);
             // Trả về chuỗi định dạng mong muốn: [65kg, 70kg]
             return `[${weights.map(w => `${w}kg`).join(', ')}]`;
-        } 
-        
+        }
+
         // Trường hợp mảng chung khác (nếu có, có thể cần logic tùy chỉnh khác)
         // Ví dụ: return value.join(', ');
         return value.toString();
@@ -97,6 +98,8 @@ export default function CustomTable({
     loading,
     refetch,
     isListUser,
+    invoice,
+    invoiceSummary
 }) {
     const navigate = useNavigate();
     const dispatch = useDispatch(); // Hook để bắn action Redux
@@ -111,10 +114,10 @@ export default function CustomTable({
         return data?.filter((item) =>
             title?.some((col) => {
                 const rawValue = getValueByPath(item, col.key);
-                
+
                 // Sử dụng formatValue để có được giá trị đã định dạng (bao gồm cả chuỗi mảng)
-                const value = formatValue(col.key, rawValue, col.isArray); 
-                
+                const value = formatValue(col.key, rawValue, col.isArray);
+
                 // Chuyển đổi giá trị sang chuỗi để tìm kiếm
                 return value?.toString()?.toLowerCase()?.includes(lowerSearch);
             })
@@ -147,7 +150,33 @@ export default function CustomTable({
                     Quản lý toàn bộ sản phẩm
                 </Typography>
             </Box>
+            {invoice && <Box marginY={'2rem'} width={'100%'}>
+                <Row sx={{
+                    width: '100%',
+                    flexWrap: 'wrap',
+                    gap: '0.8rem',
+                }}>
+                    {invoiceSummary?.map((card, index) => (
+                        <Box
+                            key={index}
+                            sx={{
+                                flex: {
+                                    xs: "1 1 100%",
+                                    sm: "1 1 calc(50% - 0.5rem)",
+                                },
+                                maxWidth: { lg: '50%' }
+                            }}
+                        >
+                            <CardStatus
+                                title={card.title}
+                                count={card.count}
+                                iconKey={card.iconKey}
+                            />
+                        </Box>
+                    ))}
+                </Row>
 
+            </Box>}
             {/* --- Toolbar: Search, Filter, Add --- */}
             <Box
                 display="flex"
@@ -259,11 +288,11 @@ export default function CustomTable({
 
                                         // 1. Ép kiểu boolean thành chuỗi 'true'/'false' cho logic status
                                         const isStatusField = col?.key.toLowerCase().includes('status');
-                                        const cellRawValue = isStatusField ? String(rawValue) : rawValue; 
-                                        
+                                        const cellRawValue = isStatusField ? String(rawValue) : rawValue;
+
                                         // 2. Định dạng nội dung hiển thị (sử dụng formatValue và truyền cờ isArray)
                                         const displayContent = formatValue(col?.key, cellRawValue, col.isArray);
-                                        
+
                                         // 3. Lấy style cho status
                                         const statusStyles = isStatusField ? getStatusStyleMui(cellRawValue) : {};
 
@@ -271,7 +300,7 @@ export default function CustomTable({
                                         return (
                                             <TableCell
                                                 key={colIndex}
-                                                onClick={() => detailNavigate && navigate(detailNavigate,{state: item?.documentId})}
+                                                onClick={() => detailNavigate && navigate(detailNavigate, { state: item?.documentId })}
                                                 sx={{ cursor: detailNavigate ? "pointer" : "default" }}
                                             >
                                                 <Typography

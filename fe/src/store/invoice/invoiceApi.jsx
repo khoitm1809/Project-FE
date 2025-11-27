@@ -1,6 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { API_URL } from '../../utils/ApiConstants';
-import { LOCAL_STORAGE_NAME } from '../../utils/constant';
 import { axiosBaseQuery } from '../../services/axiosBaseQuery';
 
 export const invoiceApi = createApi({
@@ -66,9 +65,8 @@ export const invoiceApi = createApi({
 });
 
 export const {
-    useGetDetailInvoiceQuery,
-    useGetListInvoiceQuery,
-    useAddInvoiceMutation,
-    useDeleteInvoiceMutation,
-    useEditInvoiceMutation
+   useGetListInvoiceQuery,
+   useAddInvoiceMutation,
+   useDeleteInvoiceMutation,
+   useEditInvoiceMutation
 } = invoiceApi;

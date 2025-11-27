@@ -33,7 +33,7 @@ const rootReducer = combineReducers({
     [pigGrowthRecordApi.reducerPath]: pigGrowthRecordApi.reducer,
     [feedSettingApi.reducerPath]: feedSettingApi.reducer,
     [todoApi.reducerPath]: todoApi.reducer,
-    [invoiceApi.reducerPath]: todoApi.reducer
+    [invoiceApi.reducerPath]: invoiceApi.reducer
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
