@@ -10,13 +10,14 @@ export const pigApi = createApi({
         //get list pig
         getListPig: builder.query({
             query: (params) => {
-                const { barnId, ...rest } = params || {};
+                const { barnId, UID, ...rest } = params || {};
                 return {
                     url: API_URL.PIG + "?populate=*",
                     method: "GET",
                     params: {
                         ...rest,
                         ...(barnId ? { "filters[barn][id]": barnId } : {}),
+                        ...(UID ? { "filters[users_permissions_user][id]": UID } : {}),
                     },
                 };
             },

@@ -39,6 +39,7 @@ const PigGrowthRecord = () => {
         data: listPigs,
         isLoading: loadingListPig,
     } = useGetListPigQuery({
+        UID
     }, { refetchOnMountOrArgChange: true })
 
     console.log(listPigs?.data)
@@ -46,7 +47,6 @@ const PigGrowthRecord = () => {
         { key: "recordDate", label: "Ngày ghi nhận", isDateTime: true },
         { key: "weight", label: "Cân nặng (kg)" },
         { key: "pig.pigCode", label: "Mã lợn" },
-        { key: "users_permissions_user.username", label: "Người phụ trách" },
         { key: "note", label: "Ghi chú" },
     ];
     const dialogTitle = [ // Truyền danh sách Lợn và User vào
@@ -61,13 +61,6 @@ const PigGrowthRecord = () => {
             mappingKey: "pig.pigCode" // 🛑 Lấy ID của Lợn
         },
 
-        // {
-        //     key: "users_permissions_user",
-        //     label: "Người ghi nhận",
-        //     isDropDown: true,
-        //     // list: convertToDropdown(listUsers), // Giả định list User được truyền vào
-        //     mappingKey: "users_permissions_user.id" // 🛑 Lấy ID của User
-        // },
 
         { key: "note", label: "Ghi chú" },
     ];
