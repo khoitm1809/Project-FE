@@ -7,6 +7,7 @@ import { useAddPigGrowthRecordMutation, useDeletePigGrowthRecordMutation, useEdi
 import { useSelector } from "react-redux";
 import AddDataDialog from "../../components/AddDataDialog";
 import EditDataDialog from "../../components/EditDataDialog";
+import { useGetListPigQuery } from "../../store/pig/pigAction";
 
 export const status = [
     { value: "true", label: "Khỏe" },
@@ -33,12 +34,18 @@ const PigGrowthRecord = () => {
     } = useGetListPigGrowthRecordQuery({
         UID: UID
     }, { refetchOnMountOrArgChange: true })
+
+    const {
+        data: listPigs,
+        isLoading: loadingListPig,
+    } = useGetListPigQuery({
+    }, { refetchOnMountOrArgChange: true })
+
+    console.log(listPigs?.data)
     const title = [
         { key: "recordDate", label: "Ngày ghi nhận", isDateTime: true },
         { key: "weight", label: "Cân nặng (kg)" },
-        // Hiển thị Mã lợn (lồng nhau)
         { key: "pig.pigCode", label: "Mã lợn" },
-        // Hiển thị tên Người ghi nhận (lồng nhau)
         { key: "users_permissions_user.username", label: "Người phụ trách" },
         { key: "note", label: "Ghi chú" },
     ];
@@ -46,13 +53,13 @@ const PigGrowthRecord = () => {
         { key: "recordDate", label: "Ngày ghi nhận", isDateTime: true }, // Ngày tháng
         { key: "weight", label: "Cân nặng", isNumber: true },
 
-        // {
-        //     key: "pig",
-        //     label: "Lợn",
-        //     isDropDown: true,
-        //     // list: convertToDropdown(listPigs), // Giả định list Lợn được truyền vào
-        //     mappingKey: "pig.id" // 🛑 Lấy ID của Lợn
-        // },
+        {
+            key: "pig",
+            label: "Lợn",
+            isDropDown: true,
+            list: convertToDropdown(listPigs?.data), // Giả định list Lợn được truyền vào
+            mappingKey: "pig.pigCode" // 🛑 Lấy ID của Lợn
+        },
 
         // {
         //     key: "users_permissions_user",

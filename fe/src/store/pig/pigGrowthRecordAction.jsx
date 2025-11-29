@@ -25,7 +25,7 @@ export const pigGrowthRecordApi = createApi({
         // add off spring
         addPigGrowthRecord: builder.mutation({
             query: (payload) => ({
-                url: API_URL.PIG,
+                url: API_URL.PIG_GROWTH_RECORDS,
                 method: 'POST',
                 data: { data: payload },
             }),
@@ -34,7 +34,7 @@ export const pigGrowthRecordApi = createApi({
         // edit off spring
         editPigGrowthRecord: builder.mutation({
             query: (body) => ({
-                url: API_URL.PIG + "/" + body.id,
+                url: API_URL.PIG_GROWTH_RECORDS + "/" + body.id,
                 method: 'PUT',
                 data: body,
             }),
@@ -43,7 +43,7 @@ export const pigGrowthRecordApi = createApi({
         // delete off spring
         deletePigGrowthRecord: builder.mutation({
             query: (id) => ({
-                url: API_URL.PIG + "/" + id,
+                url: API_URL.PIG_GROWTH_RECORDS + "/" + id,
                 method: 'DELETE',
             }),
         }),
