@@ -73,13 +73,13 @@ export const TodoItem = ({ todo, onChangeStatus, onAssign, role }) => {
         isLoading: isLoadingUsers,
     } = useGetListUserQuery({
         role: ROLES.WORKER
-    }, { refetchOnMountOrArgChange: true });
+    }, { skip: role == ROLES.WORKER, refetchOnMountOrArgChange: true });
 
     const assignedUser = listUser?.find(user => user.id === assignedUserId);
 
     const assignedUserName = assignedUser
         ? assignedUser.username
-        : getInitialAssignedUserName(todo); 
+        : getInitialAssignedUserName(todo);
 
     const currentStatusProps = getStatusProps(status);
 
