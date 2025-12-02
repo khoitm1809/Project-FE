@@ -100,7 +100,8 @@ export default function CustomTable({
     refetch,
     isListUser,
     invoice,
-    invoiceSummary
+    invoiceSummary,
+    isId
 }) {
     const navigate = useNavigate();
     const dispatch = useDispatch(); // Hook để bắn action Redux
@@ -301,7 +302,7 @@ export default function CustomTable({
                                         return (
                                             <TableCell
                                                 key={colIndex}
-                                                onClick={() => detailNavigate && navigate(detailNavigate, { state: ROUTES.LIST_USER ? item?.id : item?.documentId })}
+                                                onClick={() => detailNavigate && navigate(detailNavigate, { state: isId ? item?.id : item?.documentId })}
                                                 sx={{ cursor: detailNavigate ? "pointer" : "default" }}
                                             >
                                                 <Typography

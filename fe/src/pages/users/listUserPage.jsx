@@ -67,6 +67,7 @@ const ListUserPage = () => {
                 refetch={refetch}
                 isListUser={true}
                 detailNavigate={ROUTES.PROFILE}
+                isId={true}
             />
         </BoxContainer>
     )
