@@ -19,6 +19,7 @@ import dayjs from 'dayjs';
 import { openAddModal, openEditModal } from '../store/helper/helperSlice';
 import { DeleteButton, EditButton, Row } from './commonStyled';
 import CardStatus from './CardStatus';
+import { ROUTES } from '../router/routerConstants';
 
 // --- Helper Functions ---
 /**
@@ -300,7 +301,7 @@ export default function CustomTable({
                                         return (
                                             <TableCell
                                                 key={colIndex}
-                                                onClick={() => detailNavigate && navigate(detailNavigate, { state: item?.documentId })}
+                                                onClick={() => detailNavigate && navigate(detailNavigate, { state: ROUTES.LIST_USER ? item?.id : item?.documentId })}
                                                 sx={{ cursor: detailNavigate ? "pointer" : "default" }}
                                             >
                                                 <Typography

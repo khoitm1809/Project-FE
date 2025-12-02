@@ -9,8 +9,13 @@ import {
     TextField,
     Typography,
 } from "@mui/material";
-import { Mail, Phone, MapPin, Calendar } from "lucide-react";
-import { useGetCurrentUserQuery } from "../../store/auth/authAction";
+import { Mail, Phone, MapPin, Calendar, Notebook } from "lucide-react";
+import { useEditUserMutation, useGetCurrentUserQuery, useImageUploadMutation } from "../../store/auth/authAction";
+import { useRef, useState } from "react";
+import AvatarCustom from "../../components/Avatar/AvataCustom";
+import PreviewAvatar from "../../components/Avatar/PreviewAvatar";
+import { Column, Row } from "../../components/commonStyled";
+import { useLocation } from "react-router";
 
 // Hàm tiện ích để định dạng ngày tháng
 const formatDate = (dateString) => {
@@ -23,48 +28,127 @@ const formatDate = (dateString) => {
     }
 };
 
-// Hàm tiện ích để tính số lượng Published Items (Hoàn thành)
+// Hàm tiện ích để tính số lượng finished Items (Hoàn thành)
 const countPublished = (data) => {
     let count = 0;
-    // Lặp qua tất cả các mảng và đếm những mục có publishedAt
-    const arraysToCount = [
-        data?.pigs || [],
-        data?.areas || [],
-        data?.pig_types || [],
-        data?.owners || []
-    ];
 
-    arraysToCount.forEach(arr => {
-        arr.forEach(item => {
-            if (item.publishedAt) {
-                count++;
-            }
-        });
+    data?.forEach(item => {
+        if (item?.toDoStatus == 'done') {
+            count++;
+        }
     });
 
     return count;
 };
 
 // Hàm tiện ích để tính số lượng nhiệm vụ đang thực hiện (Doing)
-const countDoingTodos = (owners) => {
-    if (!owners) return 0;
-    // Lọc các mục trong 'owners' mà có 'publishedAt' khác null VÀ 'toDoStatus' là 'doing'
-    // Hoặc chỉ đếm các mục có 'toDoStatus' là 'doing' tùy theo logic nghiệp vụ của bạn.
-    // Tôi sẽ đếm các mục trong 'owners' có 'toDoStatus' là 'doing'
-    return owners.filter(owner => owner.toDoStatus === "doing" && owner.publishedAt).length;
+const countDoingTodos = (tasks) => {
+    if (!tasks) return 0;
+    return tasks.filter(task => task?.toDoStatus == "doing")?.length;
 };
 
 
 export function ProfilePage() {
     const UID = localStorage.getItem("UID")
+    const location = useLocation();
+    const id = location?.state;
+    const currentUserName = localStorage.getItem("username");
+    const fileInputRef = useRef(null);
+    const [src, setSrc] = useState(null);
+    const [preview, setPreview] = useState(null);
+    const [modalOpen, setModalOpen] = useState(false);
+    const [viewAvatar, setViewAvatar] = useState(false);
+    const [selectedFile, setSelectedFile] = useState(null);
+    const handleClose = () => setViewAvatar(false)
+    const [editUser] = useEditUserMutation();
+    const [imageUpload] = useImageUploadMutation()
+
     const {
         data: userData,
         isLoading: loadingUser,
         refetch
     } = useGetCurrentUserQuery(
-        { UID },
+        { UID: id ? id : UID },
         { refetchOnMountOrArgChange: true }
     );
+    const handleClick = () => {
+        if (fileInputRef.current) {
+            fileInputRef.current.click();
+        }
+    };
+
+    // File input change
+    const handleImgChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setSrc(URL.createObjectURL(file));
+            setSelectedFile(file);
+            setModalOpen(true);
+            e.target.value = "";
+        }
+    };
+
+    const uploadFileToStrapi = async (file) => {
+        if (!file) return null;
+
+        const formData = new FormData();
+        formData.append('files', file, file.name);
+
+        try {
+            const uploadedFiles = await imageUpload(formData).unwrap();
+
+            if (uploadedFiles && uploadedFiles.length > 0) {
+                return uploadedFiles[0].id;
+            }
+            return null;
+        } catch (error) {
+            console.error("Lỗi khi upload file:", error);
+            alert(`Upload file thất bại: ${error.data?.error?.message || "Lỗi không xác định"}`);
+            return null;
+        }
+    };
+
+    const uploadAvatar = async () => {
+        if (!selectedFile) {
+            // alert("Vui lòng chọn một file ảnh để upload.");
+            return;
+        }
+
+        try {
+            const fileId = await uploadFileToStrapi(selectedFile);
+
+            if (!fileId) {
+                return;
+            }
+
+            const updateData = {
+                avatar: fileId
+            };
+
+            const userIdToUpdate = UID;
+
+            const result = await editUser({
+                UID: userIdToUpdate,
+                avatar: updateData
+            }).unwrap();
+
+            // console.log("Cập nhật user thành công:", result);
+
+            setModalOpen(false);
+            setSelectedFile(null);
+            setPreview(null);
+            refetch();
+
+        } catch (error) {
+            console.error("Lỗi trong quá trình cập nhật avatar:", error);
+            // alert(`Cập nhật avatar thất bại: ${error.data?.error?.message || "Lỗi không xác định"}`);
+        }
+    };
+
+    const onSubmit = (data) => {
+
+    }
+
 
     // Xử lý dữ liệu
     const user = userData || {};
@@ -72,10 +156,11 @@ export function ProfilePage() {
     const userEmail = user.email || "Chưa có email";
     const userRole = user.role?.name || "Chức danh không rõ";
     const joinDate = formatDate(user.createdAt);
+    const isCurrentUser = currentUserName == userName;
 
     // Tính toán số liệu thống kê
-    const completedProjects = countPublished(user); 
-    const doingTasks = countDoingTodos(user.owners);
+    const completedProjects = countPublished(user?.todos);
+    const doingTasks = countDoingTodos(user?.todos);
     const averageRating = "4.8";
     const workingHours = "1,240";
 
@@ -91,31 +176,83 @@ export function ProfilePage() {
                 <Typography variant="h4" mb={1}>
                     Trang cá nhân
                 </Typography>
-                <Typography color="text.secondary">
+                {isCurrentUser && <Typography color="text.secondary">
                     Quản lý thông tin cá nhân của bạn
-                </Typography>
+                </Typography>}
             </Box>
 
-            <Grid spacing={3}> 
+            <Grid spacing={3}>
                 {/* Profile Card */}
                 <Grid item xs={12} lg={4} mt={'2rem'}>
                     <Card>
                         <CardContent sx={{ pt: 3 }}>
                             <Box display="flex" flexDirection="column" alignItems="center">
-                                <Avatar
-                                    src="https://github.com/shadcn.png"
-                                    sx={{ width: 120, height: 120 }}
+                                <AvatarCustom
+                                    modalOpen={modalOpen}
+                                    src={src}
+                                    setPreview={setPreview}
+                                    setModalOpen={setModalOpen}
                                 />
+                                <PreviewAvatar
+                                    onClose={handleClose}
+                                    modalOpen={viewAvatar}
+                                    src={preview} />
                                 <Box textAlign="center" mt={2}>
                                     <Typography variant="h5">{userName}</Typography>
                                     <Typography color="text.secondary">
                                         {userRole}
                                     </Typography>
                                 </Box>
+                                <Column justifyContent={'center'} alignItems={'center'} >
+                                    <Box
+                                        onClick={() => setViewAvatar(true)}
+                                        sx={{
+                                            // background: currentTheme?.home?.bgScroll,
+                                            borderRadius: '100%',
+                                            height: '12.6rem',
+                                            width: '12.6rem',
+                                            display: 'flex',
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                            cursor: 'pointer'
+                                        }}>
+                                        <Avatar
+                                            sx={{ width: '12rem', height: '12rem' }}
+                                            src={
+                                                preview || (user.avatar && `${process.env.REACT_APP_BASE_URL}${user.avatar.url}`) ||
+                                                "https://cdn.tech24.vn/upload/tech24_vn/post/images/2024/06/17/557/kha-banh-meme-3.jpg"
+                                            }
+                                        />
+                                    </Box>
+                                    {isCurrentUser && <Column>
+                                        <Row mt={'0.6rem'}>
+                                            <Box sx={{ cursor: 'pointer', mr: '1.6rem', gap: '1.2rem', justifyContent: 'center', alignItems: 'center', display: 'flex' }}
+                                                onClick={handleClick}>
+                                                <input
+                                                    type="file"
+                                                    accept="image/*"
+                                                    ref={fileInputRef}
+                                                    onChange={handleImgChange}
+                                                    style={{ display: "none" }}
+                                                />
+                                                <img
+                                                // src={currentTheme?.common?.uploadImage} 
+                                                />
+                                                <Typography variant="14500">Upload Image</Typography>
+                                            </Box>
+                                            <Box sx={{ cursor: 'pointer', ml: '1.6rem', gap: '1.2rem', justifyContent: 'center', alignItems: 'center', display: 'flex' }} onClick={() => setPreview(null)}>
+                                                <img
+                                                // src={currentTheme?.common?.trashBin}
+                                                />
+                                                <Typography variant="14500">Delete Image</Typography>
+                                            </Box>
+                                        </Row>
+                                        <Button variant="contained" sx={{ marginTop: '1.6rem', width: '100%' }} onClick={uploadAvatar}>
+                                            Save Change
+                                        </Button>
+                                    </Column>}
+                                </Column>
 
-                                <Button fullWidth sx={{ mt: 2 }} variant="contained">
-                                    Thay đổi ảnh
-                                </Button>
                             </Box>
 
                             {/* Profile Info */}
@@ -127,10 +264,10 @@ export function ProfilePage() {
                                     </Typography>
                                 </Box>
 
-                                <Box display="flex" gap={1} alignItems="center">
+                                {userData?.phoneNumber && <Box display="flex" gap={1} alignItems="center">
                                     <Phone size={18} />
-                                    <Typography color="text.secondary">+84 123 456 789</Typography> {/* Hardcoded - Cần field trong JSON */}
-                                </Box>
+                                    <Typography color="text.secondary">{userData?.phoneNumber}</Typography> {/* Hardcoded - Cần field trong JSON */}
+                                </Box>}
 
                                 <Box display="flex" gap={1} alignItems="center">
                                     <MapPin size={18} />
@@ -145,13 +282,19 @@ export function ProfilePage() {
                                         Tham gia: {joinDate}
                                     </Typography>
                                 </Box>
+                                <Box display="flex" gap={1} alignItems="center">
+                                    <Notebook size={18} />
+                                    <Typography color="text.secondary">
+                                        Bio: {userData?.description}
+                                    </Typography>
+                                </Box>
                             </Box>
                         </CardContent>
                     </Card>
                 </Grid>
 
                 {/* Profile Form */}
-                <Grid item xs={12} lg={8} mt={'2rem'}>
+                {isCurrentUser && <Grid item xs={12} lg={8} mt={'2rem'}>
                     <Card>
                         <CardHeader
                             title={<Typography variant="h6">Thông tin cá nhân</Typography>}
@@ -217,7 +360,7 @@ export function ProfilePage() {
                             </Box>
                         </CardContent>
                     </Card>
-                </Grid>
+                </Grid>}
 
                 {/* Statistics Card */}
                 <Grid item xs={12} mt={'2rem'}>

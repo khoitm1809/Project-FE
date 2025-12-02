@@ -7,6 +7,7 @@ import EditDataDialog from "../../components/EditDataDialog";
 import { useSelector } from "react-redux";
 import { convertToDropdown } from "../../components/convertToDropdown";
 import { ROLES } from "../../utils/rolesConstant";
+import { ROUTES } from "../../router/routerConstants";
 
 const ListUserPage = () => {
     const [registerUser] = useUserRegisterMutation();
@@ -65,6 +66,7 @@ const ListUserPage = () => {
                 loading={loadingListUser}
                 refetch={refetch}
                 isListUser={true}
+                detailNavigate={ROUTES.PROFILE}
             />
         </BoxContainer>
     )

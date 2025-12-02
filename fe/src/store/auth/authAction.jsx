@@ -73,12 +73,21 @@ export const authApi = createApi({
             }),
         }),
 
+        imageUpload: builder.mutation({
+            query: (body) => ({
+                url: API_URL.UPLOAD,
+                method: 'POST',
+                data: body,
+            }),
+        }),
+
         // edit user
         editUser: builder.mutation({
-            query: (body) => ({
-                url: API_URL.LIST_USER + "/" + body.id,
+            query: ({ UID, avatar }) => ({
+                url: API_URL.LIST_USER + '/' + UID + "?populate=*",
                 method: 'PUT',
-                data: body,
+                data: avatar,
+
             }),
         }),
 
@@ -94,4 +103,4 @@ export const authApi = createApi({
     }),
 });
 
-export const { useUserLoginMutation, useGetListRoleQuery, useLazyGetUserRoleQuery, useGetListUserQuery, useGetCurrentUserQuery, useUserRegisterMutation, useDeleteUserMutation, useEditUserMutation } = authApi;
+export const { useUserLoginMutation, useImageUploadMutation, useGetListRoleQuery, useLazyGetUserRoleQuery, useGetListUserQuery, useGetCurrentUserQuery, useUserRegisterMutation, useDeleteUserMutation, useEditUserMutation } = authApi;
