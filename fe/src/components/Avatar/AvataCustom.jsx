@@ -15,22 +15,37 @@ const Column = styled(Box)(({ theme }) => ({
 }))
 
 
-export default function AvatarCustom({ src, modalOpen, setModalOpen, setPreview }) {
+export default function AvatarCustom({ src, modalOpen, setModalOpen, onCropSave }) {
     const [slideValue, setSlideValue] = useState(10);
     const cropRef = useRef(null);
 
-    const handleSave = async () => {
-        if (cropRef) {
-            const dataUrl = cropRef.current.getImage().toDataURL();
-            const result = await fetch(dataUrl);
-            const blob = await result.blob();
-            setPreview(URL.createObjectURL(blob));
+    const dataURLtoFile = (dataurl, filename) => {
+        const arr = dataurl.split(',');
+        const mime = arr[0].match(/:(.*?);/)[1];
+        const bstr = atob(arr[1]);
+        let n = bstr.length;
+        const u8arr = new Uint8Array(n);
+        while (n--) {
+            u8arr[n] = bstr.charCodeAt(n);
+        }
+        return new File([u8arr], filename, { type: mime });
+    }
+
+    const handleSave = () => {
+        if (cropRef.current) {
+            const dataUrl = cropRef.current.getImage().toDataURL('image/png');
+
+            const croppedFile = dataURLtoFile(dataUrl, `cropped_avatar_${Date.now()}.png`);
+
+            onCropSave(croppedFile);
+
             setModalOpen(false);
         }
     };
     return (
         <Modal
             open={modalOpen}
+            onClose={() => setModalOpen(false)} // Thêm onClose cho Modal
             sx={{
                 display: 'flex',
                 justifyContent: 'center',
@@ -38,7 +53,10 @@ export default function AvatarCustom({ src, modalOpen, setModalOpen, setPreview 
             }}>
             <Box sx={{
                 width: '300px',
-                height: '300px',
+                height: '380px', // Tăng chiều cao để chứa slider và nút
+                backgroundColor: 'white', // Thêm nền để dễ nhìn trong Modal
+                padding: '20px',
+                borderRadius: '8px',
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'center',
@@ -47,9 +65,10 @@ export default function AvatarCustom({ src, modalOpen, setModalOpen, setPreview 
                 <AvatarEditor
                     ref={cropRef}
                     image={src}
-                    style={{ width: "100%", height: "100%" }}
-                    border={50}
-                    borderRadius={150}
+                    width={250} // Kích thước khung crop
+                    height={250}
+                    border={25}
+                    borderRadius={150} // Tạo hình tròn
                     color={[0, 0, 0, 0.72]}
                     scale={slideValue / 10}
                     rotate={0}
@@ -58,39 +77,35 @@ export default function AvatarCustom({ src, modalOpen, setModalOpen, setPreview 
                     min={10}
                     max={50}
                     sx={{
-                        margin: "0 auto",
+                        margin: "15px auto",
                         width: "80%",
                         color: "black",
-                        "& .MuiSlider-thumb": {
-                            color: "rgba(255, 141, 76, 1)", // thumb color
-                        },
-                        "& .MuiSlider-track": {
-                            color: "rgba(255, 141, 76, 1)", // filled part
-                        },
-                        "& .MuiSlider-rail": {
-                            color: "white", // unfilled bar
-                        },
+                        "& .MuiSlider-thumb": { color: "rgba(255, 141, 76, 1)" },
+                        "& .MuiSlider-track": { color: "rgba(255, 141, 76, 1)" },
+                        "& .MuiSlider-rail": { color: "white" },
                     }}
                     size="medium"
-                    defaultValue={slideValue}
                     value={slideValue}
-                    onChange={(e) => setSlideValue(e.target.value)}
+                    onChange={(e, newValue) => setSlideValue(newValue)}
                 />
                 <Box
                     sx={{
                         display: "flex",
                         padding: "10px",
                         gap: '2.4rem',
-                        width: '100%'
+                        width: '100%',
+                        justifyContent: 'space-around'
                     }}
                 >
                     <Button
-                        onClick={(e) => setModalOpen(false)}>
-                        Cancel
+                        variant="outlined"
+                        onClick={() => setModalOpen(false)}>
+                        Hủy
                     </Button>
                     <Button
+                        variant="contained"
                         onClick={handleSave}>
-                        Save
+                        Lưu
                     </Button>
                 </Box>
             </Box>

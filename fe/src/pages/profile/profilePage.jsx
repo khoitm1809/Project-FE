@@ -60,6 +60,7 @@ export function ProfilePage() {
     const [viewAvatar, setViewAvatar] = useState(false);
     const [selectedFile, setSelectedFile] = useState(null);
     const handleClose = () => setViewAvatar(false)
+    const [croppedFile, setCroppedFile] = useState(null);
     const [editUser] = useEditUserMutation();
     const [imageUpload] = useImageUploadMutation()
 
@@ -71,6 +72,12 @@ export function ProfilePage() {
         { UID: id ? id : UID },
         { refetchOnMountOrArgChange: true }
     );
+
+    const handleCropSave = (file) => {
+        setCroppedFile(file); // Lưu trữ File đã crop
+        setPreview(URL.createObjectURL(file)); // Cập nhật preview bằng URL tạm thời của File mới
+    };
+
     const handleClick = () => {
         if (fileInputRef.current) {
             fileInputRef.current.click();
@@ -81,10 +88,10 @@ export function ProfilePage() {
     const handleImgChange = (e) => {
         const file = e.target.files[0];
         if (file) {
+            // Chỉ cần lấy URL để hiển thị trong AvatarEditor, không cần lưu File gốc
             setSrc(URL.createObjectURL(file));
-            setSelectedFile(file);
             setModalOpen(true);
-            e.target.value = "";
+            e.target.value = ""; // Xóa giá trị để có thể chọn lại cùng một file
         }
     };
 
@@ -92,7 +99,7 @@ export function ProfilePage() {
         if (!file) return null;
 
         const formData = new FormData();
-        formData.append('files', file, file.name);
+        formData.append('files', file, file.name); // Sử dụng File đã crop ở đây
 
         try {
             const uploadedFiles = await imageUpload(formData).unwrap();
@@ -103,19 +110,20 @@ export function ProfilePage() {
             return null;
         } catch (error) {
             console.error("Lỗi khi upload file:", error);
-            alert(`Upload file thất bại: ${error.data?.error?.message || "Lỗi không xác định"}`);
+            // alert(`Upload file thất bại: ${error.data?.error?.message || "Lỗi không xác định"}`);
             return null;
         }
     };
 
     const uploadAvatar = async () => {
-        if (!selectedFile) {
-            // alert("Vui lòng chọn một file ảnh để upload.");
+        if (!croppedFile) {
+            // alert("Vui lòng crop và lưu ảnh trước khi upload.");
             return;
         }
 
         try {
-            const fileId = await uploadFileToStrapi(selectedFile);
+            // File cần upload là croppedFile
+            const fileId = await uploadFileToStrapi(croppedFile);
 
             if (!fileId) {
                 return;
@@ -132,12 +140,12 @@ export function ProfilePage() {
                 avatar: updateData
             }).unwrap();
 
-            // console.log("Cập nhật user thành công:", result);
+            console.log("Cập nhật user thành công:", result);
 
             setModalOpen(false);
-            setSelectedFile(null);
-            setPreview(null);
-            refetch();
+            setCroppedFile(null); // Xóa File đã crop sau khi upload
+            // setPreview(null); // Giữ preview (URL tạm) cho đến khi refetch data mới
+            refetch(); // Tải lại dữ liệu người dùng để hiển thị avatar mới
 
         } catch (error) {
             console.error("Lỗi trong quá trình cập nhật avatar:", error);
@@ -190,13 +198,17 @@ export function ProfilePage() {
                                 <AvatarCustom
                                     modalOpen={modalOpen}
                                     src={src}
-                                    setPreview={setPreview}
                                     setModalOpen={setModalOpen}
+                                    onCropSave={handleCropSave} // Sửa ở đây
                                 />
                                 <PreviewAvatar
                                     onClose={handleClose}
                                     modalOpen={viewAvatar}
-                                    src={preview} />
+                                    src={
+                                        preview || (user.avatar && `${process.env.REACT_APP_BASE_URL}${user.avatar.url}`) ||
+                                        "https://cdn.tech24.vn/upload/tech24_vn/post/images/2024/06/17/557/kha-banh-meme-3.jpg"
+                                    }
+                                />
                                 <Box textAlign="center" mt={2}>
                                     <Typography variant="h5">{userName}</Typography>
                                     <Typography color="text.secondary">
