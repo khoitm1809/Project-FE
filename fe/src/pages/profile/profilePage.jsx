@@ -282,12 +282,12 @@ export function ProfilePage() {
                                         Tham gia: {joinDate}
                                     </Typography>
                                 </Box>
-                                <Box display="flex" gap={1} alignItems="center">
+                                {userData?.description && <Box display="flex" gap={1} alignItems="center">
                                     <Notebook size={18} />
                                     <Typography color="text.secondary">
                                         Bio: {userData?.description}
                                     </Typography>
-                                </Box>
+                                </Box>}
                             </Box>
                         </CardContent>
                     </Card>
