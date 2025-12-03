@@ -10,6 +10,7 @@ import AddDataDialog from "../../components/AddDataDialog";
 import { useLocation } from "react-router";
 import { useGetListWarehouseCategoryQuery } from "../../store/warehouse/warehouseAction";
 import { ROLES } from "../../utils/rolesConstant";
+import { useGetListUserQuery } from "../../store/auth/authAction";
 
 const WareHouseItem = () => {
     const location = useLocation();
@@ -36,6 +37,12 @@ const WareHouseItem = () => {
         warehouseCategoryID: warehouseCategoryID,
     }, { refetchOnMountOrArgChange: true })
 
+    const {
+        data: listUser,
+    } = useGetListUserQuery({
+        role: ROLES.WORKER
+    }, { refetchOnMountOrArgChange: true })
+
     const title = [
         { key: "name", label: "Tên vật phẩm" },
         { key: "quantity", label: "Số lượng" },
@@ -58,11 +65,22 @@ const WareHouseItem = () => {
             mappingKey: "warehouse_category.id"
         },
 
+        // {
+        //     key: "users_permissions_user",
+        //     label: "Người phụ trách",
+        //     isDropDown: true,
+        //     defaultvalue: UID,
+        //     list: convertToDropdown(listUser),
+        //     mappingKey: "users_permissions_user.id"
+        // },
         {
             key: "users_permissions_user",
             label: "Người phụ trách",
+            isDisable: true,
+            defaultValue: UID,
             isDropDown: true,
-            // list: convertToDropdown(listUser), 
+            defaultvalue: UID,
+            list: convertToDropdown(listUser),
             mappingKey: "users_permissions_user.id"
         },
     ];

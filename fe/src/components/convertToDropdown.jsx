@@ -7,6 +7,6 @@ export const convertToDropdown = (list) => {
         // Lấy ID làm giá trị (value), đảm bảo chuyển thành chuỗi (String)
         value: String(item?.id),
         // Lấy tên chuồng làm nhãn hiển thị (label)
-        label: item?.name || item?.pigCode,
+        label: item?.name || item?.pigCode || item?.username,
     }));
 };
