@@ -1,4 +1,4 @@
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, MenuItem, Select, TextField, Typography } from "@mui/material";
+import { Box, Button, TextField, Typography } from "@mui/material";
 import { BoxContainer, Row } from "../../components/commonStyled";
 import { useLocation, useNavigate } from "react-router";
 import { useState } from "react";
@@ -12,6 +12,10 @@ import { ROLES } from "../../utils/rolesConstant";
 import { useGetListUserQuery } from "../../store/auth/authAction";
 import { useConfirmDialog } from "../../components/confirmDialog";
 import { MESSAGE_TYPE } from "../../utils/constant";
+import CommonDialog from "../../components/CommonDialog";
+import { useAddEquipmentMutation, useDeleteEquipmentMutation, useEditEquipmentMutation } from "../../store/warehouse/equipmentsAction";
+import { useAddFeedSettingMutation, useDeleteFeedSettingMutation, useEditFeedSettingMutation } from "../../store/warehouse/feedSettingsAction";
+import { useGetListWarehouseItemQuery, useLazyGetListWarehouseItemQuery } from "../../store/warehouse/warehouseItemAction";
 
 const BarnPage = () => {
     const location = useLocation();
@@ -23,23 +27,40 @@ const BarnPage = () => {
     const { openDialog } = useConfirmDialog()
 
     const [searchTerm, setSearchTerm] = useState('');
-    const [openAddDialog, setOpenAddDialog] = useState(false);
-    const [isAssignDialogOpen, setIsAssignDialogOpen] = useState(false);
 
-    const [selectedBarnId, setSelectedBarnId] = useState(null);
-    const [selectedWorkerId, setSelectedWorkerId] = useState(null);
-
-    const [openEditDialog, setOpenEditDialog] = useState(false);
-    const [editingBarn, setEditingBarn] = useState(null);
+    const [dialogState, setDialogState] = useState({
+        open: false,
+        mode: null,
+        editingBarn: null,
+        selectedBarnId: null,
+        warehouseItems: [],
+    });
 
     const [newBarnData, setNewBarnData] = useState({
         name: '',
         description: '',
     });
 
+    const [selectedWorkerId, setSelectedWorkerId] = useState(null);
+
     const [addBarn, { isLoading: isAddingBarn }] = useAddBarnMutation();
     const [editBarn, { isLoading: isEditingBarn }] = useEditBarnMutation();
     const [deleteBarn, { isLoading: isDeletingBarn }] = useDeleteBarnMutation();
+
+    const [addEquipment, { isLoading: isAddingEquipment }] = useAddEquipmentMutation();
+    const [editEquipment, { isLoading: isEditingEquipment }] = useEditEquipmentMutation();
+    const [deleteEquipment, { isLoading: isDeletingEquipment }] = useDeleteEquipmentMutation();
+
+    const [addFeedSetting, { isLoading: isAddingFeedSetting }] = useAddFeedSettingMutation();
+    const [editFeedSetting, { isLoading: isEditingFeedSetting }] = useEditFeedSettingMutation();
+    const [deleteFeedSetting, { isLoading: isDeletingFeedSetting }] = useDeleteFeedSettingMutation();
+
+
+    const [equipmentForm, setEquipmentForm] = useState({
+        warehouseItemId: null,
+        quantity: null,
+        name: null,
+    });
 
     const {
         data: listBarn,
@@ -59,45 +80,73 @@ const BarnPage = () => {
         refetchOnMountOrArgChange: true
     })
 
-    // --- DIALOG HANDLERS ---
+    const [getList, { isLoading: isLoadingWarehouse }] = useLazyGetListWarehouseItemQuery();
 
-    // ADD
-    const toggleAddDialog = () => {
-        setOpenAddDialog(prev => !prev);
+    const handleCloseDialog = () => {
+        setDialogState({ open: false, mode: null, editingBarn: null, selectedBarnId: null, warehouseItems: [] });
         setNewBarnData({ name: '', description: '' });
-    };
-
-    // EDIT
-    const handleOpenEditDialog = (barn) => {
-        setEditingBarn(barn);
-        setNewBarnData({ name: barn.name, description: barn.description });
-        setOpenEditDialog(true);
-    };
-
-    const handleCloseEditDialog = () => {
-        setOpenEditDialog(false);
-        setEditingBarn(null);
-        setNewBarnData({ name: '', description: '' });
-    };
-
-    // ASSIGN
-    const handleCloseAssignDialog = () => {
-        setIsAssignDialogOpen(false);
-        setSelectedBarnId(null);
         setSelectedWorkerId(null);
-    }
+    };
+
+    const handleOpenAddDialog = () => {
+        setDialogState({ open: true, mode: 'add', editingBarn: null, selectedBarnId: null, warehouseItems: [] });
+        setNewBarnData({ name: '', description: '' });
+    };
+
+    const handleOpenEditDialog = (barn) => {
+        setDialogState({ open: true, mode: 'edit', editingBarn: barn, selectedBarnId: null, warehouseItems: [] });
+        setNewBarnData({ name: barn.name, description: barn.description });
+    };
 
     const handleOpenAssignWorkerDialog = (barnId) => {
-        setSelectedBarnId(barnId);
-
         const currentBarn = listBarn?.data?.find(barn => barn?.documentId === barnId);
         const currentWorkerId = currentBarn?.users_permissions_user?.id || null;
 
+        setDialogState({ open: true, mode: 'assign', editingBarn: null, selectedBarnId: barnId, warehouseItems: [] });
         setSelectedWorkerId(currentWorkerId);
-        setIsAssignDialogOpen(true);
     };
 
-    // --- DATA HANDLERS ---
+    const handleOpenFeedDialog = async (barn) => {
+        // try {
+        const result = await getList({ itemType: 'feed' }).unwrap();
+        setDialogState({
+            open: true,
+            mode: 'feed',
+            editingBarn: barn,
+            selectedBarnId: barn.documentId,
+            warehouseItems: result.data || []
+        });
+        // } catch (error) {
+        //     console.error("Lỗi khi lấy danh sách thức ăn:", error);
+        //     openDialog({
+        //         type: MESSAGE_TYPE.ERROR,
+        //         message: "Không thể tải danh sách thức ăn",
+        //         isShowCloseBtn: true,
+        //         isHideAction: true,
+        //     });
+        // }
+    };
+
+    const handleOpenEquipmentDialog = async (barn) => {
+        // try {
+        const result = await getList({ itemType: 'equipment' }).unwrap();
+        setDialogState({
+            open: true,
+            mode: 'equipment',
+            editingBarn: barn,
+            selectedBarnId: barn.documentId,
+            warehouseItems: result.data || []
+        });
+        // } catch (error) {
+        //     console.error("Lỗi khi lấy danh sách thiết bị:", error);
+        //     openDialog({
+        //         type: MESSAGE_TYPE.ERROR,
+        //         message: "Không thể tải danh sách thiết bị",
+        //         isShowCloseBtn: true,
+        //         isHideAction: true,
+        //     });
+        // }
+    };
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -105,50 +154,92 @@ const BarnPage = () => {
             ...prev,
             [name]: value,
         }));
-        if (openEditDialog) {
-            setEditingBarn(prev => ({
+
+        if (dialogState.mode === 'edit') {
+            setDialogState(prev => ({
                 ...prev,
-                [name]: value
+                editingBarn: {
+                    ...prev.editingBarn,
+                    [name]: value
+                }
             }));
         }
     };
 
-    const handleAddBarnSubmit = async (e) => {
-        e.preventDefault();
-
-        if (isAddingBarn || !newBarnData.name || !newBarnData.description) return;
-
-        try {
-            await addBarn({
-                area: areaId,
-                ...newBarnData,
-            }).unwrap();
-
-            toggleAddDialog();
-            await refetch();
-        } catch (error) {
-            console.error("Lỗi khi thêm chuồng:", error);
-        }
+    const handleWorkerSelect = (event) => {
+        setSelectedWorkerId(event.target.value === "" ? null : event.target.value);
     };
 
-    const handleEditBarnSubmit = async (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        if (isEditingBarn || !editingBarn) return;
 
         try {
-            await editBarn({
-                id: editingBarn.documentId,
-                name: editingBarn.name,
-                description: editingBarn.description
-            }).unwrap();
+            switch (dialogState.mode) {
+                case 'add':
+                    if (isAddingBarn || !newBarnData.name || !newBarnData.description) return;
+                    await addBarn({
+                        area: areaId,
+                        ...newBarnData,
+                    }).unwrap();
+                    break;
+                case 'edit':
+                    if (isEditingBarn || !dialogState.editingBarn) return;
+                    await editBarn({
+                        id: dialogState.editingBarn.documentId,
+                        name: dialogState.editingBarn.name,
+                        description: dialogState.editingBarn.description
+                    }).unwrap();
+                    break;
+                case 'assign':
+                    if (isEditingBarn || !dialogState.selectedBarnId) return;
+                    const workerId = selectedWorkerId || null;
+                    await editBarn({
+                        id: dialogState.selectedBarnId,
+                        users_permissions_user: workerId
+                    }).unwrap();
+                    break;
+                case 'feed':
+                    await addFeedSetting({
 
-            handleCloseEditDialog();
+                    })
+
+                    break;
+                case 'equipment':
+                    // Validate dữ liệu
+                    // if (!equipmentForm.warehouseItemId || !equipmentForm.quantity) {
+                    //     openDialog({
+                    //         type: MESSAGE_TYPE.WARNING,
+                    //         message: "Vui lòng chọn thiết bị và nhập số lượng",
+                    //         isShowCloseBtn: true,
+                    //         isHideAction: true,
+                    //     });
+                    //     return;
+                    // }
+                   
+                    await addEquipment({
+                        barn: dialogState.selectedBarnId,
+                        warehouse_item: equipmentForm.warehouseItemId, // ID thiết bị chọn từ list
+                        quantityInstalled: Number(equipmentForm.quantity), // Số lượng nhập vào,
+                        name: null
+                    }).unwrap();
+                    break;
+                default:
+                    return;
+            }
+
+            handleCloseDialog();
             await refetch();
         } catch (error) {
-            console.error("Lỗi khi sửa chuồng:", error);
+            console.error(`Lỗi khi thực hiện hành động ${dialogState.mode}:`, error);
+            openDialog({
+                type: MESSAGE_TYPE.ERROR,
+                message: `Đã xảy ra lỗi`,
+                isShowCloseBtn: true,
+                isHideAction: true,
+            });
         }
     };
-
+    console.log(dialogState.selectedBarnId, '????')
     const handleDeleteBarn = async (barnToDelete) => {
         if (!barnToDelete?.documentId || isDeletingBarn) return;
 
@@ -159,7 +250,6 @@ const BarnPage = () => {
                 isShowCloseBtn: true,
                 isHideAction: true,
                 customSecondText: "Đã hiểu",
-
             });
             return;
         }
@@ -182,34 +272,76 @@ const BarnPage = () => {
         });
     };
 
-    const handleWorkerSelect = (event) => {
-        setSelectedWorkerId(event.target.value === "" ? null : event.target.value);
-    };
-
-    const handleAssignEmployees = async () => {
-        const workerId = selectedWorkerId || null;
-
-        try {
-            await editBarn({
-                id: selectedBarnId,
-                users_permissions_user: workerId
-            }).unwrap();
-            setIsAssignDialogOpen(false)
-            await refetch();
-        } catch (error) {
-            openDialog({
-                type: MESSAGE_TYPE.ERROR,
-                message: `Lỗi khi phân công nhân viên`,
-                isShowCloseBtn: true,
-                isHideAction: true,
-            });
-        }
-    };
-
     const filteredBarns = listBarn?.data?.filter(barn =>
         barn?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         barn?.description?.toLowerCase().includes(searchTerm.toLowerCase())
     ) || [];
+
+    const handleEquipmentFormChange = (e) => {
+        const { name, value } = e.target;
+        setEquipmentForm(prev => ({
+            ...prev,
+            [name]: value
+        }));
+    };
+
+    let dialogProps = {};
+    const barnToAssignName = listBarn?.data?.find(barn => barn.documentId === dialogState.selectedBarnId)?.name;
+
+    switch (dialogState.mode) {
+        case 'add':
+            dialogProps = {
+                title: 'Tạo Chuồng mới',
+                data: newBarnData,
+                onDataChange: handleInputChange,
+                isLoading: isAddingBarn,
+            };
+            break;
+        case 'edit':
+            dialogProps = {
+                title: `Chỉnh sửa Chuồng: ${dialogState.editingBarn?.name || ''}`,
+                data: dialogState.editingBarn,
+                onDataChange: handleInputChange,
+                isLoading: isEditingBarn,
+            };
+            break;
+        case 'assign':
+            dialogProps = {
+                title: 'Phân công nhân viên',
+                isLoading: isEditingBarn,
+                assignProps: {
+                    descriptionText: `Chọn nhân viên phụ trách chuồng **${barnToAssignName || ''}**:`,
+                    listWorker: listWorker,
+                    selectedWorkerId: selectedWorkerId,
+                    onWorkerSelect: handleWorkerSelect,
+                },
+            };
+            break;
+        case 'feed':
+            dialogProps = {
+                title: `Cấu hình thức ăn: ${dialogState.editingBarn?.name || ''}`,
+                isLoading: isAddingFeedSetting || isEditingFeedSetting || isDeletingFeedSetting || isLoadingWarehouse,
+                feedProps: {
+                    availableFeeds: dialogState.warehouseItems,
+                    currentSettings: dialogState.editingBarn?.feed_settings || [],
+                },
+            };
+            break;
+        case 'equipment':
+            dialogProps = {
+                title: `Quản lý thiết bị: ${dialogState.editingBarn?.name || ''}`,
+                isLoading: isAddingEquipment || isEditingEquipment || isDeletingEquipment || isLoadingWarehouse,
+                equipmentProps: {
+                    availableEquipments: dialogState.warehouseItems, // List lấy từ API
+                    formData: equipmentForm,                         // State form
+                    onFormChange: handleEquipmentFormChange,         // Hàm change
+                },
+            };
+            break;
+        default:
+            dialogProps = {};
+    }
+
 
     return (
         <BoxContainer padding={'2rem'}>
@@ -283,7 +415,7 @@ const BarnPage = () => {
                     {role === ROLES.OWNER && <Button
                         variant="contained"
                         startIcon={<AddOutlinedIcon />}
-                        onClick={toggleAddDialog}
+                        onClick={handleOpenAddDialog}
                         sx={{
                             height: "44px",
                             width: { xs: "100%", sm: "10rem" },
@@ -326,6 +458,7 @@ const BarnPage = () => {
                             >
                                 <CardInfo
                                     name={barn?.name}
+                                    data={barn}
                                     description={barn?.description}
                                     publishedAt={barn?.publishedAt}
                                     nameCount={"Số lợn: "}
@@ -335,6 +468,15 @@ const BarnPage = () => {
                                     isAssign={true}
                                     onActionAssign={() => handleOpenAssignWorkerDialog(barn?.documentId)}
                                     isEdit={true}
+                                    equipment={true}
+                                    feedSetting={true}
+                                    feeedSettingData={barn?.feed_settings}
+                                    onActionFeedSetting={(e) => {
+                                        handleOpenFeedDialog(barn);
+                                    }}
+                                    onActionEquipment={(e) => {
+                                        handleOpenEquipmentDialog(barn);
+                                    }}
                                     onActionEdit={(e) => {
                                         handleOpenEditDialog(barn);
                                     }}
@@ -342,226 +484,22 @@ const BarnPage = () => {
                                     onActionDelete={(e) => {
                                         handleDeleteBarn(barn);
                                     }}
-                                    feedSetting={true}
-                                    feeedSettingData={barn?.feed_settings}
                                 />
                             </Box>
                         ))
                     )}
                 </Row>
 
-                {/* ADD BARN DIALOG */}
-                <Dialog
-                    fullWidth
-                    open={openAddDialog}
-                    onClose={toggleAddDialog}
-                    PaperProps={{
-                        sx: { borderRadius: "12px", paddingTop: "4px" }
-                    }}
-                >
-                    <DialogTitle
-                        sx={{ fontSize: "1.25rem", fontWeight: 700, pb: 1.5 }}
-                    >
-                        Tạo Chuồng mới
-                    </DialogTitle>
+                {dialogState.mode && (
+                    <CommonDialog
+                        open={dialogState.open}
+                        onClose={handleCloseDialog}
+                        mode={dialogState.mode}
+                        onSubmit={handleSubmit}
+                        {...dialogProps}
+                    />
+                )}
 
-                    <form onSubmit={handleAddBarnSubmit}>
-                        <DialogContent
-                            dividers
-                            sx={{ border: "none", pt: 2, pb: 1, "& .MuiDialogContent-root": { border: "none" } }}
-                        >
-                            <TextField
-                                fullWidth
-                                placeholder="Tên chuồng..."
-                                name="name"
-                                onChange={handleInputChange}
-                                value={newBarnData.name}
-                                required
-                                disabled={isAddingBarn}
-                                sx={{
-                                    mb: 2,
-                                    "& .MuiOutlinedInput-root": { backgroundColor: "#f5f5f5", borderRadius: "8px", height: "44px", paddingLeft: "10px", "& fieldset": { border: "none" }, "&:hover fieldset": { border: "none" }, "&.Mui-focused fieldset": { border: "none" }, "& input": { fontSize: "0.95rem" } },
-                                    "& .MuiInputBase-input::placeholder": { color: "#999" },
-                                }}
-                            />
-
-                            <TextField
-                                fullWidth
-                                placeholder="Mô tả..."
-                                name="description"
-                                onChange={handleInputChange}
-                                value={newBarnData.description}
-                                required
-                                multiline
-                                rows={3}
-                                disabled={isAddingBarn}
-                                sx={{
-                                    "& .MuiOutlinedInput-root": { backgroundColor: "#f5f5f5", borderRadius: "8px", "& fieldset": { border: "none" }, "&:hover fieldset": { border: "none" }, "&.Mui-focused fieldset": { border: "none" }, "& textarea": { fontSize: "0.95rem" } },
-                                    "& .MuiInputBase-input::placeholder": { color: "#999" },
-                                }}
-                            />
-                        </DialogContent>
-
-                        <DialogActions sx={{ p: 2 }}>
-                            <Button
-                                onClick={toggleAddDialog}
-                                disabled={isAddingBarn}
-                                sx={{ textTransform: "none", color: "#444", borderRadius: "8px", px: 2, "&:hover": { backgroundColor: "#eee" } }}
-                            >
-                                Hủy
-                            </Button>
-
-                            <Button
-                                variant="contained"
-                                type="submit"
-                                disabled={isAddingBarn}
-                                sx={{ textTransform: "none", borderRadius: "8px", px: 3 }}
-                            >
-                                {isAddingBarn ? 'Đang tạo...' : 'Tạo'}
-                            </Button>
-                        </DialogActions>
-                    </form>
-                </Dialog>
-
-                {/* EDIT BARN DIALOG */}
-                <Dialog
-                    fullWidth
-                    open={openEditDialog}
-                    onClose={handleCloseEditDialog}
-                    PaperProps={{
-                        sx: { borderRadius: "12px", paddingTop: "4px" }
-                    }}
-                >
-                    <DialogTitle
-                        sx={{ fontSize: "1.25rem", fontWeight: 700, pb: 1.5 }}
-                    >
-                        Chỉnh sửa Chuồng: {editingBarn?.name}
-                    </DialogTitle>
-
-                    {editingBarn && (
-                        <form onSubmit={handleEditBarnSubmit}>
-                            <DialogContent
-                                dividers
-                                sx={{ border: "none", pt: 2, pb: 1, "& .MuiDialogContent-root": { border: "none" } }}
-                            >
-                                <TextField
-                                    fullWidth
-                                    placeholder="Tên chuồng..."
-                                    name="name"
-                                    required
-                                    defaultValue={editingBarn.name || ''}
-                                    onChange={(e) => handleInputChange(e)}
-                                    disabled={isEditingBarn}
-                                    sx={{
-                                        mb: 2,
-                                        "& .MuiOutlinedInput-root": { backgroundColor: "#f5f5f5", borderRadius: "8px", height: "44px", paddingLeft: "10px", "& fieldset": { border: "none" }, "&:hover fieldset": { border: "none" }, "&.Mui-focused fieldset": { border: "none" }, "& input": { fontSize: "0.95rem" } },
-                                        "& .MuiInputBase-input::placeholder": { color: "#999" },
-                                    }}
-                                />
-
-                                <TextField
-                                    fullWidth
-                                    placeholder="Mô tả..."
-                                    name="description"
-                                    required
-                                    multiline
-                                    rows={3}
-                                    defaultValue={editingBarn.description || ''}
-                                    onChange={(e) => handleInputChange(e)}
-                                    disabled={isEditingBarn}
-                                    sx={{
-                                        "& .MuiOutlinedInput-root": { backgroundColor: "#f5f5f5", borderRadius: "8px", "& fieldset": { border: "none" }, "&:hover fieldset": { border: "none" }, "&.Mui-focused fieldset": { border: "none" }, "& textarea": { fontSize: "0.95rem" } },
-                                        "& .MuiInputBase-input::placeholder": { color: "#999" },
-                                    }}
-                                />
-                            </DialogContent>
-
-                            <DialogActions sx={{ p: 2 }}>
-                                <Button
-                                    onClick={handleCloseEditDialog}
-                                    disabled={isEditingBarn}
-                                    sx={{ textTransform: "none", color: "#444", borderRadius: "8px", px: 2, "&:hover": { backgroundColor: "#eee" } }}
-                                >
-                                    Hủy
-                                </Button>
-
-                                <Button
-                                    type="submit"
-                                    variant="contained"
-                                    disabled={isEditingBarn}
-                                    sx={{ textTransform: "none", borderRadius: "8px", px: 3 }}
-                                >
-                                    {isEditingBarn ? 'Đang lưu...' : 'Lưu thay đổi'}
-                                </Button>
-                            </DialogActions>
-                        </form>
-                    )}
-                </Dialog>
-
-                {/* Phân công DIALOG */}
-                <Dialog
-                    open={isAssignDialogOpen}
-                    onClose={handleCloseAssignDialog}
-                    fullWidth
-                    maxWidth="sm"
-                >
-                    <DialogTitle>Phân công nhân viên</DialogTitle>
-
-                    <DialogContent dividers>
-                        <DialogContentText sx={{ mb: 2 }}>
-                            Chọn nhân viên phụ trách chuồng **{listBarn?.data?.find(barn => barn.documentId === selectedBarnId)?.name}**:
-                        </DialogContentText>
-
-                        <Box sx={{
-                            maxHeight: 350,
-                            overflowY: "auto",
-                            display: "flex",
-                            flexDirection: "column",
-                            gap: 2,
-                            py: 1,
-                        }}>
-                            <FormControl fullWidth>
-                                <Select
-                                    value={selectedWorkerId || ''}
-                                    onChange={handleWorkerSelect}
-                                    displayEmpty
-                                    sx={{
-                                        height: 44,
-                                        borderRadius: 2,
-                                    }}
-                                >
-                                    <MenuItem value="">
-                                        <span style={{ color: "#888" }}>Không phân công (Chủ trang trại phụ trách)</span>
-                                    </MenuItem>
-                                    {listWorker?.map((worker) => (
-                                        <MenuItem key={worker.id} value={worker.id}>
-                                            {worker.username}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-                        </Box>
-                    </DialogContent>
-
-                    <DialogActions>
-                        <Button
-                            variant="outlined"
-                            onClick={handleCloseAssignDialog}
-                            disabled={isEditingBarn}
-                        >
-                            Hủy
-                        </Button>
-
-                        <Button
-                            variant="contained"
-                            sx={{ background: 'black', color: 'white' }}
-                            onClick={handleAssignEmployees}
-                            disabled={isEditingBarn}
-                        >
-                            {isEditingBarn ? 'Đang lưu...' : 'Lưu phân công'}
-                        </Button>
-                    </DialogActions>
-                </Dialog>
             </Box>
         </BoxContainer>
     )

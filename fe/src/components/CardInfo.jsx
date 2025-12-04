@@ -12,13 +12,16 @@ import EditIcon from "@mui/icons-material/Edit";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import RestaurantOutlinedIcon from '@mui/icons-material/RestaurantOutlined';
 import dayjs from "dayjs";
 import { Row } from "./commonStyled";
 import { useGetListFeedSettingQuery } from "../store/warehouse/feedSettingsAction";
 import { SettingsIcon } from "lucide-react";
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
+import ConstructionOutlinedIcon from '@mui/icons-material/ConstructionOutlined';
 const CardInfo = ({
     name,
+    data,
     description,
     nameCount,
     publishedAt,
@@ -33,7 +36,9 @@ const CardInfo = ({
     onActionEdit,
     onActionDelete,
     feedSetting,
-    feeedSettingData
+    equipment,
+    onActionFeedSetting,
+    onActionEquipment
 }) => {
     const {
         data: listfeedSettings,
@@ -87,6 +92,22 @@ const CardInfo = ({
                                 <EditIcon fontSize="small" />
                             </IconButton>
                         </Tooltip>}
+                        {feedSetting && <Tooltip title="Cài đặt Thức ăn">
+                            <IconButton size="small" onClick={(e) => {
+                                e.stopPropagation();
+                                onActionFeedSetting?.();
+                            }}>
+                                <RestaurantOutlinedIcon fontSize="small" />
+                            </IconButton>
+                        </Tooltip>}
+                        {equipment && <Tooltip title="Cài đặt Vật tư">
+                            <IconButton size="small" onClick={(e) => {
+                                e.stopPropagation();
+                                onActionEquipment?.();
+                            }}>
+                                <ConstructionOutlinedIcon fontSize="small" />
+                            </IconButton>
+                        </Tooltip>}
                         {isDelete && <Tooltip title="Xóa">
                             <IconButton size="small" color="error" onClick={(e) => {
                                 e.stopPropagation();
@@ -96,13 +117,7 @@ const CardInfo = ({
                             </IconButton>
                         </Tooltip>}
                     </Box>}
-                    {feedSetting && <Tooltip title="Cài đặt Thức ăn">
-                        <IconButton size="small" color="primary" onClick={(e) => {
-                            e.stopPropagation(); // Ngăn chặn sự kiện click lan truyền lên Card
-                        }}>
-                            <SettingsIcon fontSize="small" />
-                        </IconButton>
-                    </Tooltip>}
+
                 </Box>
             </Box>
             <Row gap={'0.4rem'} px={2} pb={0}>
@@ -121,17 +136,20 @@ const CardInfo = ({
                 >
                     {description}
                 </Typography>
-                {feedSetting && <Row gap={'0.4rem'}>
+                {feedSetting && <Row gap={'0.4rem'} >
                     <Typography
                         variant="body2"
                         sx={{ color: "gray", minHeight: "20px" }}>
                         Feed Setting:
                     </Typography>
-                    {/* {feeedSettingData?.map((item, index) => (
-                        <Row sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                            <Typography>{item?.amountPerDay}</Typography>
-                        </Row>
-                    ))} */}
+                </Row>}
+                {equipment && <Row gap={'0.4rem'} mt={"0.4rem"}>
+                    <Row
+                        sx={{ color: "gray", minHeight: "20px" }}>
+                        Equipment Setting: {data?.barn_equipments?.map((item, index) => (
+                            <Typography key={index}>{`${item?.name}, `}</Typography>
+                        ))}
+                    </Row>
                 </Row>}
                 {publishedAt && (
                     <Typography

@@ -3,14 +3,14 @@ import { API_URL } from '../../utils/ApiConstants';
 import { LOCAL_STORAGE_NAME } from '../../utils/constant';
 import { axiosBaseQuery } from '../../services/axiosBaseQuery';
 
-export const feedSettingApi = createApi({
-    reducerPath: 'feedSettingApi',
+export const equipmentApi = createApi({
+    reducerPath: 'equipmentApi',
     baseQuery: axiosBaseQuery(),
     endpoints: (builder) => ({
         // Get List Off Spring
-        getListFeedSetting: builder.query({
+        getListEquipment: builder.query({
             query: (params) => ({
-                url: API_URL.BARN_FEED_SETTING + "?populate=*",
+                url: API_URL.BARN_EQUIPMENT + "?populate=*",
                 method: 'GET',
                 params: {
                     ...params,
@@ -19,27 +19,27 @@ export const feedSettingApi = createApi({
         }),
 
         // add off spring
-        addFeedSetting: builder.mutation({
+        addEquipment: builder.mutation({
             query: (body) => ({
-                url: API_URL.BARN_FEED_SETTING,
+                url: API_URL.BARN_EQUIPMENT,
                 method: 'POST',
                 data: { data: body },
             }),
         }),
 
         // edit off spring
-        editFeedSetting: builder.mutation({
+        editEquipment: builder.mutation({
             query: (body) => ({
-                url: API_URL.BARN_FEED_SETTING + "/" + body.id,
+                url: API_URL.BARN_EQUIPMENT + "/" + body.id,
                 method: 'PUT',
                 data: body,
             }),
         }),
 
         // delete off spring
-        deleteFeedSetting: builder.mutation({
+        deleteEquipment: builder.mutation({
             query: (id) => ({
-                url: API_URL.BARN_FEED_SETTING + "/" + id,
+                url: API_URL.BARN_EQUIPMENT + "/" + id,
                 method: 'DELETE',
             }),
         }),
@@ -48,8 +48,8 @@ export const feedSettingApi = createApi({
 });
 
 export const {
-    useGetListFeedSettingQuery,
-    useAddFeedSettingMutation,
-    useDeleteFeedSettingMutation,
-    useEditFeedSettingMutation
-} = feedSettingApi;
+    useGetListEquipmentQuery,
+    useAddEquipmentMutation,
+    useDeleteEquipmentMutation,
+    useEditEquipmentMutation
+} = equipmentApi;

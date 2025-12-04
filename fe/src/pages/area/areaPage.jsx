@@ -1,4 +1,6 @@
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Typography } from "@mui/material";
+// src/pages/AreaPage.jsx
+
+import { Box, Button, TextField, Typography } from "@mui/material";
 import { BoxContainer, Row } from "../../components/commonStyled";
 import { useNavigate } from "react-router";
 import { useState } from "react";
@@ -11,96 +13,107 @@ import { ROUTES } from "../../router/routerConstants";
 import { ROLES } from "../../utils/rolesConstant";
 import { MESSAGE_TYPE } from "../../utils/constant";
 import { useConfirmDialog } from "../../components/confirmDialog";
+import CommonDialog from "../../components/CommonDialog";
 
 const AreaPage = () => {
     const role = localStorage.getItem("role");
     const UID = localStorage.getItem("UID");
     const navigate = useNavigate();
 
-    const [searchTerm, setSearchTerm] = useState('');
-    const [openAddDialog, setOpenAddDialog] = useState(false);
-    const [openEditDialog, setOpenEditDialog] = useState(false);
-    const [editingArea, setEditingArea] = useState(null);
-    const [isSubmitting, setIsSubmitting] = useState(false);
-
-    const [addArea] = useAddAreaMutation();
-    const [editArea] = useEditAreaMutation();
-    const [deleteArea] = useDeleteAreaMutation();
     const { openDialog } = useConfirmDialog()
+
+    const [searchTerm, setSearchTerm] = useState('');
+
+    const [dialogState, setDialogState] = useState({
+        open: false,
+        mode: null, // 'add', 'edit'
+        editingArea: null,
+    });
+
+    const [newAreaData, setNewAreaData] = useState({
+        name: '',
+        description: '',
+    });
+
+    const [addArea, { isLoading: isAddingArea }] = useAddAreaMutation();
+    const [editArea, { isLoading: isEditingArea }] = useEditAreaMutation();
+    const [deleteArea, { isLoading: isDeletingArea }] = useDeleteAreaMutation();
+
     const {
         data: listArea,
         isLoading: loadingArea,
         refetch
     } = useGetListAreaQuery({}, { refetchOnMountOrArgChange: true })
 
-    const toggleAddDialog = () => setOpenAddDialog(prev => !prev);
+    const handleCloseDialog = () => {
+        setDialogState({ open: false, mode: null, editingArea: null });
+        setNewAreaData({ name: '', description: '' });
+    };
+
+    const handleOpenAddDialog = () => {
+        setDialogState({ open: true, mode: 'add', editingArea: null });
+        setNewAreaData({ name: '', description: '' });
+    };
 
     const handleOpenEditDialog = (area) => {
-        setEditingArea(area);
-        setOpenEditDialog(true);
+        setDialogState({ open: true, mode: 'edit', editingArea: area });
+        setNewAreaData({ name: area.name, description: area.description });
     };
 
-    const handleCloseEditDialog = () => {
-        setOpenEditDialog(false);
-        setEditingArea(null);
-    };
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setNewAreaData(prev => ({
+            ...prev,
+            [name]: value,
+        }));
 
-    const handleSubmitAdd = async (e) => {
-        e.preventDefault();
-        setIsSubmitting(true);
-        const formData = new FormData(e.currentTarget);
-        const name = formData.get('name');
-        const description = formData.get('description');
-
-        try {
-            await addArea({ name, description, users_permissions_user: UID }).unwrap();
-
-            toggleAddDialog();
-            refetch();
-        } catch (error) {
-            openDialog({
-                type: MESSAGE_TYPE.ERROR,
-                message: `Lỗi khi thêm khu vực`,
-                isShowCloseBtn: true,
-                isHideAction: true,
-            });
-        } finally {
-            setIsSubmitting(false);
+        if (dialogState.mode === 'edit') {
+            setDialogState(prev => ({
+                ...prev,
+                editingArea: {
+                    ...prev.editingArea,
+                    [name]: value
+                }
+            }));
         }
     };
 
-    const handleSubmitEdit = async (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!editingArea) return;
-
-        setIsSubmitting(true);
-        const formData = new FormData(e.currentTarget);
-        const name = formData.get('name');
-        const description = formData.get('description');
-
-        const updateData = {
-            name,
-            description
-        };
 
         try {
-            await editArea({
-                id: editingArea.documentId,
-                updateData
-            }).unwrap();
+            switch (dialogState.mode) {
+                case 'add':
+                    if (isAddingArea || !newAreaData.name) return;
+                    await addArea({
+                        ...newAreaData,
+                        users_permissions_user: UID
+                    }).unwrap();
+                    break;
+                case 'edit':
+                    if (isEditingArea || !dialogState.editingArea) return;
+                    await editArea({
+                        id: dialogState.editingArea.documentId,
+                        updateData: {
+                            name: dialogState.editingArea.name,
+                            description: dialogState.editingArea.description
+                        }
+                    }).unwrap();
+                    break;
+                default:
+                    return;
+            }
 
-            handleCloseEditDialog();
-            refetch();
+            handleCloseDialog();
+            await refetch();
         } catch (error) {
-            const errorMessage = error.data?.message || error.error || "Không thể sửa khu vực. Vui lòng thử lại.";
+            const errorMessage = error.data?.message || error.error || "Vui lòng thử lại.";
             openDialog({
                 type: MESSAGE_TYPE.ERROR,
-                message: `Lỗi khi sửa khu vực: ${errorMessage}`,
+                message: `Lỗi khi ${dialogState.mode === 'add' ? 'thêm' : 'sửa'} khu vực: ${errorMessage}`,
                 isShowCloseBtn: true,
                 isHideAction: true,
             });
-        } finally {
-            setIsSubmitting(false);
         }
     };
 
@@ -108,27 +121,39 @@ const AreaPage = () => {
         const areaToDelete = listArea?.data?.find(area => area.documentId === areaId);
         const barnCount = areaToDelete?.barns?.length || 0;
 
+        if (isDeletingArea) return;
+
         if (barnCount > 0) {
             openDialog({
                 type: MESSAGE_TYPE.WARNING,
-                // Hiển thị số lượng chuồng cần xóa
                 message: `Bạn phải xóa ${barnCount} chuồng mới được xóa khu này`,
                 isShowCloseBtn: true,
                 isHideAction: true,
                 customSecondText: "Xác nhận"
             });
         } else {
-            try {
-                await deleteArea(areaId).unwrap();
-                refetch();
-            } catch (error) {
-                openDialog({
-                    type: MESSAGE_TYPE.ERROR,
-                    message: `Lỗi khi xóa khu vực`,
-                    isShowCloseBtn: true,
-                    isHideAction: true,
-                });
-            }
+            const confirmDelete = async () => {
+                try {
+                    await deleteArea(areaId).unwrap();
+                    await refetch();
+                } catch (error) {
+                    openDialog({
+                        type: MESSAGE_TYPE.ERROR,
+                        message: `Lỗi khi xóa khu vực`,
+                        isShowCloseBtn: true,
+                        isHideAction: true,
+                    });
+                }
+            };
+
+            openDialog({
+                type: MESSAGE_TYPE.CONFIRM,
+                message: `Bạn có chắc chắn muốn xóa khu vực **${areaToDelete?.name}**?`,
+                isShowCloseBtn: true,
+                isHideAction: false,
+                customSecondText: "Xóa",
+                actionConfirm: confirmDelete,
+            });
         }
     };
 
@@ -137,10 +162,31 @@ const AreaPage = () => {
         area?.description?.toLowerCase().includes(searchTerm.toLowerCase())
     ) || [];
 
+    let dialogProps = {};
+    switch (dialogState.mode) {
+        case 'add':
+            dialogProps = {
+                title: 'Tạo Khu vực mới',
+                data: newAreaData,
+                onDataChange: handleInputChange,
+                isLoading: isAddingArea,
+            };
+            break;
+        case 'edit':
+            dialogProps = {
+                title: `Chỉnh sửa Khu vực: ${dialogState.editingArea?.name || ''}`,
+                data: dialogState.editingArea,
+                onDataChange: handleInputChange,
+                isLoading: isEditingArea,
+            };
+            break;
+        default:
+            dialogProps = {};
+    }
+
     return (
         <BoxContainer padding={'2rem'}>
             <Box mb={4}>
-                {/* Tiêu đề trang */}
                 <Box sx={{ marginBottom: '2rem' }}>
                     <Typography
                         variant="h4"
@@ -157,7 +203,6 @@ const AreaPage = () => {
                     </Typography>
                 </Box>
 
-                {/* Thanh tìm kiếm, lọc và nút thêm mới */}
                 <Box
                     display="flex"
                     flexDirection={{ xs: "column", sm: "row" }}
@@ -210,7 +255,7 @@ const AreaPage = () => {
                     <Button
                         variant="contained"
                         startIcon={<AddOutlinedIcon />}
-                        onClick={toggleAddDialog}
+                        onClick={handleOpenAddDialog}
                         sx={{
                             height: "44px",
                             width: { xs: "100%", sm: "10rem" },
@@ -226,271 +271,58 @@ const AreaPage = () => {
                     </Button>
                 </Box>
 
-                {/* Danh sách thẻ khu vực */}
                 <Row sx={{
                     width: '100%',
                     flexWrap: 'wrap',
                     gap: '2rem',
                 }}>
-                    {filteredArea.map((area, index) => (
-                        <Box key={area?.id || index}
-                            sx={{
-                                flex: {
-                                    xs: "1 1 100%",
-                                    sm: "0 0 calc(50% - 1rem)",
-                                },
-                            }}
-                            onClick={() => navigate(ROUTES.BARN, { state: area?.id })}>
-                            <CardInfo
-                                name={area?.name}
-                                description={area?.description}
-                                publishedAt={area?.publishedAt}
-                                arrayCount={area?.barns?.length}
-                                isOwner={role === ROLES.OWNER}
-                                nameCount={"Số chuồng: "}
-                                createBy={`Người tạo: ${area?.users_permissions_user?.username}`}
-                                isEdit={true}
-                                isAssign={false}
-                                isDelete={true}
-                                onActionEdit={() => {
-                                    handleOpenEditDialog(area);
-                                }}
-                                onActionDelete={() => {
-                                    handleDelete(area.documentId);
-                                }}
-                            />
-                        </Box>
-                    ))}
-                    {!loadingArea && filteredArea.length === 0 && (
+                    {loadingArea ? (
+                        <Typography sx={{ p: 2, color: 'text.secondary' }}>Đang tải danh sách khu vực...</Typography>
+                    ) : filteredArea.length === 0 ? (
                         <Typography sx={{ p: 2, color: 'text.secondary' }}>Không tìm thấy khu vực nào.</Typography>
+                    ) : (
+                        filteredArea.map((area, index) => (
+                            <Box key={area?.id || index}
+                                sx={{
+                                    flex: {
+                                        xs: "1 1 100%",
+                                        sm: "0 0 calc(50% - 1rem)",
+                                    },
+                                }}
+                                onClick={() => navigate(ROUTES.BARN, { state: area?.id })}>
+                                <CardInfo
+                                    name={area?.name}
+                                    description={area?.description}
+                                    publishedAt={area?.publishedAt}
+                                    arrayCount={area?.barns?.length}
+                                    isOwner={role === ROLES.OWNER}
+                                    nameCount={"Số chuồng: "}
+                                    createBy={`Người tạo: ${area?.users_permissions_user?.username}`}
+                                    isEdit={true}
+                                    isAssign={false}
+                                    isDelete={true}
+                                    equipment={false}
+                                    onActionEdit={() => {
+                                        handleOpenEditDialog(area);
+                                    }}
+                                    onActionDelete={() => {
+                                        handleDelete(area.documentId);
+                                    }}
+                                />
+                            </Box>
+                        ))
                     )}
                 </Row>
 
-                {/* Dialog Thêm mới */}
-                <Dialog
-                    fullWidth
-                    open={openAddDialog}
-                    onClose={toggleAddDialog}
-                    PaperProps={{
-                        sx: {
-                            borderRadius: "12px",
-                            paddingTop: "4px"
-                        }
-                    }}
-                >
-                    <DialogTitle
-                        sx={{
-                            fontSize: "1.25rem",
-                            fontWeight: 700,
-                            pb: 1.5,
-                        }}
-                    >
-                        Tạo khu mới
-                    </DialogTitle>
-
-                    <form onSubmit={handleSubmitAdd}>
-                        <DialogContent
-                            dividers
-                            sx={{
-                                border: "none",
-                                pt: 2,
-                                pb: 1,
-                                "& .MuiDialogContent-root": {
-                                    border: "none",
-                                },
-                            }}
-                        >
-                            <TextField
-                                fullWidth
-                                placeholder="Tên khu..."
-                                name="name"
-                                required
-                                disabled={isSubmitting}
-                                sx={{
-                                    mb: 2,
-                                    "& .MuiOutlinedInput-root": {
-                                        backgroundColor: "#f5f5f5",
-                                        borderRadius: "8px",
-                                        height: "44px",
-                                        paddingLeft: "10px",
-
-                                        "& fieldset": { border: "none" },
-                                        "&:hover fieldset": { border: "none" },
-                                        "&.Mui-focused fieldset": { border: "none" },
-
-                                        "& input": { fontSize: "0.95rem" },
-                                    },
-                                    "& .MuiInputBase-input::placeholder": { color: "#999" },
-                                }}
-                            />
-
-                            <TextField
-                                fullWidth
-                                placeholder="Mô tả..."
-                                name="description"
-                                required
-                                multiline
-                                rows={3}
-                                disabled={isSubmitting}
-                                sx={{
-                                    "& .MuiOutlinedInput-root": {
-                                        backgroundColor: "#f5f5f5",
-                                        borderRadius: "8px",
-
-                                        "& fieldset": { border: "none" },
-                                        "&:hover fieldset": { border: "none" },
-                                        "&.Mui-focused fieldset": { border: "none" },
-
-                                        "& textarea": { fontSize: "0.95rem" },
-                                    },
-                                    "& .MuiInputBase-input::placeholder": { color: "#999" },
-                                }}
-                            />
-                        </DialogContent>
-
-                        <DialogActions sx={{ p: 2 }}>
-                            <Button
-                                onClick={toggleAddDialog}
-                                sx={{
-                                    textTransform: "none",
-                                    color: "#444",
-                                    borderRadius: "8px",
-                                    px: 2,
-                                    "&:hover": { backgroundColor: "#eee" }
-                                }}
-                                disabled={isSubmitting}
-                            >
-                                Hủy
-                            </Button>
-
-                            <Button
-                                type="submit"
-                                variant="contained"
-                                sx={{
-                                    textTransform: "none",
-                                    borderRadius: "8px",
-                                    px: 3,
-                                }}
-                                disabled={isSubmitting}
-                            >
-                                {isSubmitting ? 'Đang tạo...' : 'Tạo'}
-                            </Button>
-                        </DialogActions>
-                    </form>
-                </Dialog>
-
-                {/* Dialog Chỉnh sửa */}
-                <Dialog
-                    fullWidth
-                    open={openEditDialog}
-                    onClose={handleCloseEditDialog}
-                    PaperProps={{
-                        sx: {
-                            borderRadius: "12px",
-                            paddingTop: "4px"
-                        }
-                    }}
-                >
-                    <DialogTitle
-                        sx={{
-                            fontSize: "1.25rem",
-                            fontWeight: 700,
-                            pb: 1.5,
-                        }}
-                    >
-                        Chỉnh sửa Khu vực: {editingArea?.name}
-                    </DialogTitle>
-
-                    {editingArea && (
-                        <form onSubmit={handleSubmitEdit}>
-                            <DialogContent
-                                dividers
-                                sx={{
-                                    border: "none",
-                                    pt: 2,
-                                    pb: 1,
-                                    "& .MuiDialogContent-root": {
-                                        border: "none",
-                                    },
-                                }}
-                            >
-                                <TextField
-                                    fullWidth
-                                    placeholder="Tên khu..."
-                                    name="name"
-                                    required
-                                    defaultValue={editingArea?.name || ''}
-                                    disabled={isSubmitting}
-                                    sx={{
-                                        mb: 2,
-                                        "& .MuiOutlinedInput-root": {
-                                            backgroundColor: "#f5f5f5",
-                                            borderRadius: "8px",
-                                            height: "44px",
-                                            paddingLeft: "10px",
-                                            "& fieldset": { border: "none" },
-                                            "&:hover fieldset": { border: "none" },
-                                            "&.Mui-focused fieldset": { border: "none" },
-                                            "& input": { fontSize: "0.95rem" },
-                                        },
-                                        "& .MuiInputBase-input::placeholder": { color: "#999" },
-                                    }}
-                                />
-
-                                <TextField
-                                    fullWidth
-                                    placeholder="Mô tả..."
-                                    name="description"
-                                    required
-                                    multiline
-                                    rows={3}
-                                    defaultValue={editingArea?.description || ''}
-                                    disabled={isSubmitting}
-                                    sx={{
-                                        "& .MuiOutlinedInput-root": {
-                                            backgroundColor: "#f5f5f5",
-                                            borderRadius: "8px",
-                                            "& fieldset": { border: "none" },
-                                            "&:hover fieldset": { border: "none" },
-                                            "&.Mui-focused fieldset": { border: "none" },
-                                            "& textarea": { fontSize: "0.95rem" },
-                                        },
-                                        "& .MuiInputBase-input::placeholder": { color: "#999" },
-                                    }}
-                                />
-                            </DialogContent>
-
-                            <DialogActions sx={{ p: 2 }}>
-                                <Button
-                                    onClick={handleCloseEditDialog}
-                                    sx={{
-                                        textTransform: "none",
-                                        color: "#444",
-                                        borderRadius: "8px",
-                                        px: 2,
-                                        "&:hover": { backgroundColor: "#eee" }
-                                    }}
-                                    disabled={isSubmitting}
-                                >
-                                    Hủy
-                                </Button>
-
-                                <Button
-                                    type="submit"
-                                    variant="contained"
-                                    sx={{
-                                        textTransform: "none",
-                                        borderRadius: "8px",
-                                        px: 3,
-                                    }}
-                                    disabled={isSubmitting}
-                                >
-                                    {isSubmitting ? 'Đang lưu...' : 'Lưu thay đổi'}
-                                </Button>
-                            </DialogActions>
-                        </form>
-                    )}
-                </Dialog>
+                {dialogState.mode && (
+                    <CommonDialog
+                        open={dialogState.open}
+                        onClose={handleCloseDialog}
+                        mode={dialogState.mode}
+                        onSubmit={handleSubmit}
+                        {...dialogProps}
+                    />
+                )}
 
             </Box>
         </BoxContainer>

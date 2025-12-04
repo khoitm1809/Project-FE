@@ -10,14 +10,13 @@ export const warehouseItemApi = createApi({
 
         getListWarehouseItem: builder.query({
             query: (params) => {
-                const { warehouseCategoryID, UID, ...rest } = params || {};
+                const { itemType, ...rest } = params || {};
                 return {
                     url: API_URL.WAREHOUSE_ITEM + "?populate=*",
                     method: "GET",
                     params: {
                         ...rest,
-                        ...(warehouseCategoryID ? { "filters[warehouse_category][id]": warehouseCategoryID } : {}),
-                        ...(UID ? { "filters[users_permissions_user][id]": UID } : {}),
+                        ...(itemType ? { "filters[itemType]": itemType } : {}),
                     },
                 };
             },
@@ -50,6 +49,7 @@ export const warehouseItemApi = createApi({
 });
 
 export const {
+    useLazyGetListWarehouseItemQuery,
     useGetListWarehouseItemQuery,
     useAddWarehouseItemMutation,
     useDeleteWarehouseItemMutation,

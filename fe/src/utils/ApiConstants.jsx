@@ -15,4 +15,7 @@ export const API_URL = {
   TODO: '/api/todos',
   INVOICE: '/api/invoices',
   UPLOAD: '/api/upload',
+  BARN_FEED_SETTING: "/api/barn-feed-settings",
+  BARN_EQUIPMENT: "/api/barn-equipments",
+  INVENTORY_TRANSACTIONS: "/api/inventory-transactions"
 };

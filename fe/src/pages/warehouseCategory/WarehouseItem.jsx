@@ -50,12 +50,14 @@ const WareHouseItem = () => {
         { key: "warehouse_category.name", label: "Danh mục" },
         { key: "users_permissions_user.username", label: "Người tạo" },
         { key: "createdAt", label: "Ngày tạo" },
+        { key: "totalLeft", label: "Còn lại" },
     ];
 
     const dialogTitle = [
         { key: "name", label: "Tên vật phẩm" },
         { key: "quantity", label: "Số lượng", isNumber: true },
-        { key: "unit", label: "Đơn vị" },
+        { key: "inUsed", label: "Tình trạng sử dụng", isNumber: true },
+        { key: "totalLeft", label: "Còn lại", isNumber: true },
 
         {
             key: "warehouse_category",

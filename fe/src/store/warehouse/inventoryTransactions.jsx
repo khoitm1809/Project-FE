@@ -1,16 +1,15 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { API_URL } from '../../utils/ApiConstants';
-import { LOCAL_STORAGE_NAME } from '../../utils/constant';
 import { axiosBaseQuery } from '../../services/axiosBaseQuery';
 
-export const feedSettingApi = createApi({
-    reducerPath: 'feedSettingApi',
+export const inventoryTransactionApi = createApi({
+    reducerPath: 'inventoryTransactionApi',
     baseQuery: axiosBaseQuery(),
     endpoints: (builder) => ({
         // Get List Off Spring
-        getListFeedSetting: builder.query({
+        getListInventoryTransaction: builder.query({
             query: (params) => ({
-                url: API_URL.BARN_FEED_SETTING + "?populate=*",
+                url: API_URL.INVENTORY_TRANSACTIONS + "?populate=*",
                 method: 'GET',
                 params: {
                     ...params,
@@ -19,27 +18,27 @@ export const feedSettingApi = createApi({
         }),
 
         // add off spring
-        addFeedSetting: builder.mutation({
+        addInventoryTransaction: builder.mutation({
             query: (body) => ({
-                url: API_URL.BARN_FEED_SETTING,
+                url: API_URL.INVENTORY_TRANSACTIONS,
                 method: 'POST',
                 data: { data: body },
             }),
         }),
 
         // edit off spring
-        editFeedSetting: builder.mutation({
+        editInventoryTransaction: builder.mutation({
             query: (body) => ({
-                url: API_URL.BARN_FEED_SETTING + "/" + body.id,
+                url: API_URL.INVENTORY_TRANSACTIONS + "/" + body.id,
                 method: 'PUT',
                 data: body,
             }),
         }),
 
         // delete off spring
-        deleteFeedSetting: builder.mutation({
+        deleteInventoryTransaction: builder.mutation({
             query: (id) => ({
-                url: API_URL.BARN_FEED_SETTING + "/" + id,
+                url: API_URL.INVENTORY_TRANSACTIONS + "/" + id,
                 method: 'DELETE',
             }),
         }),
@@ -48,8 +47,8 @@ export const feedSettingApi = createApi({
 });
 
 export const {
-    useGetListFeedSettingQuery,
-    useAddFeedSettingMutation,
-    useDeleteFeedSettingMutation,
-    useEditFeedSettingMutation
-} = feedSettingApi;
+    useAddInventoryTransactionMutation,
+    useDeleteInventoryTransactionMutation,
+    useEditInventoryTransactionMutation,
+    useGetListInventoryTransactionQuery
+} = inventoryTransactionApi;
