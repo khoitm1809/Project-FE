@@ -10,13 +10,14 @@ export const warehouseItemApi = createApi({
 
         getListWarehouseItem: builder.query({
             query: (params) => {
-                const { itemType, ...rest } = params || {};
+                const { itemType, id, ...rest } = params || {};
                 return {
                     url: API_URL.WAREHOUSE_ITEM + "?populate=*",
                     method: "GET",
                     params: {
                         ...rest,
                         ...(itemType ? { "filters[itemType]": itemType } : {}),
+                        ...(id ? { "filters[warehouse_category][id]": id } : {}),
                     },
                 };
             },

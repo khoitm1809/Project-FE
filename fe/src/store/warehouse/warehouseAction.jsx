@@ -9,13 +9,17 @@ export const warehouseApi = createApi({
     endpoints: (builder) => ({
         // Get List Off Spring
         getListWarehouseCategory: builder.query({
-            query: (params) => ({
-                url: API_URL.WAREHOUSE_CATEGORY + "?populate=*",
-                method: 'GET',
-                params: {
-                    ...params,
-                },
-            }),
+            query: (params) => {
+                const { itemType, id, ...rest } = params || {};
+                return {
+                    url: API_URL.WAREHOUSE_CATEGORY + "?populate=*",
+                    method: "GET",
+                    params: {
+                        ...rest,
+                        ...(id ? { "filters[warehouse_category][id]": id } : {}),
+                    },
+                };
+            },
         }),
 
         // add off spring

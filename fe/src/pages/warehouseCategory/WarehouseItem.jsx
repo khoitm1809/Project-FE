@@ -21,20 +21,19 @@ const WareHouseItem = () => {
     const [editWareHouseItem] = useEditWarehouseItemMutation();
     const [deleteWareHouseItem] = useDeleteWarehouseItemMutation();
     const { modalType } = useSelector((state) => state.helper);
-
+    console.log(warehouseCategoryID)
     const {
         data: listWareHouseItem,
         isLoading: loadingWareHouseItem,
         refetch
     } = useGetListWarehouseItemQuery({
-        warehouseCategoryID: warehouseCategoryID,
-        UID: role == ROLES.OWNER ? null : UID
+        id: warehouseCategoryID,
+        // users_permissions_user: role == ROLES.OWNER ? null : UID
     }, { refetchOnMountOrArgChange: true })
 
     const {
         data: listWareHouseCategory,
     } = useGetListWarehouseCategoryQuery({
-        warehouseCategoryID: warehouseCategoryID,
     }, { refetchOnMountOrArgChange: true })
 
     const {
@@ -46,24 +45,26 @@ const WareHouseItem = () => {
     const title = [
         { key: "name", label: "Tên vật phẩm" },
         { key: "quantity", label: "Số lượng" },
+        { key: "totalLeft", label: "Còn lại" },
         { key: "unit", label: "Đơn vị" },
         { key: "warehouse_category.name", label: "Danh mục" },
         { key: "users_permissions_user.username", label: "Người tạo" },
         { key: "createdAt", label: "Ngày tạo" },
-        { key: "totalLeft", label: "Còn lại" },
+        { key: "itemType", label: "Loại" },
     ];
 
     const dialogTitle = [
         { key: "name", label: "Tên vật phẩm" },
         { key: "quantity", label: "Số lượng", isNumber: true },
-        { key: "inUsed", label: "Tình trạng sử dụng", isNumber: true },
         { key: "totalLeft", label: "Còn lại", isNumber: true },
+        { key: "inUsed", label: "Tình trạng sử dụng", isNumber: true },
+        { key: "itemType", label: "Loại" }, //Thêm array itemType
 
         {
             key: "warehouse_category",
             label: "Danh mục",
-            isDropDown: true,
-            list: convertToDropdown(listWareHouseCategory?.data),
+            isDisable: true,
+            defaultValue: warehouseCategoryID,
             mappingKey: "warehouse_category.id"
         },
 
@@ -79,7 +80,6 @@ const WareHouseItem = () => {
             key: "users_permissions_user",
             label: "Người phụ trách",
             isDisable: true,
-            defaultValue: UID,
             isDropDown: true,
             defaultvalue: UID,
             list: convertToDropdown(listUser),

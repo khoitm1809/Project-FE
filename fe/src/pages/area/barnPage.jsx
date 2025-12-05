@@ -15,7 +15,7 @@ import { MESSAGE_TYPE } from "../../utils/constant";
 import CommonDialog from "../../components/CommonDialog";
 import { useAddEquipmentMutation, useDeleteEquipmentMutation, useEditEquipmentMutation } from "../../store/warehouse/equipmentsAction";
 import { useAddFeedSettingMutation, useDeleteFeedSettingMutation, useEditFeedSettingMutation } from "../../store/warehouse/feedSettingsAction";
-import { useGetListWarehouseItemQuery, useLazyGetListWarehouseItemQuery } from "../../store/warehouse/warehouseItemAction";
+import { useEditWarehouseItemMutation, useGetListWarehouseItemQuery, useLazyGetListWarehouseItemQuery } from "../../store/warehouse/warehouseItemAction";
 
 const BarnPage = () => {
     const location = useLocation();
@@ -48,13 +48,18 @@ const BarnPage = () => {
     const [deleteBarn, { isLoading: isDeletingBarn }] = useDeleteBarnMutation();
 
     const [addEquipment, { isLoading: isAddingEquipment }] = useAddEquipmentMutation();
-    const [editEquipment, { isLoading: isEditingEquipment }] = useEditEquipmentMutation();
     const [deleteEquipment, { isLoading: isDeletingEquipment }] = useDeleteEquipmentMutation();
 
     const [addFeedSetting, { isLoading: isAddingFeedSetting }] = useAddFeedSettingMutation();
-    const [editFeedSetting, { isLoading: isEditingFeedSetting }] = useEditFeedSettingMutation();
     const [deleteFeedSetting, { isLoading: isDeletingFeedSetting }] = useDeleteFeedSettingMutation();
 
+    const [editWareHouseItem] = useEditWarehouseItemMutation();
+
+    const [feedForm, setFeedForm] = useState({
+        warehouseItemId: null,
+        quantity: null,
+        name: null,
+    });
 
     const [equipmentForm, setEquipmentForm] = useState({
         warehouseItemId: null,
@@ -148,6 +153,14 @@ const BarnPage = () => {
         // }
     };
 
+    const handleFeedFormChange = (e) => {
+        const { name, value } = e.target;
+        setFeedForm(prev => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
+
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setNewBarnData(prev => ({
@@ -199,29 +212,71 @@ const BarnPage = () => {
                     }).unwrap();
                     break;
                 case 'feed':
-                    await addFeedSetting({
+                    const qtyFeed = Number(feedForm.quantity);
+                    const currentFeedId = feedForm.warehouseItemId;
 
-                    })
+                    // Check tồn kho
+                    const selectedFeedItem = dialogState.warehouseItems.find(
+                        item => (item.documentId || item.id) === currentFeedId
+                    );
+
+                    if (selectedFeedItem && (selectedFeedItem.totalLeft || 0) < qtyFeed) {
+                        openDialog({
+                            type: MESSAGE_TYPE.ERROR,
+                            message: `Số lượng tồn kho không đủ! (Còn: ${selectedFeedItem.totalLeft})`,
+                            isShowCloseBtn: true,
+                            isHideAction: true,
+                        });
+                        return;
+                    }
+
+                    // Gọi API thêm Feed Setting
+                    await addFeedSetting({
+                        barn: dialogState.selectedBarnId,
+                        warehouse_item: currentFeedId,
+                        quantityInstalled: qtyFeed, // Lưu ý tên trường trong API feed_settings (quantity hay quantityInstalled?)
+                        name: feedForm.name,
+                    }).unwrap();
+
+                    // Trừ tồn kho
+                    if (selectedFeedItem) {
+                        const newTotalLeft = (selectedFeedItem.totalLeft || 0) - qtyFeed;
+                        await editWareHouseItem({
+                            id: currentFeedId,
+                            totalLeft: newTotalLeft < 0 ? 0 : newTotalLeft
+                        }).unwrap();
+                    }
+                    break;
 
                     break;
                 case 'equipment':
-                    // Validate dữ liệu
-                    // if (!equipmentForm.warehouseItemId || !equipmentForm.quantity) {
-                    //     openDialog({
-                    //         type: MESSAGE_TYPE.WARNING,
-                    //         message: "Vui lòng chọn thiết bị và nhập số lượng",
-                    //         isShowCloseBtn: true,
-                    //         isHideAction: true,
-                    //     });
-                    //     return;
-                    // }
-                   
+                    const qtyInstalled = Number(equipmentForm.quantity);
+                    const currentItemId = equipmentForm.warehouseItemId;
+
+                    // 1. Tìm thiết bị đang chọn trong danh sách để lấy totalLeft hiện tại
+                    const selectedItem = dialogState.warehouseItems.find(
+                        item => (item.documentId || item.id) === currentItemId
+                    );
+
+
+                    // 2. Thêm thiết bị vào chuồng (API cũ)
                     await addEquipment({
                         barn: dialogState.selectedBarnId,
-                        warehouse_item: equipmentForm.warehouseItemId, // ID thiết bị chọn từ list
-                        quantityInstalled: Number(equipmentForm.quantity), // Số lượng nhập vào,
-                        name: null
+                        warehouse_item: currentItemId,
+                        quantityInstalled: qtyInstalled,
+                        name: equipmentForm.name,
                     }).unwrap();
+
+                    // 3. Cập nhật trừ tồn kho (API mới)
+                    // Logic: totalLeft Mới = totalLeft Cũ - Số lượng lắp
+                    if (selectedItem) {
+                        const newTotalLeft = (selectedItem.totalLeft || 0) - qtyInstalled;
+
+                        await editWareHouseItem({
+                            id: currentItemId, // Hoặc documentId tùy vào API của bạn yêu cầu gì
+                            totalLeft: newTotalLeft < 0 ? 0 : newTotalLeft
+                        }).unwrap();
+                    }
                     break;
                 default:
                     return;
@@ -239,7 +294,7 @@ const BarnPage = () => {
             });
         }
     };
-    console.log(dialogState.selectedBarnId, '????')
+
     const handleDeleteBarn = async (barnToDelete) => {
         if (!barnToDelete?.documentId || isDeletingBarn) return;
 
@@ -272,6 +327,104 @@ const BarnPage = () => {
         });
     };
 
+    const handleDeleteInstalledEquipment = async (installedItem) => {
+        if (!installedItem) return;
+
+        try {
+            const qtyReturn = Number(installedItem.quantityInstalled);
+            const warehouseItemId = installedItem.warehouse_item?.id || installedItem.warehouse_item; // Tùy cấu trúc API trả về object hay ID
+
+            // 2. Gọi API xóa thiết bị khỏi chuồng
+            await deleteEquipment(installedItem.documentId || installedItem.id).unwrap();
+
+            // 3. Trả lại số lượng vào kho (Nếu tìm thấy ID kho)
+            if (warehouseItemId) {
+                // Tìm item trong list warehouseItems hiện có để lấy totalLeft hiện tại
+                // Hoặc gọi API get detail nếu cần chính xác tuyệt đối. 
+                // Ở đây giả sử lấy từ list đã load:
+                const warehouseItem = dialogState.warehouseItems.find(
+                    item => (item.documentId || item.id) === warehouseItemId
+                );
+
+                if (warehouseItem) {
+                    const newTotalLeft = (warehouseItem.totalLeft || 0) + qtyReturn;
+
+                    await editWareHouseItem({
+                        id: warehouseItemId,
+                        totalLeft: newTotalLeft
+                    }).unwrap();
+                }
+            }
+
+            refetch();
+
+            // Cập nhật lại state editingBarn để Dialog hiển thị list mới nhất ngay lập tức
+            const updatedBarn = listBarn?.data?.find(b => b.documentId === dialogState.selectedBarnId);
+            if (updatedBarn) {
+                setDialogState(prev => ({
+                    ...prev,
+                    editingBarn: updatedBarn
+                }));
+            }
+
+        } catch (error) {
+            openDialog({
+                type: MESSAGE_TYPE.ERROR,
+                message: "Không thể xóa thiết bị",
+                isShowCloseBtn: true,
+                isHideAction: true,
+            });
+        }
+    };
+
+    const handleDeleteFeedSetting = async (feedItem) => {
+        if (!feedItem) return;
+
+        // Confirm (tùy chọn)
+        // const confirm = window.confirm(`Bạn muốn xóa cấu hình thức ăn này?`);
+        // if (!confirm) return;
+
+        try {
+            const qtyReturn = Number(feedItem.quantity || 0); // Lưu ý field quantity bên feed setting tên là gì (giả sử là quantity)
+            const warehouseItemId = feedItem.warehouse_item?.id || feedItem.warehouse_item;
+
+            // Gọi API xóa
+            await deleteFeedSetting(feedItem.documentId || feedItem.id).unwrap();
+
+            // Trả lại tồn kho
+            if (warehouseItemId) {
+                const warehouseItem = dialogState.warehouseItems.find(
+                    item => (item.documentId || item.id) === warehouseItemId
+                );
+
+                if (warehouseItem) {
+                    const newTotalLeft = (warehouseItem.totalLeft || 0) + qtyReturn;
+                    await editWareHouseItem({
+                        id: warehouseItemId,
+                        totalLeft: newTotalLeft
+                    }).unwrap();
+                }
+            }
+
+            await refetch();
+
+            // Cập nhật lại list trong dialog
+            const updatedBarn = listBarn?.data?.find(b => b.documentId === dialogState.selectedBarnId);
+            if (updatedBarn) {
+                setDialogState(prev => ({ ...prev, editingBarn: updatedBarn }));
+            }
+
+        } catch (error) {
+            console.error("Lỗi xóa feed:", error);
+            openDialog({
+                type: MESSAGE_TYPE.ERROR,
+                message: "Không thể xóa cấu hình thức ăn",
+                isShowCloseBtn: true,
+                isHideAction: true,
+            });
+        }
+    };
+
     const filteredBarns = listBarn?.data?.filter(barn =>
         barn?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         barn?.description?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -279,9 +432,10 @@ const BarnPage = () => {
 
     const handleEquipmentFormChange = (e) => {
         const { name, value } = e.target;
+
         setEquipmentForm(prev => ({
             ...prev,
-            [name]: value
+            [name]: value,
         }));
     };
 
@@ -320,21 +474,27 @@ const BarnPage = () => {
         case 'feed':
             dialogProps = {
                 title: `Cấu hình thức ăn: ${dialogState.editingBarn?.name || ''}`,
-                isLoading: isAddingFeedSetting || isEditingFeedSetting || isDeletingFeedSetting || isLoadingWarehouse,
-                feedProps: {
+                isLoading: isAddingFeedSetting || isDeletingFeedSetting || isLoadingWarehouse,
+                feedProps: { // Đổi tên prop cho khớp logic mới
                     availableFeeds: dialogState.warehouseItems,
-                    currentSettings: dialogState.editingBarn?.feed_settings || [],
+                    formData: feedForm,
+                    onFormChange: handleFeedFormChange,
+                    currentSettings: dialogState.editingBarn?.feed_settings || [], // List đã có
+                    onDelete: handleDeleteFeedSetting // Hàm xóa
                 },
             };
             break;
         case 'equipment':
             dialogProps = {
                 title: `Quản lý thiết bị: ${dialogState.editingBarn?.name || ''}`,
-                isLoading: isAddingEquipment || isEditingEquipment || isDeletingEquipment || isLoadingWarehouse,
+                isLoading: isAddingEquipment || isDeletingEquipment || isLoadingWarehouse,
                 equipmentProps: {
                     availableEquipments: dialogState.warehouseItems, // List lấy từ API
                     formData: equipmentForm,                         // State form
                     onFormChange: handleEquipmentFormChange,         // Hàm change
+                    onDelete: handleDeleteInstalledEquipment,
+                    currentInstalled: dialogState.editingBarn?.barn_equipments || [], // List đã lắp
+                    onDelete: handleDeleteInstalledEquipment
                 },
             };
             break;

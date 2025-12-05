@@ -15,7 +15,6 @@ import { feedSettingApi } from "./warehouse/feedSettingsAction";
 import { todoApi } from "./todo/todoAction";
 import { invoiceApi } from "./invoice/invoiceApi";
 import { equipmentApi } from "./warehouse/equipmentsAction";
-import { inventoryTransactionApi } from "./warehouse/inventoryTransactions";
 
 const persistConfig = {
     key: "auth",
@@ -37,7 +36,6 @@ const rootReducer = combineReducers({
     [invoiceApi.reducerPath]: invoiceApi.reducer,
     [equipmentApi.reducerPath]: equipmentApi.reducer,
     [feedSettingApi.reducerPath]: feedSettingApi.reducer,
-    [inventoryTransactionApi.reducerPath]: inventoryTransactionApi.reducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -59,7 +57,6 @@ export const store = configureStore({
             invoiceApi.middleware,
             equipmentApi.middleware,
             feedSettingApi.middleware,
-            inventoryTransactionApi.middleware,
         ),
 });
 
