@@ -31,10 +31,10 @@ const WareHouseItem = () => {
         // users_permissions_user: role == ROLES.OWNER ? null : UID
     }, { refetchOnMountOrArgChange: true })
 
-    const {
-        data: listWareHouseCategory,
-    } = useGetListWarehouseCategoryQuery({
-    }, { refetchOnMountOrArgChange: true })
+    // const {
+    //     data: listWareHouseCategory,
+    // } = useGetListWarehouseCategoryQuery({
+    // }, { refetchOnMountOrArgChange: true })
 
     const {
         data: listUser,
@@ -56,9 +56,19 @@ const WareHouseItem = () => {
     const dialogTitle = [
         { key: "name", label: "Tên vật phẩm" },
         { key: "quantity", label: "Số lượng", isNumber: true },
-        { key: "totalLeft", label: "Còn lại", isNumber: true },
-        { key: "inUsed", label: "Tình trạng sử dụng", isNumber: true },
-        { key: "itemType", label: "Loại" }, //Thêm array itemType
+        { key: "totalLeft", label: "Còn lại", isNumber: true, },
+        {
+            key: "itemType", label: "Loại",
+            isDropDown: true,
+            list: [
+                { label: 'feed', value: 'feed' },
+                { label: 'equipment', value: 'equipment' },
+                { label: 'medicine', value: 'medicine' },
+                { label: 'vitamin', value: 'vitamin' },
+                { label: 'tool', value: 'tool' },
+                { label: 'supply', value: 'supply' },
+            ]
+        }, //Thêm array itemType
 
         {
             key: "warehouse_category",

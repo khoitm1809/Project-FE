@@ -28,7 +28,7 @@ const CommonDialog = ({
 }) => {
     // --- Biến kiểm tra validation (đưa ra ngoài để dùng chung cho cả renderContent và Button Submit) ---
     let isOverStock = false;
-
+        console.log(feedProps)
     // Hàm xử lý chung để tìm item và check tồn kho (tránh lặp code)
     const checkStock = (items, formId, formQty) => {
         const selected = items?.find(i => (i.documentId || i.id) === formId);
@@ -256,10 +256,9 @@ const CommonDialog = ({
     const renderFeedContent = () => {
         if (!feedProps) return null;
         const { availableFeeds, formData, onFormChange, currentSettings, onDelete } = feedProps;
-        console.log(availableFeeds,'??')
         // Check tồn kho
         const { isError, maxQty, selectedItem } = checkStock(availableFeeds, formData.warehouseItemId, formData.quantity);
-
+        console.log(currentSettings)
         // Cập nhật biến cờ global
         if (mode === 'feed') isOverStock = isError;
 
@@ -316,9 +315,9 @@ const CommonDialog = ({
                         Danh sách thức ăn đã thêm ({currentSettings?.length || 0}):
                     </Typography>
                     <Box sx={{ maxHeight: '200px', overflowY: 'auto', bgcolor: '#fafafa', borderRadius: 1, border: '1px solid #eee' }}>
-                        {availableFeeds?.length > 0 ? (
+                        {currentSettings?.length > 0 ? (
                             <List dense>
-                                {availableFeeds.map((item, index) => (
+                                {currentSettings?.map((item, index) => (
                                     <ListItem
                                         key={item.id || index}
                                         divider={index !== currentSettings.length - 1}
@@ -329,8 +328,8 @@ const CommonDialog = ({
                                         }
                                     >
                                         <ListItemText
-                                            primary={item.name}
-                                            secondary={`Số lượng: ${item.quantityInstalled || 0}`} // Hoặc item.amount tùy API trả về
+                                            primary={item?.name}
+                                            secondary={`Số lượng: ${item?.quantityInstalled || 0}`} // Hoặc item.amount tùy API trả về
                                             primaryTypographyProps={{ fontWeight: 500, fontSize: '0.9rem' }}
                                         />
                                     </ListItem>

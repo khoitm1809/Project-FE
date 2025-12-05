@@ -119,7 +119,8 @@ const BarnPage = () => {
             mode: 'feed',
             editingBarn: barn,
             selectedBarnId: barn.documentId,
-            warehouseItems: result.data || []
+            warehouseItems: result.data || [],
+            currentSettings: barn.barn_feed_settings || barn.feed_settings || []
         });
         // } catch (error) {
         //     console.error("Lỗi khi lấy danh sách thức ăn:", error);
@@ -441,7 +442,7 @@ const BarnPage = () => {
 
     let dialogProps = {};
     const barnToAssignName = listBarn?.data?.find(barn => barn.documentId === dialogState.selectedBarnId)?.name;
-
+    // console.log(dialogState,'"???')
     switch (dialogState.mode) {
         case 'add':
             dialogProps = {
@@ -479,7 +480,7 @@ const BarnPage = () => {
                     availableFeeds: dialogState.warehouseItems,
                     formData: feedForm,
                     onFormChange: handleFeedFormChange,
-                    currentSettings: dialogState.editingBarn?.feed_settings || [], // List đã có
+                    currentSettings: dialogState.editingBarn?.barn_feed_settings || dialogState.editingBarn?.feed_settings || [],
                     onDelete: handleDeleteFeedSetting // Hàm xóa
                 },
             };
